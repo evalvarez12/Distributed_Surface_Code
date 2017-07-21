@@ -54,11 +54,14 @@ class SurfaceCode:
         self.plaqsRound1 = self.plaqs[:, ::2]
         self.plaqsRound2 = self.plaqs[:, 1::2]
 
-    def measureStabilizer(self, pos, stabilizer, pLie=0):
+    def measureStabilizer(self, pos, stabilizer, pNotComplete=0, pLie=0):
         """
         Measures all stabilizers
         """
         _, c, t = self._selectStabilizer(stabilizer)
+
+
+
 
         # TODO nearest indices func here: toroid planar
         t, b, l, r = self._stabilizerQubits(pos)
@@ -67,7 +70,10 @@ class SurfaceCode:
                                           self.qubits[c][l[0], l[1]] *
                                           self.qubits[c][r[0], r[1]])
 
-
+    def incompleteMeasuerement(self, pos, pNotComplete):
+        incomplete = (np.random.rand(len(pos)) < pNotComplete)
+        newPos = np.delete(pos, np.where(inComplete), 1)
+        return pos
 
     def measureAllStabilizer(self, stabilizer, pLie=0):
         pos, c, t = self._selectStabilizer(stabilizer)
@@ -104,7 +110,7 @@ class SurfaceCode:
         return top, bottom, left, right
 
 
-    def applyQubitErrors(self, pX, pZ):
+    def applyNoiseQubitErrors(self, pX, pZ):
         """
         Apply random error to the data qubits
         """
@@ -116,20 +122,35 @@ class SurfaceCode:
         self.qubits[:, self.tags == "Q"] *= noise
 
 
+    def applyOperationError(self, pos, error):
+        errQubit1, errQubit2 = self._twoRandStabQubits(pos)
+
+        # TODO care with errors shape
+        self.qubits[:, errQubit1[0], errQubit1[1]] *= error[0]
+        self.qubits[:, errQubit2[0], errQubit2[1]] *= error[1]
+
+
     def applyNoisyMeasurement(self, stabilizer, errorVec, errorSum, notCompleteProb=0):
+        """
+        Does a noisy measurement on the stabilizer type.
+        The measurement is done in 2 rounds of interspersed stabilizers.
+        """
         # Specify stabilizer
         pos, c, t = self._selectStabilizer(stabilizer)
 
-        # Find probabilistic error
-        err = np.random.rand()
-        # Index of the actual error is the last True in less than rand number
-        errIndex = np.where(errorSum < err)[0][-1]
+        # Find all set of probabilistic errors
+        err = np.random.rand(len(pos))
+        errIndex = np.zeros(len(pos))
+        for i in range(len(pos)):
+            # Index of the actual error is the last True in less than rand number
+            errIndex[i] = np.where(errorSum > err[i])[0][0]
 
+        self.measureStabilizer
 
     # def applyErrors(self, pos, errors):
 
 
-    def _twoStatilizerQubits(self, pos):
+    def _twoRandStabQubits(self, pos):
         options = np.array([[-1, 0],[1, 0],[0, -1], [0, 1]])
         # TODO optimize this for
         # Draw the selected options

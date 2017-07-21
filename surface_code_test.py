@@ -17,7 +17,7 @@ class TestSurfaceCode(unittest.TestCase):
     def test_stabilizer_measurements(self):
         # print(sc.stars)
         print("____________________________")
-        sc.applyQubitErrors(.5,0)
+        sc.applyNoiseQubitErrors(.5,0)
         print(sc.qubits[0])
         print("____________________________")
         sc.measureAllStabilizer("star")
@@ -27,8 +27,8 @@ class TestSurfaceCode(unittest.TestCase):
 
     def test_two_stabilizer_qubits(self):
         print(sc.stars)
-        testPos = np.array([[0],[0]])
-        a,b = sc._twoStatilizerQubits(testPos)
+        testPos = np.array([[0,1],[0,2]])
+        a,b = sc._twoRandStabQubits(testPos)
         print(testPos)
         print(a)
         print(b)
