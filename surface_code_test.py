@@ -20,9 +20,18 @@ class TestSurfaceCode(unittest.TestCase):
         sc.applyQubitErrors(.5,0)
         print(sc.qubits[0])
         print("____________________________")
-        sc.measure("star")
+        sc.measureAllStabilizer("star")
         print(sc.qubits[0])
         print(sc.tags)
+
+
+    def test_two_stabilizer_qubits(self):
+        print(sc.stars)
+        testPos = np.array([[0],[0]])
+        a,b = sc._twoStatilizerQubits(testPos)
+        print(testPos)
+        print(a)
+        print(b)
 
     # def test_proyector(self):
 
