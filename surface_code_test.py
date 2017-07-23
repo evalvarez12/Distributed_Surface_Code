@@ -14,24 +14,32 @@ size = 3
 sc = surface_code.SurfaceCode(size)
 class TestSurfaceCode(unittest.TestCase):
 
-    def test_stabilizer_measurements(self):
+    def test_measureStabilizer(self):
         # print(sc.stars)
         print("____________________________")
-        sc.applyNoiseQubitErrors(.5,0)
+        sc._applyNoiseQubit(.5,0)
         print(sc.qubits[0])
         print("____________________________")
         sc.measureAllStabilizer("star")
         print(sc.qubits[0])
         print(sc.tags)
 
+    def test_stabilizerLieAll(self):
+        print("____________________________")
+        sc._stabilizerLieAll(1)
+        print(sc.qubits)
 
-    def test_two_stabilizer_qubits(self):
+
+    def test_twoRandStabQubits(self):
+        print("____________________________")
         print(sc.stars)
         testPos = np.array([[0,1],[0,2]])
         a,b = sc._twoRandStabQubits(testPos)
         print(testPos)
         print(a)
         print(b)
+
+
 
     # def test_proyector(self):
 
