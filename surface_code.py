@@ -185,7 +185,7 @@ class SurfaceCode:
         # Apply error to stabilizer
         self.qubitts[0][pos[0], pos[1]] *= errMeasurement
 
-    def NoisyMeasurement(self, stabilizer, errorVec, errorSum, pNotComplete=0):
+    def noisyMeasurement(self, stabilizer, errorVec, errorSum, pNotComplete=0):
         """
         Does a noisy measurement on the stabilizer type.
         The measurement is done in 2 rounds of interspersed stabilizers.
@@ -265,4 +265,56 @@ class SurfaceCode:
         return pos1, pos2, c, t
 
     def reset(self):
-        sc.qubits.fill(1)
+        self.qubits.fill(1)
+
+    def getStars(self):
+        return self.qubits[0][self.tags == "S"]
+
+    def getPlaqs(self):
+        return self.qubits[0][self.tags == "P"]
+
+    def measureLogical(self):
+        # TODO is this wrong? X1 and ZI should be perpendicular
+        # TODO X1 first row Z1 first column
+        X1 = np.prod(self.qubits[0, 0, 1::2])
+        Z1 = np.prod(self.qubits[1, 1, 0::2])
+        # Z1 = self.qubits[1, 1::2, 0]
+
+        # TODO X2 second column Z1 first row
+        X2 = np.prod(self.qubits[0, 1::2, 0])
+        Z2 = np.prod(self.qubits[1, 0::2, 1])
+
+        return [[X1, X2], [Z1, Z2]]
+
+
+def apply_matching(self,error_type,matching):
+    # TODO redo all  of this
+    if error_type in ["X","x",0]: channel=0
+    elif error_type in ["Z","z",1]: channel =1
+    else:
+        raise ValueError('valid error types are "X" or "Z"')
+
+    flips=[]
+    for pair in matching:
+        [p0,p1]=pair[0]
+        [q0,q1]=pair[1]
+        m=2*self.size
+        d0=(q0-p0)%m
+        d1=(q1-p1)%m
+        if d0 < m-d0:
+            end0=q0
+            for x in range(1,d0,2):
+                flips+=[[(p0+x)%m,p1]]
+        else:
+            end0=p0
+            for x in range(1,m-d0,2):
+                flips+=[[(q0+x)%m,q1]]
+        if d1 < m-d1:
+            for y in range(1,d1,2):
+                flips+=[[end0,(p1+y)%m]]
+        else:
+            for y in range(1,m-d1,2):
+                flips+=[[end0,(q1+y)%m]]
+
+    for flip in flips:
+        self.array[flip[0]][flip[1]][channel]*=-1
