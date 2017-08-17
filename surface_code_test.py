@@ -10,29 +10,50 @@ import numpy as np
 import numpy.testing as nptest
 import surface_code
 
+# initialize the surface code object
+# do NOT change size, it will ruin the test cases.
 size = 3
 sc = surface_code.SurfaceCode(size)
+
+
 class TestSurfaceCode(unittest.TestCase):
+    """Test class for the surface code."""
+
+    def test_structure(self):
+        starsPosition = np.array([[0, 0, 0, 2, 2, 2, 4, 4, 4],
+                                  [0, 2, 4, 0, 2, 4, 0, 2, 4]])
+
+        plaqsPosition = np.array([[1, 1, 1, 3, 3, 3, 5, 5, 5],
+                                  [1, 3, 5, 1, 3, 5, 1, 3, 5]])
+
+        np.testing.assert_array_equal(starsPosition, sc.stars)
+        np.testing.assert_array_equal(plaqsPosition, sc.plaqs)
+
+
+    def test_applyRandomError(self):
+        print("-------------------Testing random noise------------------------")
+        sc._applyNoiseQubit(0.5, 0.5)
+        print(sc.qubits)
 
     def test_measureStabilizer(self):
-        # print(sc.stars)
-        print("____________________________")
-        sc._applyNoiseQubit(.5,0)
-        print(sc.qubits[0])
-        print("____________________________")
-        sc.measureAllStabilizer("star")
-        print(sc.qubits[0])
+        print("-------------------Testing stabilizer measurements-------------")
+        sc.reset()
+        sc._applyNoiseQubit(.3, .3)
+        sc.measureStabilizerType("star")
+        sc.measureStabilizerType("plaq")
         print(sc.tags)
+        print(sc.qubits)
 
     def test_stabilizerLieAll(self):
-        print("____________________________")
-        sc._stabilizerLieAll(1)
-        print(sc.qubits)
+        print("-------------------Testing stabilizer lie-------------")
+        sc.reset()
+        sc._stabilizerLie("S", .5)
+        sc._stabilizerLie("P", .5)
+        print(sc.qubits[0])
 
 
     def test_twoRandStabQubits(self):
         print("____________________________")
-        print(sc.stars)
         testPos = np.array([[0,1],[0,2]])
         a,b = sc._twoRandStabQubits(testPos)
         print(testPos)
@@ -40,19 +61,6 @@ class TestSurfaceCode(unittest.TestCase):
         print(b)
 
 
-
-    # def test_proyector(self):
-
-    #     P = proyector_single_qubit(1, 1, 0)
-    #     P_ref = qt.Qobj([[0, 1]])
-    #     print(P)
-    #     print(P_ref)
-    #     # self.assertEqual(P, P_ref)
-    #
-    # def test_proyection(self):
-    #     S = qt.bell_state('01')
-    #     P = proyector_single_qubit(0, 2, 0)
-    #     print(P*S)
 
 
 

@@ -90,7 +90,7 @@ class SurfaceCode:
         self.plaqsRound1 = self.plaqs[:, ::2]
         self.plaqsRound2 = self.plaqs[:, 1::2]
 
-    def measureStabilizer(self, pos, stabilizer, pNotComplete=0):
+    def measureStabilizer(self, pos, c, pNotComplete=0):
         """
         Measure stabilizers on the given position.
 
@@ -98,12 +98,12 @@ class SurfaceCode:
         ----------
         pos : array [[x1, x2, x3, ...], [y1, y2, y3, ...]]
             Positions of the stabilizers to be measured.
+        c   : 0 or 1 channel of the stabilizer type
         stabilizer : string - "star" or "plaq"
             Kind of stabilizer to be measured.
         pNotComplete=0 : float
             Probaility to not complete stabilizer measurement.
         """
-        _, c, t = self._selectStabilizer(stabilizer)
 
         if pNotComplete != 0:
             pos = self._incompleteMeasuerement(pos, pNotComplete)
@@ -123,7 +123,7 @@ class SurfaceCode:
         newPos = np.delete(pos, np.where(incomplete), 1)
         return newPos
 
-    def measureAllStabilizer(self, stabilizer):
+    def measureStabilizerType(self, stabilizer, pNotComplete=0):
         """
         Measure ALL stabilizers of a given type.
 
@@ -132,7 +132,7 @@ class SurfaceCode:
         stabilizer: string - either "star" or "plaq"
         """
         pos, c, t = self._selectStabilizer(stabilizer)
-        self.measureStabilizer(pos, stabilizer)
+        self.measureStabilizer(pos, c, pNotComplete)
 
     def _stabilizerLie(self, tag, pLie):
         """Add measurement errot to a type of stabilizers."""
@@ -201,11 +201,11 @@ class SurfaceCode:
             errIndex[i] = np.where(errorSum > err[i])[0][0]
 
         self.operationError(pos1, errorVec[errIndex[:len(pos1)]])
-        self.measureStabilizer(pos1, stabilizer, pNotComplete)
+        self.measureStabilizer(pos1, c, pNotComplete)
         # TODO :or ?
-        # self.measureStabilizer(pos, stabilizer)
+        # self.measureStabilizer(pos, c)
 
-        self.measureStabilizer(pos2, stabilizer, pNotComplete)
+        self.measureStabilizer(pos2, c, pNotComplete)
         self.operationError(pos2, errorVec[errIndex[len(pos1):]])
 
 
@@ -287,12 +287,9 @@ class SurfaceCode:
         return [[X1, X2], [Z1, Z2]]
 
 
-def apply_matching(self,error_type,matching):
+def matching(self, errorType, matching):
     # TODO redo all  of this
-    if error_type in ["X","x",0]: channel=0
-    elif error_type in ["Z","z",1]: channel =1
-    else:
-        raise ValueError('valid error types are "X" or "Z"')
+    _, c, t = self._selectStabilizer(errorType)
 
     flips=[]
     for pair in matching:
@@ -316,5 +313,5 @@ def apply_matching(self,error_type,matching):
             for y in range(1,m-d1,2):
                 flips+=[[end0,(q1+y)%m]]
 
-    for flip in flips:
-        self.array[flip[0]][flip[1]][channel]*=-1
+        flips = np.array(flips).transpose()
+        self.qubits[c][flips[0], flips[1]] *= -1

@@ -22,19 +22,21 @@ import blossom5.pyMatch as pm
 
 def matchToric3D(size, anyons, weights=[1,1]):
 
-    if anyons  == 0:
+    if len(anyons)  == 0:
         return []
 
     graph = makeGraph(anyons, weights)
-
+    print(anyons)
     numberNodes = len(anyons)
     print(graph)
+    # matching: indexes to which anyon conects
     matching = pm.getMatching(numberNodes, graph)
-    return(matching)
-    # matching_pairs=[[i,matching[i]] for i in range(numberNodesnodes) if matching[i]>i]
-    # points=[] if len(matching_pairs)==0 else [[nodes_list[i] for i in x] for x in matching_pairs]
-    #
-    # return points
+    print(matching)
+    pairsInd = [[i, matching[i]] for i in range(numberNodes) if matching[i]>i]
+    print(pairsInd)
+    pairs = [] if len(pairsInd)==0 else [[anyons[p]] for p in pairsInd]
+
+    return pairs
 
 
 def makeGraph(nodes, weights=[1, 1]):
@@ -43,9 +45,13 @@ def makeGraph(nodes, weights=[1, 1]):
     m = 2*numberNodes
     wT, wS = weights
     graph = []
+
+    # ind = np.arange(numberNodes)
+    # graph = [nodes - nodes[i+1:] for i in range(numberNodes)]
+    # graphIdexes = []
     for i in range(numberNodes-1):
         p1, p2, p3 = nodes[i]
-        for j in range(i, numberNodes-1):
+        for j in range(i+1, numberNodes):
             q1, q2, q3 = nodes[j]
 
             wt = (q3 - p3)*wT
@@ -58,3 +64,11 @@ def makeGraph(nodes, weights=[1, 1]):
             graph += [[i, j, weight]]
     # List of values for time distance weights
     return graph
+
+def weightNorm(pos, m, weights):
+    # TODO: use this?
+    # pos = [[px, py, pt], [px, py, pt]]
+    swT, wS = weights
+    res = abs(pos)
+    res = (pos[:, 0]%m + pos[:, 1]%m)*wS + pos[:, 2]*wT
+    return res

@@ -63,4 +63,4 @@ class Layers:
             anyonsStar += [np.append(s, i) for s in stars]
             anyonsPlaq += [np.append(p, i) for p in plaqs]
 
-        return anyonsStar, anyonsPlaq
+        return np.array(anyonsStar), np.array(anyonsPlaq)
