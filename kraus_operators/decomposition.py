@@ -100,8 +100,8 @@ def error_D(system_size):
     return all_errors
 
 
-    def Fidelity(rhoA, stateB):
-        """
-        Fidelity for the special case when one of the states is a pure state.
-        """
-        return stateB.dag() * rhoA * stateB
+def fidelity(rhoA, stateB):
+    """
+    Fidelity for the special case when one of the states is a pure state.
+    """
+    return stateB.dag() * rhoA * stateB
