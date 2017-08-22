@@ -36,9 +36,9 @@ class TestStringMethods(unittest.TestCase):
         S = qt.bell_state('01')
         print(S)
         S = S * S.dag()
-        measurement, collapsedState = measure_single_Zbasis(S, 2, 0, True)
+        measurement, collapsed_state = measure_single_Zbasis(S, 2, 0, True)
         print(measurement)
-        print(collapsedState)
+        print(collapsed_state)
 
 
     # def test_isupper(self):

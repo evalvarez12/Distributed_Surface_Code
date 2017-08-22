@@ -21,9 +21,9 @@ def single_qubit_gate_noise(rho, p, N=1, pos=0):
     return res
 
 def single_qubit_gate(rho, gate, p, N=1, pos=0):
-    newRho = gate * rho * gate.dag()
-    newRho = single_qubit_gate(newRho, p, N, pos)
-    return newRho
+    new_rho = gate * rho * gate.dag()
+    new_rho = single_qubit_gate_noise(new_rho, p, N, pos)
+    return new_rho
 
 
 def two_qubit_gate_noise(rho, p, N=2, pos1=0, pos2=1):
@@ -42,9 +42,34 @@ def two_qubit_gate_noise(rho, p, N=2, pos1=0, pos2=1):
     return res
 
 def two_qubit_gate(rho, gate, p, N=2, pos1=0, pos2=1):
-    newRho = gate * rho * gate.dag()
-    newRho = two_qubit_gate_noise(newRho, p, N, pos1, pos2)
+    new_rho = gate * rho * gate.dag()
+    new_rho = two_qubit_gate_noise(new_rho, p, N, pos1, pos2)
+    return new_rho
 
 
-def measurement_Zbasis(rho, p):
-    res = measure
+def measurement_Zbasis(rho, p, N=1, pos=0):
+    measurement, state = operations.measure_single_Zbasis(rho, N, pos, False)
+
+    if measurement == 1:
+        noisy_measurement = operations.collapse_single_Zbasis(rho, N, 1, pos, False)
+    else:
+        noisy_measurement = operations.collapse_single_Zbasis(rho, N, 0, pos, False)
+
+    noisy_measurement = (1-p)*measurement + p*noisy_measurement
+    # Flip measurement to include error
+    r = np.random.rand()
+    if r < p:
+        measurement *= -1
+
+    return measurement, noisy_measurement
+
+
+def bell_pair(p):
+    a = qt.bell_state('00') * qt.bell_state('00').dag()
+    b = qt.bell_state('01') * qt.bell_state('01').dag() \
+        + qt.bell_state('10') * qt.bell_state('10').dag() \
+        + qt.bell_state('11') * qt.bell_state('11').dag()
+    W = (1-p)*a + p/3.*b
+    # H = qt.snot(2, 1)
+    # return H*W*H.dag()
+    return W
