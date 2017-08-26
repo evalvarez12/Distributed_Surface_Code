@@ -23,19 +23,24 @@ class Protocols:
         self.pm = pm
         self.pg = pg
         self.pn = pn
-        self.N = system_size
 
     def generate_bell_pair(self):
+        """Generate a raw Bell pair."""
         bell = errs.bell_pair(self.pn)
         bell = bell * bell.dag()
         return bell
 
     def append_bell_pair(self, rho):
+        """Append a raw Bell pair to the state."""
         bell = self.generate_bell_pair()
+        # Bell state is attached at the end of the complete state
         full_rho = qt.tensor(rho, bell)
         return full_rho
 
     def get_two_qubit_gates(self, N, controls, targets, sigma):
+        """
+        Construct two qubit Control type of gates.
+        """
         gates = []
         if sigma == "X":
             for i in range(len(controls)):
@@ -47,57 +52,140 @@ class Protocols:
 
         return gates
 
-    def apply_gates(self, rho, gates):
-        for i in gates:
-            rho = i * rho * i.dag()
+    def apply_two_qubit_gates(self, rho, N, controls, targets, sigma):
+        """
+        Apply a series of two qubit Control type of gates.
+        """
+        gates = self.get_two_qubit_gates(N, controls, targets, sigma)
+        for i in range(len(gates)):
+            rho = errs.two_qubit_gate(rho, gates[i], self.pg, N, controls[i], targets[i])
         return rho
 
-    def single_selection(self, rho, data_qubits, sigma):
+    def measure_single(self, rho, N, pos, basis):
+        """
+        Measure a single qubit in the state.
+        Dimension is reduced after collapse
+        """
+        if basis == "X":
+            measurement, collapsed_state = errs.measure_single_Xbasis(rho, self.pm, N, pos)
+        elif basis == "Z":
+            measurement, collapsed_state = errs.measure_single_Zbasis(rho, self.pm, N, pos)
+        return measurement, collapsed_state
+
+
+    # def measurements_Xbasis(self, rho, N, positions):
+    #     measurements = []
+    #     system_size = N
+    #     for pos in positions:
+    #         m, rho = self.measure_single(rho, system_size, pos, "X")
+    #         system_size -= 1
+    #         measurements += [m]
+    #     return measurements, rho
+
+    def collapse_ancillas(self, rho, N, N_ancillas):
+        """
+        Measure the ancillas in the X basis.
+        Ancillas position need to be the last part of the state.
+        """
+        measurements = []
+        for i in range(N_ancillas):
+            m, rho = self.measure_single(rho, N - i, N - i - 1, "X")
+            measurements += [m]
+
+        if len(set(measurements)) > 1:
+            return False, None
+
+        return True, rho
+
+
+    def single_selection(self, rho, operation_qubits, sigma):
         """
         Single selection round.
-        Uses 4 qubits minimum.
+        Uses 2 ancilla qubits.
         """
         # Generate raw bell pair
         rho = self.append_bell_pair(rho)
         N = len(rho.dims[0])
+        N_ancillas = 2
 
         # Apply two qubit gates
         controls = [N-1, N-2]
-        gates = self.get_two_qubit_gates(N, controls, data_qubits, sigma)
-        rho = self.apply_gates(rho, gates)
+        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits, sigma)
 
         # Measure ancillas in X basis
-        measurement1, collapsed_state = ops.measure_single_Xbasis(rho, N, N-1, True)
-        measurement2, collapsed_state = ops.measure_single_Xbasis(collapsed_state, N-1, N-2, True)
-        return collapsed_state
+        success, collapsed_rho = self.collapse_ancillas(rho, N, N_ancillas)
+        return success, collapsed_rho
 
-    def double_selection(self, rho, data_qubits, sigma):
+    def double_selection(self, rho, operation_qubits, sigma):
         """
         Double selection round.
-        Uses 6 qubits minimum.
+        Uses 4 ancilla qubits.
         """
-        # Generate first bell pair
+        # Generate two bell pairs
+        rho = self.append_bell_pair(rho)
         rho = self.append_bell_pair(rho)
         N = len(rho.dims[0])
+        N_ancillas = 4
 
-        # Apply two qubit gates
-        controls = [N-1, N-2]
-        gates = self.get_two_qubit_gates(N, controls, data_qubits, sigma)
-        rho = self.apply_gates(rho, gates)
+        # Apply first two qubit gates
+        controls = [N-3, N-4]
+        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits, sigma)
 
-        # Generate second bell pair
-        rho = self.append_bell_pair(rho)
-        N = len(rho.dims[0])
-
-        # Apply gates
+        # Apply second set of gates
         controls = [N-1, N-2]
         targets = [N-3, N-4]
-        gates = self.get_two_qubit_gates(N, controls, data_qubits, "Z")
-        rho = self.apply_gates(rho, gates)
+        rho = self.apply_two_qubit_gates(rho, N, controls, targets, "Z")
 
         # Measure ancillas in X basis
-        measurement1, collapsed_state = ops.measure_single_Xbasis(rho, N, N-1, True)
-        measurement2, collapsed_state = ops.measure_single_Xbasis(collapsed_state, N-1, N-2, True)
-        measurement3, collapsed_state = ops.measure_single_Xbasis(collapsed_state, N-2, N-3, True)
-        measurement4, collapsed_state = ops.measure_single_Xbasis(collapsed_state, N-3, N-4, True)
-        return collapsed_state
+        success, collapsed_rho = self.collapse_ancillas(rho, N, N_ancillas)
+        return success, collapsed_rho
+
+    def one_dot(self, rho, operation_qubits, sigma):
+        """
+        Perform the one dot procedure.
+        Uses 4 ancillas.
+        """
+
+        # Generate a raw Bell pair
+        rho = self.append_bell_pair(rho)
+        N = len(rho.dims[0])
+        N_ancillas = 2
+
+        # Rounds of single selection
+        succes, rho = self.single_selection(rho, [N-1, N-2], "X")
+        succes, rho = self.single_selection(rho, [N-1, N-2], "Z")
+
+        # Apply CNOT gates
+        controls = [N-1, N-2]
+        rho = self.apply_two_qubit_gates(rho, N, controls,operation_qubits, sigma)
+
+        # Measure this procedures ancilla
+        success, collapsed_rho = self.collapse_ancillas(rho, N, N_ancillas)
+        return success, collapsed_rho
+
+
+    def two_dots(self, rho, operation_qubits, sigma):
+        """
+        Perform the two dots procedure.
+        Uses 4 ancillas.
+        """
+
+        # Generate a raw Bell pair
+        rho = self.append_bell_pair(rho)
+        N = len(rho.dims[0])
+        N_ancillas = 2
+
+        # Rounds of single selection
+        succes, rho = self.single_selection(rho, [N-1, N-2], "X")
+        succes, rho = self.single_selection(rho, [N-1, N-2], "Z")
+
+        # Apply CNOT gates
+        controls = [N-1, N-2]
+        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits, sigma)
+
+        # Extra round of single selection
+        succes, rho = self.single_selection(rho, [N-1, N-2], "Z")
+
+        # Measure this procedures ancilla
+        success, collapsed_rho = self.collapse_ancillas(rho, N, N_ancillas)
+        return success, collapsed_rho
