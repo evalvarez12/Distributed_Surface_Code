@@ -7,14 +7,34 @@ rho = errs.bell_pair(.4)
 rho_ideal = qt.bell_state("00")
 print(decomposition.fidelity(rho, rho_ideal))
 
-prot = protocols.Protocols(0.0, 0.0, 0., .4, 2)
-succes, single = prot.single_selection(rho, [0, 1], "Z")
-print(succes)
+prot = protocols.Protocols(0.0, 0.0, 0., .3, 2)
+
+print("------------------SINGLE SELECTION-------------------")
+success, single = prot.single_selection(rho, [0, 1], "Z")
 print(single)
-print(decomposition.fidelity(single, rho_ideal))
+if success:
+    print(decomposition.fidelity(single, rho_ideal))
 
+print("------------------ONE DOT-------------------")
+success, one_dot = prot.one_dot(rho, [0, 1], "Z")
+print(one_dot)
+if success:
+    print(decomposition.fidelity(one_dot, rho_ideal))
 
-succes, double = prot.double_selection(rho, [0, 1], "Z")
-print(succes)
+print("------------------TWO DOTS-------------------")
+success, two_dot = prot.two_dots(rho, [0, 1], "X")
+print(two_dot)
+if success:
+    print(decomposition.fidelity(two_dot, rho_ideal))
+
+print("-------------------DOUBLE SELECTION-----------")
+success, double = prot.double_selection(rho, [0, 1], "Z")
 print(double)
-print(decomposition.fidelity(double, rho_ideal))
+if success:
+    print(decomposition.fidelity(double, rho_ideal))
+
+
+print("-----------------EXPEDIENT------------------")
+m, rho = prot.expedient("Z")
+print(rho)
+print(m)
