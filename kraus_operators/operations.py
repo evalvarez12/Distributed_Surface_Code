@@ -20,6 +20,7 @@ def measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
 def measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
     p0 = p_measurement_single_Zbasis(rho, 0, N, pos, dimRed)
     r = np.random.rand()
+    print("P0", p0)
     if r < np.linalg.norm(p0):
         collapsed_rho = collapse_single_Zbasis(rho, 0, N, pos, dimRed)
         measurement = 1

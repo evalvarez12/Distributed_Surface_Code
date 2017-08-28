@@ -223,7 +223,6 @@ class Protocols:
 
         # Initial state
         rho_initial = self.operational_state(4)
-        rho_initial = rho_initial * rho_initial.dag()
 
         success = False
         while not success:
@@ -288,7 +287,6 @@ class Protocols:
 
         # Initial state
         rho_initial = self.operational_state(4)
-        rho_initial = rho_initial * rho_initial.dag()
 
         success = False
         while not success:
@@ -355,4 +353,25 @@ class Protocols:
         targets = [0, 1, 2, 3]
         rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
         measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=4)
+        return measurements, rho
+
+    def monolitic(self, rho_initial, stabilizer):
+        """
+        Perform the monolithic stabilizer protocol.
+        Uses 4 data qubits and 1 ancillas.
+        """
+
+        # Initial state
+        # rho_initial = self.operational_state(4)
+        state = qt.snot() * qt.basis(2, 0)
+        state = state * state.dag()
+        rho = qt.tensor(rho_initial, state)
+        N = len(rho.dims[0])
+        print(N)
+
+        # Apply two qubit gates
+        controls = [N-1]*4
+        targets = [0, 1, 2, 3]
+        rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
+        measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=1)
         return measurements, rho

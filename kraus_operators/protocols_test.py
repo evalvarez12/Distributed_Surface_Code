@@ -34,7 +34,16 @@ if success:
     print(decomposition.fidelity(double, rho_ideal))
 
 
-print("-----------------EXPEDIENT------------------")
-m, rho = prot.expedient("Z")
+# print("-----------------EXPEDIENT------------------")
+# m, rho = prot.expedient("Z")
+# print(rho)
+# print(m)
+
+print("-----------------MONOLITHIC------------------")
+rho_initial = qt.snot() * qt.basis(2, 0)
+for i in range(3):
+    rho_initial = qt.tensor(rho_initial, qt.snot()*qt.basis(2, 0))
+rho_initial = rho_initial * rho_initial.dag()
+m, rho = prot.monolitic(rho_initial, "X")
 print(rho)
 print(m)
