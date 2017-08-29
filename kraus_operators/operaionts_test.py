@@ -31,8 +31,8 @@ class TestStringMethods(unittest.TestCase):
         P = proyector_single_qubit_Zbasis(0, 2, 0)
         print(P*S)
 
-    def test_measurement(self):
-        print("----------Test measurement----------")
+    def test_measurement_Zbasis(self):
+        print("----------Test measurement Z basis----------")
         S = qt.bell_state('01')
         print(S)
         S = S * S.dag()
@@ -40,6 +40,16 @@ class TestStringMethods(unittest.TestCase):
         print(measurement)
         print(collapsed_state)
 
+    def test_measurement_Xbasis(self):
+        print("----------Test measurement X basis----------")
+        S = qt.snot() * qt.basis(2, 1)
+        S = qt.tensor(S, S)
+        S = S * S.dag()
+        print(S)
+        # S = S * S.dag()
+        measurement, collapsed_state = measure_single_Xbasis(S, 2, 1, True)
+        print(measurement)
+        print(collapsed_state)
 
     # def test_isupper(self):
     #     self.assertTrue('FOO'.isupper())

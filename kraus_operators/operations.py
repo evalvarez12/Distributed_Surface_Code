@@ -10,6 +10,17 @@ import numpy as np
 
 
 def measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
+    """
+    Measure a single qubit in the X basis.
+
+    Parameters
+    ----------
+    rho : density matrix.
+    N : system size.
+    pos : position of qubit to be measured.
+    dimRed : is the collapsed state has reduced to the
+            dimentions N - 1
+    """
     H = qt.snot(N, pos)
     rho = H * rho * H.dag()
     measurement, collapsed_rho = measure_single_Zbasis(rho, N, pos, dimRed)
@@ -18,9 +29,22 @@ def measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
     return measurement, collapsed_rho
 
 def measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
+    """
+    Measure a single qubit in the Z basis.
+
+    Parameters
+    ----------
+    rho : density matrix.
+    N : system size.
+    pos : position of qubit to be measured.
+    dimRed : is the collapsed state has reduced to the
+            dimentions N - 1
+    """
+    # Calculate the probability of measurment 1
     p0 = p_measurement_single_Zbasis(rho, 0, N, pos, dimRed)
     r = np.random.rand()
-    print("P0", p0)
+    # print("P0", p0)
+    # Draw a measurement
     if r < np.linalg.norm(p0):
         collapsed_rho = collapse_single_Zbasis(rho, 0, N, pos, dimRed)
         measurement = 1
@@ -31,6 +55,10 @@ def measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
 
 
 def collapse_single_Zbasis(rho, proyect, N=1, pos=0, dimRed=False):
+    """
+    Collapse the state in the postion of a single qubit.
+    """
+    # Obtain the proyection operator depending on dimRed
     if dimRed:
         p = proyector_single_qubit_Zbasis_dimRed(proyect, N, pos)
     else:
@@ -40,11 +68,10 @@ def collapse_single_Zbasis(rho, proyect, N=1, pos=0, dimRed=False):
 
 
 def p_measurement_single_Zbasis(rho, measure, N=1, pos=0, dimRed=False):
-    # TODO check that if rho is not type operator to raise err
-    if dimRed:
-        p = proyector_single_qubit_Zbasis_dimRed(measure, N, pos)
-    else:
-        p = proyector_single_qubit_Zbasis(measure, N, pos)
+    """
+    Calculate the probability of measuring the value "measure".
+    """
+    p = proyector_single_qubit_Zbasis(measure, N, pos)
     return (p * rho).tr()
 
 
@@ -69,6 +96,10 @@ def proyector_single_qubit_Zbasis(proyect, N=1, pos=0):
 
 
 def tensor_single_operator(operator, N, pos):
+    """
+    Tensor a single qubit operator between identyties accoring to the
+    position of the qubit and the system size.
+    """
     # TODO use qt.rx, qt.ry, qt.rz instead for sigmas?
     if pos > N:
         raise ValueError("tensor_single_operator: N > pos")
@@ -89,6 +120,9 @@ def tensor_single_operator(operator, N, pos):
 
 
 def tensor_operator(operators, positions, N):
+    """
+    Tensor the product of multiple single qubit operators.
+    """
     l = len(operators)
     res = qt.qeye([2]*N)
     for i in range(l):

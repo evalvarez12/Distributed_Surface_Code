@@ -9,14 +9,21 @@ import qutip as qt
 import numpy as np
 import operations as ops
 
-sigmas = [qt.qeye(2), qt.sigmax(), qt.sigmay(), qt.sigmaz()]
+# sigmas = [qt.qeye(2), qt.sigmax(), qt.sigmay(), qt.sigmaz()]
 
 # TODO ask david if the order of the application noise gate is important
 
+
+def get_sigmas(N=1, pos=0):
+    sigmas = [qt.qeye([2]*N), qt.rx(np.pi, N, pos), qt.ry(np.pi, N, pos),
+              qt.rz(np.pi, N, pos)]
+    return sigmas
+
+
 def single_qubit_gate_noise(rho, p, N=1, pos=0):
     res = rho*(1 - p)
-    for i in sigmas[1:]:
-        noise = ops.tensor_single_operator(i, N, pos)
+    sigmas = get_sigmas(N, pos)
+    for noise in sigmas[1:]:
         res += p/3.*(noise * rho * noise.dag())
     return res
 
@@ -28,16 +35,19 @@ def single_qubit_gate(rho, gate, p, N=1, pos=0):
 
 def two_qubit_gate_noise(rho, p, N=2, pos1=0, pos2=1):
     res = rho*(1 - p)
+    sigmas_pos1 = get_sigmas(N, pos1)
+    sigmas_pos2 = get_sigmas(N, pos2)
+
     # Compute all the possible tensor products (i x j)
-    for i in sigmas:
-        for j in sigmas[1:]:
-            noise = ops.tensor_operator([i, j], [pos1, pos2], N)
+    for i in sigmas_pos1:
+        for j in sigmas_pos2[1:]:
+            noise = i * j
             res += p/15. * (noise * rho * noise.dag())
 
     # Do the missing last part (i x sig0)
-    j = sigmas[0]
-    for i in sigmas[1:]:
-        noise = ops.tensor_operator([i, j], [pos1, pos2], N)
+    j = sigmas_pos2[0]
+    for i in sigmas_pos1[1:]:
+        noise = i * j
         res += p/15. * (noise * rho * noise.dag())
     return res
 
