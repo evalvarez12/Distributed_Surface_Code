@@ -5,14 +5,14 @@ import numpy as np
 import qutip as qt
 import operations
 
-sigmas = [qt.sigmax(), qt.sigmay(), qt.sigmaz()]
+sigmas = [qt.rx, qt.ry, qt.rz]
 
 
-def operational_state(N):
-    state = qt.tensor(qt.basis(2**N, 0), qt.basis(2**N, 0))
-    for i in range(1, 2**N):
-        state += qt.tensor(qt.basis(2**N, i), qt.basis(2**N, i))
-    return 1/np.sqrt(2**N) * state
+# def operational_state(N):
+#     state = qt.tensor(qt.basis(2**N, 0), qt.basis(2**N, 0))
+#     for i in range(1, 2**N):
+#         state += qt.tensor(qt.basis(2**N, i), qt.basis(2**N, i))
+#     return 1/np.sqrt(2**N) * state
 
 
 def error_A(system_size):
@@ -26,7 +26,7 @@ def error_A(system_size):
         # Find all possible permutations
         error_permutations = []
         for pos in range(system_size):
-            error_permutations += [operations.tensor_single_operator(err, system_size, pos)]
+            error_permutations += [err(np.pi, system_size, pos)]
         all_errors += [error_permutations]
 
     return all_errors
@@ -40,13 +40,12 @@ def error_B(system_size):
     # Choose a error
     for err1 in sigmas:
         for err2 in sigmas:
-            err_gates = [err1, err2]
             # Find all possible permutations
             error_permutations = []
             for pos1 in range(system_size):
                 for pos2 in range(pos1 + 1, system_size):
-                    positions = [pos1, pos2]
-                    error_permutations += [operations.tensor_operator(err_gates, positions, system_size)]
+                    error_permutations += [err1(np.pi, system_size, pos1)
+                                           * err2(np.pi, system_size, pos2)]
             all_errors += [error_permutations]
 
     return all_errors
@@ -62,14 +61,14 @@ def error_C(system_size):
     for err1 in sigmas:
         for err2 in sigmas:
             for err3 in sigmas:
-                err_gates = [err1, err2, err3]
                 # Find all possible permutations
                 error_permutations = []
                 for pos1 in range(system_size):
                     for pos2 in range(pos1 + 1, system_size):
                         for pos3 in range(pos2 + 1, system_size):
-                            positions = [pos1, pos2, pos3]
-                            error_permutations += [operations.tensor_operator(err_gates, positions, system_size)]
+                            error_permutations += [err1(np.pi, system_size, pos1)
+                                                   * err2(np.pi, system_size, pos2)
+                                                   * err3(np.pi, system_size, pos3)]
                 all_errors += [error_permutations]
 
     return all_errors
@@ -86,15 +85,16 @@ def error_D(system_size):
         for err2 in sigmas:
             for err3 in sigmas:
                 for err4 in sigmas:
-                    err_gates = [err1, err2, err3, err4]
                     # Find all possible permutations
                     error_permutations = []
                     for pos1 in range(system_size):
                         for pos2 in range(pos1 + 1, system_size):
                             for pos3 in range(pos2 + 1, system_size):
                                 for pos4 in range(pos3 + 1, system_size):
-                                    positions = [pos1, pos2, pos3, pos4]
-                                    error_permutations += [operations.tensor_operator(err_gates, positions, system_size)]
+                                    error_permutations += [err1(np.pi, system_size, pos1)
+                                                           * err2(np.pi, system_size, pos2)
+                                                           * err3(np.pi, system_size, pos3)
+                                                           * err4(np.pi, system_size, pos4)]
                     all_errors += [error_permutations]
 
     return all_errors

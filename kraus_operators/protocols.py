@@ -83,6 +83,10 @@ class Protocols:
     #     return measurements, rho
 
     def operational_state(self, N):
+        """
+        Create a bipartite state.
+        Also known as operational state.
+        """
         state = qt.bell_state('00')
         for i in range(1, N):
             state = qt.tensor(qt.bell_state('00'), state)
@@ -215,14 +219,14 @@ class Protocols:
         return success, collapsed_rho
 
 
-    def expedient(self, stabilizer):
+    def expedient(self, rho_initial, stabilizer):
         """
         Perform the expedient protocol.
         Uses 4 data qubits and 12 ancillas.
         """
 
         # Initial state
-        rho_initial = self.operational_state(4)
+        # rho_initial = self.operational_state(4)
 
         success = False
         while not success:
@@ -279,14 +283,14 @@ class Protocols:
         measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=4)
         return measurements, rho
 
-    def stringent(self, stabilizer):
+    def stringent(self, rho_initial, stabilizer):
         """
         Perform the stringent protocol.
         Uses 4 data qubits and 12 ancillas.
         """
 
         # Initial state
-        rho_initial = self.operational_state(4)
+        # rho_initial = self.operational_state(4)
 
         success = False
         while not success:
@@ -355,17 +359,16 @@ class Protocols:
         measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=4)
         return measurements, rho
 
-    def monolitic(self, rho_initial, stabilizer):
+    def monolithic(self, rho_initial, stabilizer):
         """
         Perform the monolithic stabilizer protocol.
         Uses 4 data qubits and 1 ancillas.
         """
 
-        # Initial state
-        # rho_initial = self.operational_state(4)
-        state = qt.snot() * qt.basis(2, 0)
-        state = state * state.dag()
-        rho = qt.tensor(rho_initial, state)
+        # Append the initialized ancilla to the state|
+        ancilla = qt.snot() * qt.basis(2, 0)
+        ancilla = ancilla * ancilla.dag()
+        rho = qt.tensor(rho_initial, ancilla)
         N = len(rho.dims[0])
         print(N)
 
