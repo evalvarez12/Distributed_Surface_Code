@@ -18,7 +18,7 @@ class Protocols:
     pn - network error
     """
 
-    def __init__(self, ps, pm, pg, pn, system_size):
+    def __init__(self, ps, pm, pg, pn):
         self.ps = ps
         self.pm = pm
         self.pg = pg
@@ -78,7 +78,7 @@ class Protocols:
             measurement, collapsed_state = errs.measure_single_Zbasis(rho, self.pm, N, pos)
         return measurement, collapsed_state
 
-    def operational_state(self, N):
+    def operational_state_ket(self, N):
         """
         Create a bipartite state.
         Also known as operational state.
@@ -86,8 +86,7 @@ class Protocols:
         state = qt.bell_state('00')
         for i in range(1, N):
             state = qt.tensor(qt.bell_state('00'), state)
-        state =  1/(2**N) * state * state.dag()
-        return state
+        return 1/np.sqrt(2**N) * state
 
     def collapse_ancillas(self, rho, N, N_ancillas):
         """
@@ -366,7 +365,6 @@ class Protocols:
         ancilla = ancilla * ancilla.dag()
         rho = qt.tensor(rho_initial, ancilla)
         N = len(rho.dims[0])
-        print(N)
 
         # Apply two qubit gates
         controls = [N-1]*4

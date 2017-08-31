@@ -6,7 +6,7 @@ rho = errs.bell_pair(.4)
 rho_ideal = qt.bell_state("00")
 # print(de.fidelity(rho, rho_ideal))
 
-prot = protocols.Protocols(0.1, 0.1, 0.1, .1, 2)
+prot = protocols.Protocols(0.1, 0.1, 0.1, .1)
 
 print("------------------SINGLE SELECTION-------------------")
 success, single = prot.single_selection(rho, [0, 1], "Z")
@@ -43,6 +43,6 @@ rho_initial = qt.snot() * qt.basis(2, 1)
 for i in range(3):
     rho_initial = qt.tensor(rho_initial, qt.snot()*qt.basis(2, 1))
 rho_initial = rho_initial * rho_initial.dag()
-m, rho = prot.monolithic(rho_initial, "X")
+m, rho = prot.monolithic(rho_initial, [0, 1, 2, 3], "X")
 print(rho)
 print(m)

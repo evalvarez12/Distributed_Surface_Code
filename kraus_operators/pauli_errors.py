@@ -16,8 +16,10 @@ L = len(sigmas)
 
 
 def get_pauli_errors(system_size, acting_positions):
-    all_errors = [error_A(system_size, acting_positions), error_B(system_size, acting_positions),
-                  error_C(system_size, acting_positions), error_D(system_size, acting_positions)]
+    all_errors = [["A", error_A(system_size, acting_positions)],
+                  ["B", error_B(system_size, acting_positions)],
+                  ["C", error_C(system_size, acting_positions)],
+                  ["D", error_D(system_size, acting_positions)]]
     return all_errors
 
 def error_A(system_size, acting_positions):
