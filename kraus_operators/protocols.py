@@ -24,6 +24,12 @@ class Protocols:
         self.pg = pg
         self.pn = pn
 
+    def fidelity(self, rhoA, stateB):
+        """
+        Fidelity for the special case when one of the states is a pure state.
+        """
+        return stateB.dag() * rhoA * stateB
+
     def generate_bell_pair(self):
         """Generate a raw Bell pair."""
         bell = errs.bell_pair(self.pn)
@@ -71,16 +77,6 @@ class Protocols:
         elif basis == "Z":
             measurement, collapsed_state = errs.measure_single_Zbasis(rho, self.pm, N, pos)
         return measurement, collapsed_state
-
-
-    # def measurements_Xbasis(self, rho, N, positions):
-    #     measurements = []
-    #     system_size = N
-    #     for pos in positions:
-    #         m, rho = self.measure_single(rho, system_size, pos, "X")
-    #         system_size -= 1
-    #         measurements += [m]
-    #     return measurements, rho
 
     def operational_state(self, N):
         """
@@ -219,7 +215,7 @@ class Protocols:
         return success, collapsed_rho
 
 
-    def expedient(self, rho_initial, stabilizer):
+    def expedient(self, rho_initial, parity_targets, stabilizer):
         """
         Perform the expedient protocol.
         Uses 4 data qubits and 12 ancillas.
@@ -278,12 +274,12 @@ class Protocols:
         # Phase 3
         # Apply two qubit gates
         controls = [N-1, N-2, N-3, N-4]
-        targets = [0, 1, 2, 3]
+        targets = parity_targets
         rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
         measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=4)
         return measurements, rho
 
-    def stringent(self, rho_initial, stabilizer):
+    def stringent(self, rho_initial, parity_targets, stabilizer):
         """
         Perform the stringent protocol.
         Uses 4 data qubits and 12 ancillas.
@@ -354,12 +350,12 @@ class Protocols:
         # Phase 3
         # Apply two qubit gates
         controls = [N-1, N-2, N-3, N-4]
-        targets = [0, 1, 2, 3]
+        targets = parity_targets
         rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
         measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=4)
         return measurements, rho
 
-    def monolithic(self, rho_initial, stabilizer):
+    def monolithic(self, rho_initial, parity_targets, stabilizer):
         """
         Perform the monolithic stabilizer protocol.
         Uses 4 data qubits and 1 ancillas.
@@ -374,7 +370,7 @@ class Protocols:
 
         # Apply two qubit gates
         controls = [N-1]*4
-        targets = [0, 1, 2, 3]
+        targets = parity_targets
         rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
         measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=1)
         return measurements, rho

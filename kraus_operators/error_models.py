@@ -78,7 +78,7 @@ def two_qubit_gate(rho, gate, p, N=2, pos1=0, pos2=1):
 def measure_single_Zbasis(rho, p, N=1, pos=0):
     X = qt.rx(np.pi, N, pos)
     rho = (1 - p)*rho + p*(X * rho * X.dag())
-    measurement, collapsed_rho = ops.measure_single_Zbasis(rho, N, pos, True)
+    measurement, collapsed_rho = ops.random_measure_single_Zbasis(rho, N, pos, True)
     return measurement, collapsed_rho
 
 
@@ -87,7 +87,7 @@ def measure_single_Xbasis(rho, p, N=1, pos=0):
     # H = qt.snot(N, pos)
     # rho = H * rho * H.dag()
     rho = (1 - p)*rho + p*(Z * rho * Z.dag())
-    measurement, collapsed_rho = ops.measure_single_Xbasis(rho, N, pos, True)
+    measurement, collapsed_rho = ops.random_measure_single_Xbasis(rho, N, pos, True)
     return measurement, collapsed_rho
 
 

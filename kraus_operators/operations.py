@@ -9,7 +9,7 @@ import qutip as qt
 import numpy as np
 
 
-def measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
+def random_measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
     """
     Measure a single qubit in the X basis.
 
@@ -23,14 +23,15 @@ def measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
     """
     H = qt.snot(N, pos)
     rho = H * rho * H.dag()
-    measurement, collapsed_rho = measure_single_Zbasis(rho, N, pos, dimRed)
+    measurement, collapsed_rho = random_measure_single_Zbasis(rho, N, pos, dimRed)
     if not dimRed:
         collapsed_rho = H * rho * H.dag()
     return measurement, collapsed_rho
 
-def measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
+def random_measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
     """
-    Measure a single qubit in the Z basis.
+    Measure a single qubit in the Z basis, using a random number to
+    choose a measurement outcome.
 
     Parameters
     ----------
