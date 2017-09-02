@@ -44,7 +44,7 @@ def random_measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
     # Calculate the probability of measurment 1
     p0 = p_measurement_single_Zbasis(rho, 0, N, pos, dimRed)
     r = np.random.rand()
-    # print("P0", p0)
+    print("P0", p0, r)
     # Draw a measurement
     if r < np.linalg.norm(p0):
         collapsed_rho = collapse_single_Zbasis(rho, 0, N, pos, dimRed)
@@ -55,15 +55,39 @@ def random_measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
     return measurement, collapsed_rho
 
 
-def collapse_single_Zbasis(rho, proyect, N=1, pos=0, dimRed=False):
+def collapse_single_Zbasis_ket(psi, project, N=1, pos=0, dimRed=False):
+    """
+    Collapse the state in the postion of a single qubit in Z basis.
+    """
+    # Obtain the projection operator depending on dimRed
+    if dimRed:
+        p = projector_single_qubit_Zbasis_dimRed(project, N, pos)
+    else:
+        p = projector_single_qubit_Zbasis(project, N, pos)
+    collapsed_psi = p * psi
+    return collapsed_psi/collapsed_psi.norm()
+
+def collapse_single_Xbasis_ket(psi, project, N=1, pos=0, dimRed=False):
+    """
+    Collapse the state in the postion of a single qubit in X basis.
+    """
+    H = qt.snot(N, pos)
+    collapsed_psi = H * psi
+    collapsed_psi = collapse_single_Zbasis_ket(collapsed_psi, project, N, pos,
+                                           dimRed)
+    if not dimRed:
+        collapsed_psi = H * collapsed_psi
+    return collapsed_psi
+
+def collapse_single_Zbasis(rho, project, N=1, pos=0, dimRed=False):
     """
     Collapse the state in the postion of a single qubit.
     """
-    # Obtain the proyection operator depending on dimRed
+    # Obtain the projection operator depending on dimRed
     if dimRed:
-        p = proyector_single_qubit_Zbasis_dimRed(proyect, N, pos)
+        p = projector_single_qubit_Zbasis_dimRed(project, N, pos)
     else:
-        p = proyector_single_qubit_Zbasis(proyect, N, pos)
+        p = projector_single_qubit_Zbasis(project, N, pos)
     collapsed_rho = p * rho * p.dag()
     return collapsed_rho/collapsed_rho.tr()
 
@@ -72,26 +96,26 @@ def p_measurement_single_Zbasis(rho, measure, N=1, pos=0, dimRed=False):
     """
     Calculate the probability of measuring the value "measure".
     """
-    p = proyector_single_qubit_Zbasis(measure, N, pos)
+    p = projector_single_qubit_Zbasis(measure, N, pos)
     return (p * rho).tr()
 
 
-def proyector_single_qubit_Zbasis_dimRed(proyect, N=1, pos=0):
-    # NOTE: This proyector reduces the dimension of the state density matrix
+def projector_single_qubit_Zbasis_dimRed(project, N=1, pos=0):
+    # NOTE: This projector reduces the dimension of the state density matrix
     # is a rectangular matrix <x| not |x><x|
-    if proyect != 0 and proyect != 1:
-        raise ValueError("proyector: measurement value invalid")
+    if project != 0 and project != 1:
+        raise ValueError("projector: measurement value invalid")
 
-    p = qt.basis(2, proyect).dag()
+    p = qt.basis(2, project).dag()
     return tensor_single_operator(p, N, pos)
 
 
-def proyector_single_qubit_Zbasis(proyect, N=1, pos=0):
-    # NOTE: This proyector is |x><x|
-    if proyect != 0 and proyect != 1:
-        raise ValueError("proyector: measurement value invalid")
+def projector_single_qubit_Zbasis(project, N=1, pos=0):
+    # NOTE: This projector is |x><x|
+    if project != 0 and project != 1:
+        raise ValueError("projector: measurement value invalid")
 
-    p = qt.basis(2, proyect)
+    p = qt.basis(2, project)
     p = p * p.dag()
     return tensor_single_operator(p, N, pos)
 

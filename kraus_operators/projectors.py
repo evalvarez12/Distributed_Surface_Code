@@ -18,7 +18,6 @@ def number_to_ket(system_size, number):
         state = qt.tensor(state, qt.basis(2, i))
     return state
 
-
 def list_numbers_to_projectors(system_size, numbers):
     ps = []
     for i in numbers:
@@ -72,3 +71,26 @@ def project_even(rho):
     if projected_rho.tr() != 0:
         projected_rho = projected_rho / projected_rho.tr()
     return projected_rho
+
+def project_odd_ket(state):
+    system_size = len(state.dims[0])
+    projectors = odd_projectors(system_size)
+    projected_state = state * 0
+    for i in projectors:
+        projected_state += i * state
+    if projected_state.norm() != 0:
+        projected_state = projected_state / projected_state.norm()
+    return projected_state
+
+def project_even_ket(state):
+    system_size = len(state.dims[0])
+    projectors = even_projectors(system_size)
+    projected_state = state * 0
+    for i in projectors:
+        projected_state += i * state
+    if projected_state.norm() != 0:
+        projected_state = projected_state / projected_state.norm()
+    return projected_state
+
+
+    

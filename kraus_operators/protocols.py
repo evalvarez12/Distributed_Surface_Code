@@ -28,7 +28,7 @@ class Protocols:
         """
         Fidelity for the special case when one of the states is a pure state.
         """
-        return stateB.dag() * rhoA * stateB
+        return (stateB.dag() * rhoA * stateB).norm()
 
     def generate_bell_pair(self):
         """Generate a raw Bell pair."""
@@ -64,8 +64,25 @@ class Protocols:
         """
         gates = self.get_two_qubit_gates(N, controls, targets, sigma)
         for i in range(len(gates)):
-            rho = errs.two_qubit_gate(rho, gates[i], self.pg, N, controls[i], targets[i])
+            rho = errs.two_qubit_gate(rho, gates[i], self.pg, N, controls[i],
+                                      targets[i])
         return rho
+
+    def parity_projection_ket(self, psi, targets, measurement, parity):
+        plus = qt.snot() * qt.basis(2, 0)
+        full_psi = qt.tensor(psi, plus)
+        N = len(full_psi.dims[0])
+        controls = [N-1]*len(targets)
+        if parity == "X":
+            for i in range(len(targets)):
+                full_psi = qt.cnot(N, controls[i], targets[i]) * full_psi
+        if parity == "Z":
+            for i in range(len(targets)):
+                full_psi = qt.cphase(np.pi, N, controls[i], targets[i]) * full_psi
+
+        collapsed_psi = ops.collapse_single_Xbasis_ket(full_psi, measurement,
+                                                       N, N-1, True)
+        return collapsed_psi
 
     def measure_single(self, rho, N, pos, basis):
         """
@@ -86,7 +103,7 @@ class Protocols:
         state = qt.bell_state('00')
         for i in range(1, N):
             state = qt.tensor(qt.bell_state('00'), state)
-        return 1/np.sqrt(2**N) * state
+        return state
 
     def collapse_ancillas(self, rho, N, N_ancillas):
         """
@@ -367,7 +384,7 @@ class Protocols:
         N = len(rho.dims[0])
 
         # Apply two qubit gates
-        controls = [N-1]*4
+        controls = [N-1]*len(parity_targets)
         targets = parity_targets
         rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
         measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=1)
