@@ -28,6 +28,27 @@ def random_measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
         collapsed_rho = H * rho * H.dag()
     return measurement, collapsed_rho
 
+
+def forced_measure_single_Xbasis(rho, N=1, pos=0, projector=0, dimRed=False):
+    """
+    Measure a single qubit in the X basis.
+
+    Parameters
+    ----------
+    rho : density matrix.
+    N : system size.
+    pos : position of qubit to be measured.
+    dimRed : is the collapsed state has reduced to the
+            dimentions N - 1
+    """
+    H = qt.snot(N, pos)
+    rho = H * rho * H.dag()
+    p, collapsed_rho = forced_measure_single_Zbasis(rho, N, pos, projector, dimRed)
+    if not dimRed:
+        collapsed_rho = H * rho * H.dag()
+    return p, collapsed_rho
+
+
 def random_measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
     """
     Measure a single qubit in the Z basis, using a random number to
@@ -53,6 +74,30 @@ def random_measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
         collapsed_rho = collapse_single_Zbasis(rho, 1, N, pos, dimRed)
         measurement = -1
     return measurement, collapsed_rho
+
+
+def forced_measure_single_Zbasis(rho, N=1, pos=0, project=0, dimRed=False):
+    """
+    Force a measurement on a single qubit in the Z basis to a given proyetor.
+
+    Parameters
+    ----------
+    rho : density matrix.
+    N : system size.
+    pos : position of qubit to be measured.
+    project : force the measurement into the desired projector
+    dimRed : is the collapsed state has reduced to the
+            dimentions N - 1
+    """
+    # Calculate the actual probability of doing the measurement
+    p = p_measurement_single_Zbasis(rho, 0, N, pos, dimRed)
+    print("P", project, p)
+    if p == 0:
+        raise ZeroDivisionError("p = 0!")
+    # Draw the measurement
+    collapsed_rho = collapse_single_Zbasis(rho, project, N, pos, dimRed)
+    return p, collapsed_rho
+
 
 
 def collapse_single_Zbasis_ket(psi, project, N=1, pos=0, dimRed=False):

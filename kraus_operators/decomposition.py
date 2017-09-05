@@ -25,6 +25,12 @@ parity = "X"
 measurement, rho = prot.expedient(rho_initial, targets, parity)
 print("measurement: ", measurement)
 
+# OLD for comparation
+measurement_OLD, rho_OLD = prot.expedient_OLD(rho_initial, targets, parity)
+print("measurement_OLD: ", measurement_OLD)
+
+
+
 # Measurements to array to use .prod()
 measurement = np.array(measurement)
 

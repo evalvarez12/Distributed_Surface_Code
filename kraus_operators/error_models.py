@@ -81,6 +81,12 @@ def measure_single_Zbasis(rho, p, N=1, pos=0):
     measurement, collapsed_rho = ops.random_measure_single_Zbasis(rho, N, pos, True)
     return measurement, collapsed_rho
 
+def measure_single_Zbasis_forced(rho, p, project, N=1, pos=0):
+    X = qt.rx(np.pi, N, pos)
+    rho = (1 - p)*rho + p*(X * rho * X.dag())
+    p, collapsed_rho = ops.forced_measure_single_Zbasis(rho, N, pos, True)
+    return p, collapsed_rho
+
 
 def measure_single_Xbasis(rho, p, N=1, pos=0):
     Z = qt.rx(np.pi, N, pos)
@@ -89,6 +95,14 @@ def measure_single_Xbasis(rho, p, N=1, pos=0):
     rho = (1 - p)*rho + p*(Z * rho * Z.dag())
     measurement, collapsed_rho = ops.random_measure_single_Xbasis(rho, N, pos, True)
     return measurement, collapsed_rho
+
+def measure_single_Xbasis_forced(rho, p, project, N=1, pos=0):
+    Z = qt.rx(np.pi, N, pos)
+    # H = qt.snot(N, pos)
+    # rho = H * rho * H.dag()
+    rho = (1 - p)*rho + p*(Z * rho * Z.dag())
+    p, collapsed_rho = ops.forced_measure_single_Xbasis(rho, N, pos, project, True)
+    return p, collapsed_rho
 
 
 def bell_pair(p):
