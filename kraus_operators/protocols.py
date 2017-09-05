@@ -161,24 +161,6 @@ class Protocols:
 
         return True, rho
 
-    def single_selection_OLD(self, rho, operation_qubits, sigma):
-        """
-        Single selection round.
-        Uses 2 ancilla qubits.
-        """
-        # Generate raw bell pair
-        rho = self.append_bell_pair(rho)
-        N = len(rho.dims[0])
-        N_ancillas = 2
-
-        # Apply two qubit gates
-        controls = [N-1, N-2]
-        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits, sigma)
-
-        # Measure ancillas in X basis
-        success, collapsed_rho = self.collapse_check_success(rho, N, N_ancillas)
-        return success, collapsed_rho
-
     def single_selection(self, rho, operation_qubits, sigma):
         """
         Single selection round.
@@ -200,30 +182,6 @@ class Protocols:
                                                              N_ancillas,
                                                              projections)
         return probs, collapsed_rho
-
-    def double_selection_OLD(self, rho, operation_qubits, sigma):
-        """
-        Double selection round.
-        Uses 4 ancilla qubits.
-        """
-        # Generate two bell pairs
-        rho = self.append_bell_pair(rho)
-        rho = self.append_bell_pair(rho)
-        N = len(rho.dims[0])
-        N_ancillas = 4
-
-        # Apply first two qubit gates
-        controls = [N-3, N-4]
-        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits, sigma)
-
-        # Apply second set of gates
-        controls = [N-1, N-2]
-        targets = [N-3, N-4]
-        rho = self.apply_two_qubit_gates(rho, N, controls, targets, "Z")
-
-        # Measure ancillas in X basis
-        success, collapsed_rho = self.collapse_check_success(rho, N, N_ancillas)
-        return success, collapsed_rho
 
     def double_selection(self, rho, operation_qubits, sigma):
         """
@@ -252,33 +210,6 @@ class Protocols:
                                                              projections)
         return probs, collapsed_rho
 
-    def one_dot_OLD(self, rho_initial, operation_qubits, sigma):
-        """
-        Perform the one dot procedure.
-        Uses 4 ancillas.
-        """
-        N = len(rho_initial.dims[0]) + 2
-        N_ancillas = 2
-
-        success = False
-        while not success:
-            # Generate a raw Bell pair
-            rho = self.append_bell_pair(rho_initial)
-
-            # Rounds of single selection
-            success, rho = self.single_selection_OLD(rho, [N-1, N-2], "X")
-            if not success:
-                continue
-            success, rho = self.single_selection_OLD(rho, [N-1, N-2], "Z")
-
-        # Apply CNOT gates
-        controls = [N-1, N-2]
-        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits, sigma)
-
-        # Measure this procedures ancillas
-        success, collapsed_rho = self.collapse_check_success(rho, N, N_ancillas)
-        return success, collapsed_rho
-
     def one_dot(self, rho_initial, operation_qubits, sigma):
         """
         Perform the one dot procedure.
@@ -304,38 +235,6 @@ class Protocols:
         probs, collapsed_rho = self.collapse_ancillas_forced(rho, N, N_ancillas,
                                                          projections)
         return probs, collapsed_rho
-
-    def two_dots_OLD(self, rho_initial, operation_qubits, sigma):
-        """
-        Perform the two dots procedure.
-        Uses 4 ancillas.
-        """
-        N = len(rho_initial.dims[0]) + 2
-        N_ancillas = 2
-
-        success = False
-        while not success:
-            # Generate a raw Bell pair
-            rho = self.append_bell_pair(rho_initial)
-
-            # Rounds of single selection
-            success, rho = self.single_selection_OLD(rho, [N-1, N-2], "X")
-            if not success:
-                continue
-            success, rho = self.single_selection_OLD(rho, [N-1, N-2], "Z")
-
-        # Apply CNOT gates
-        controls = [N-1, N-2]
-        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits, sigma)
-
-        # Extra round of single selection
-        success, rho = self.single_selection_OLD(rho, [N-1, N-2], "Z")
-        if not success:
-            return False, None
-
-        # Measure this procedures ancillas
-        success, collapsed_rho = self.collapse_check_success(rho, N, N_ancillas)
-        return success, collapsed_rho
 
     def two_dots(self, rho_initial, operation_qubits, sigma):
         """
@@ -364,79 +263,11 @@ class Protocols:
         probs, collapsed_rho = self.collapse_ancillas_forced(rho, N, N_ancillas, projections)
         return probs, collapsed_rho
 
-    def expedient_OLD(self, rho_initial, parity_targets, stabilizer):
-        """
-        Perform the expedient protocol.
-        Uses 4 data qubits and 12 ancillas.
-        """
-
-        # Initial state
-        # rho_initial = self.operational_state(4)
-
-        success = False
-        while not success:
-            print("--------->RESET")
-            # Phase 1
-            # First pair Bell state purification
-            rho = self.append_bell_pair(rho_initial)
-            N = len(rho.dims[0])
-            operational_ancillas = [N-1, N-2]
-            success, rho = self.double_selection_OLD(rho, operational_ancillas, "Z")
-            if not success:
-                continue
-            success, rho = self.double_selection_OLD(rho, operational_ancillas, "X")
-            if not success:
-                continue
-
-            # Second pair Bell state purification
-            rho = self.append_bell_pair(rho)
-            N = len(rho.dims[0])
-            operational_ancillas = [N-1, N-2]
-            success, rho = self.double_selection_OLD(rho, operational_ancillas, "Z")
-            if not success:
-                continue
-            success, rho = self.double_selection_OLD(rho, operational_ancillas, "X")
-            if not success:
-                continue
-
-            # Phase 2
-            # Define pairs to form the GHZ state
-            pair1 = [N-1, N-3]
-            pair2 = [N-2, N-4]
-            # Pair 1 operations
-            success, rho = self.one_dot_OLD(rho, pair1, "Z")
-            if not success:
-                continue
-            success, rho = self.one_dot_OLD(rho, pair1, "Z")
-            if not success:
-                continue
-
-            #Pair 2 operations
-            success, rho = self.one_dot_OLD(rho, pair2, "Z")
-            if not success:
-                continue
-            success, rho = self.one_dot_OLD(rho, pair2, "Z")
-            if not success:
-                continue
-
-
-        # Phase 3
-        # Apply two qubit gates
-        controls = [N-1, N-2, N-3, N-4]
-        targets = parity_targets
-        rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
-        measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=4)
-        return measurements, rho
-
     def expedient(self, rho_initial, parity_targets, stabilizer):
         """
         Perform the expedient protocol.
         Uses 4 data qubits and 12 ancillas.
         """
-
-        # Initial state
-        # rho_initial = self.operational_state(4)
-
         # Phase 1
         # First pair Bell state purification
         rho = self.append_bell_pair(rho_initial)
@@ -478,68 +309,36 @@ class Protocols:
         Perform the stringent protocol.
         Uses 4 data qubits and 12 ancillas.
         """
+        # Phase 1
+        # First pair Bell state purification
+        rho = self.append_bell_pair(rho_initial)
+        N = len(rho.dims[0])
+        operational_ancillas = [N-1, N-2]
+        _, rho = self.double_selection(rho, operational_ancillas, "Z")
+        _, rho = self.double_selection(rho, operational_ancillas, "X")
+        _, rho = self.two_dots(rho, operational_ancillas, "Z")
+        _, rho = self.two_dots(rho, operational_ancillas, "X")
 
-        # Initial state
-        # rho_initial = self.operational_state(4)
+        # Second pair Bell state purification
+        rho = self.append_bell_pair(rho)
+        N = len(rho.dims[0])
+        operational_ancillas = [N-1, N-2]
+        _, rho = self.double_selection(rho, operational_ancillas, "Z")
+        _, rho = self.double_selection(rho, operational_ancillas, "X")
+        _, rho = self.two_dots(rho, operational_ancillas, "Z")
+        _, rho = self.two_dots(rho, operational_ancillas, "X")
 
-        success = False
-        while not success:
-            print("--------->RESET")
-            # Phase 1
-            # First pair Bell state purification
-            rho = self.append_bell_pair(rho_initial)
-            N = len(rho.dims[0])
-            operational_ancillas = [N-1, N-2]
-            success, rho = self.double_selection(rho, operational_ancillas, "Z")
-            if not success:
-                continue
-            success, rho = self.double_selection(rho, operational_ancillas, "X")
-            if not success:
-                continue
-            success, rho = self.two_dot(rho, operational_ancillas, "Z")
-            if not success:
-                continue
-            success, rho = self.two_dot(rho, operational_ancillas, "X")
-            if not success:
-                continue
+        # Phase 2
+        # Define pairs to form the GHZ state
+        pair1 = [N-1, N-3]
+        pair2 = [N-2, N-4]
+        # Pair 1 operations
+        _, rho = self.two_dots(rho, pair1, "Z")
+        _, rho = self.two_dots(rho, pair1, "Z")
 
-            # Second pair Bell state purification
-            rho = self.append_bell_pair(rho)
-            N = len(rho.dims[0])
-            operational_ancillas = [N-1, N-2]
-            success, rho = self.double_selection(rho, operational_ancillas, "Z")
-            if not success:
-                continue
-            success, rho = self.double_selection(rho, operational_ancillas, "X")
-            if not success:
-                continue
-            success, rho = self.two_dot(rho, operational_ancillas, "Z")
-            if not success:
-                continue
-            success, rho = self.two_dot(rho, operational_ancillas, "X")
-            if not success:
-                continue
-
-            # Phase 2
-            # Define pairs to form the GHZ state
-            pair1 = [N-1, N-3]
-            pair2 = [N-2, N-4]
-            # Pair 1 operations
-            success, rho = self.two_dot(rho, pair1, "Z")
-            if not success:
-                continue
-            success, rho = self.two_dot(rho, pair1, "Z")
-            if not success:
-                continue
-
-            #Pair 2 operations
-            success, rho = self.two_dot(rho, pair2, "Z")
-            if not success:
-                continue
-            success, rho = self.two_dot(rho, pair2, "Z")
-            if not success:
-                continue
-
+        # Pair 2 operations
+        _, rho = self.two_dots(rho, pair2, "Z")
+        _, rho = self.two_dots(rho, pair2, "Z")
 
         # Phase 3
         # Apply two qubit gates

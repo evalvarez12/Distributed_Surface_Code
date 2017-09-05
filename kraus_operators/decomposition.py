@@ -22,12 +22,9 @@ rho_initial = psi_initial * psi_initial.dag()
 # Parity measurement is made on one side of the bipartite state
 targets = [0, 2, 4, 6]
 parity = "X"
-measurement, rho = prot.expedient(rho_initial, targets, parity)
+measurement, rho = prot.stringent(rho_initial, targets, parity)
 print("measurement: ", measurement)
 
-# OLD for comparation
-measurement_OLD, rho_OLD = prot.expedient_OLD(rho_initial, targets, parity)
-print("measurement_OLD: ", measurement_OLD)
 
 
 
