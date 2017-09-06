@@ -7,36 +7,33 @@ rho_ideal = qt.bell_state("00")
 # print(de.fidelity(rho, rho_ideal))
 
 prot = protocols.Protocols(0.1, 0.1, 0.1, .1)
+prot_perf = protocols.Protocols(0., 0., 0., 0.,)
 
 print("------------------SINGLE SELECTION-------------------")
-success, single = prot.single_selection(rho, [0, 1], "Z")
-print(single)
-if success:
-    print(prot.fidelity(single, rho_ideal))
+p, single = prot.single_selection(rho, [0, 1], "Z")
+print("p = ", p)
+# print(single)
+print(prot.fidelity(single, rho_ideal))
 
 print("------------------ONE DOT-------------------")
-success, one_dot = prot.one_dot(rho, [0, 1], "Z")
-print(one_dot)
-if success:
-    print(prot.fidelity(one_dot, rho_ideal))
+p, one_dot = prot.one_dot(rho, [0, 1], "Z")
+print("p = ", p)
+# print(one_dot)
+print(prot.fidelity(one_dot, rho_ideal))
 
 print("------------------TWO DOTS-------------------")
-success, two_dot = prot.two_dots(rho, [0, 1], "X")
-print(two_dot)
-if success:
-    print(prot.fidelity(two_dot, rho_ideal))
+p, two_dot = prot.two_dots(rho, [0, 1], "X")
+print("p = ", p)
+# print(two_dot)
+print(prot.fidelity(two_dot, rho_ideal))
 
 print("-------------------DOUBLE SELECTION-----------")
-success, double = prot.double_selection(rho, [0, 1], "Z")
-print(double)
-if success:
-    print(prot.fidelity(double, rho_ideal))
+p, double = prot.double_selection(rho, [0, 1], "Z")
+print("p = ", p)
+# print(double)
+print(prot.fidelity(double, rho_ideal))
 
 
-# print("-----------------EXdeDIENT------------------")
-# m, rho = prot.exdedient("Z")
-# print(rho)
-# print(m)
 
 print("-----------------MONOLITHIC------------------")
 rho_initial = qt.snot() * qt.basis(2, 1)
@@ -46,3 +43,26 @@ rho_initial = rho_initial * rho_initial.dag()
 m, rho = prot.monolithic(rho_initial, [0, 1, 2, 3], "X")
 print(rho)
 print(m)
+
+
+print("----------------PARITY MEASUREMENT-------------")
+psi = prot.operational_state_ket(2)
+targets = [0, 2]
+psi_collapsed = prot.parity_projection_ket(psi, targets, 1, "Z")
+print(psi_collapsed)
+
+
+print("--------------PERFECT COMPARATION-------------")
+# Compare parity measurements with perfect case
+psi = prot.operational_state_ket(4)
+targets = [0, 2, 4, 6]
+psi_ref0 = prot_perf.parity_projection_ket(psi, targets, 0, "Z")
+rho_ref0 = psi_ref0 * psi_ref0.dag()
+psi_ref1 = prot_perf.parity_projection_ket(psi, targets, 1, "Z")
+rho_ref1 = psi_ref1 * psi_ref1.dag()
+
+
+m, rho_perf = prot_perf.monolithic(psi * psi.dag(), targets, "Z")
+print(m)
+print(rho_ref0 == rho_perf)
+print(rho_ref1 == rho_perf)

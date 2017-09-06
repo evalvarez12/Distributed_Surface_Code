@@ -72,13 +72,13 @@ class Protocols:
         plus = qt.snot() * qt.basis(2, 0)
         full_psi = qt.tensor(psi, plus)
         N = len(full_psi.dims[0])
-        controls = [N-1]*len(targets)
+        control = N-1
         if parity == "X":
-            for i in range(len(targets)):
-                full_psi = qt.cnot(N, controls[i], targets[i]) * full_psi
+            for t in targets:
+                full_psi = qt.cnot(N, control, t) * full_psi
         if parity == "Z":
-            for i in range(len(targets)):
-                full_psi = qt.cphase(np.pi, N, controls[i], targets[i]) * full_psi
+            for t in targets:
+                full_psi = qt.cphase(np.pi, N, control, t) * full_psi
 
         collapsed_psi = ops.collapse_single_Xbasis_ket(full_psi, measurement,
                                                        N, N-1, True)
@@ -90,9 +90,15 @@ class Protocols:
         Dimension is reduced after collapse
         """
         if basis == "X":
-            measurement, collapsed_state = errs.measure_single_Xbasis(rho, self.pm, N, pos)
+            measurement, collapsed_state = errs.measure_single_Xbasis(rho,
+                                                                      self.pm,
+                                                                      N,
+                                                                      pos)
         elif basis == "Z":
-            measurement, collapsed_state = errs.measure_single_Zbasis(rho, self.pm, N, pos)
+            measurement, collapsed_state = errs.measure_single_Zbasis(rho,
+                                                                      self.pm,
+                                                                      N,
+                                                                      pos)
         return measurement, collapsed_state
 
     def measure_single_forced(self, rho, N, pos, project, basis):

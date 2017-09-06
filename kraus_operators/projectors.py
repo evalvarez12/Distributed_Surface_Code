@@ -91,6 +91,3 @@ def project_even_ket(state):
     if projected_state.norm() != 0:
         projected_state = projected_state / projected_state.norm()
     return projected_state
-
-
-    

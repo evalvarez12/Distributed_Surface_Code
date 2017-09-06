@@ -65,9 +65,9 @@ def random_measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
     # Calculate the probability of measurment 1
     p0 = p_measurement_single_Zbasis(rho, 0, N, pos, dimRed)
     r = np.random.rand()
-    print("P0", p0, r)
+    # print("P0", p0, r)
     # Draw a measurement
-    if r < np.linalg.norm(p0):
+    if r < p0:
         collapsed_rho = collapse_single_Zbasis(rho, 0, N, pos, dimRed)
         measurement = 1
     else:
@@ -91,7 +91,7 @@ def forced_measure_single_Zbasis(rho, N=1, pos=0, project=0, dimRed=False):
     """
     # Calculate the actual probability of doing the measurement
     p = p_measurement_single_Zbasis(rho, 0, N, pos, dimRed)
-    print("P", project, p)
+    # print("P", project, p)
     if p == 0:
         raise ZeroDivisionError("p = 0!")
     # Draw the measurement
@@ -110,6 +110,8 @@ def collapse_single_Zbasis_ket(psi, project, N=1, pos=0, dimRed=False):
     else:
         p = projector_single_qubit_Zbasis(project, N, pos)
     collapsed_psi = p * psi
+    if collapsed_psi.norm() == 0:
+        return collapsed_psi
     return collapsed_psi/collapsed_psi.norm()
 
 def collapse_single_Xbasis_ket(psi, project, N=1, pos=0, dimRed=False):
@@ -119,7 +121,7 @@ def collapse_single_Xbasis_ket(psi, project, N=1, pos=0, dimRed=False):
     H = qt.snot(N, pos)
     collapsed_psi = H * psi
     collapsed_psi = collapse_single_Zbasis_ket(collapsed_psi, project, N, pos,
-                                           dimRed)
+                                               dimRed)
     if not dimRed:
         collapsed_psi = H * collapsed_psi
     return collapsed_psi
@@ -142,7 +144,7 @@ def p_measurement_single_Zbasis(rho, measure, N=1, pos=0, dimRed=False):
     Calculate the probability of measuring the value "measure".
     """
     p = projector_single_qubit_Zbasis(measure, N, pos)
-    return (p * rho).tr()
+    return np.linalg.norm((p * rho).tr())
 
 
 def projector_single_qubit_Zbasis_dimRed(project, N=1, pos=0):
