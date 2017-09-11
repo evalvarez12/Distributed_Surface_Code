@@ -179,8 +179,8 @@ class Protocols:
 
         # Apply two qubit gates
         controls = [N-1, N-2]
-        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits,
-                                         sigma)
+        rho = self.apply_two_qubit_gates(rho, N, controls,
+                                         operation_qubits, sigma)
 
         # Measure ancillas in X basis
         projections = [0]*N_ancillas
@@ -202,7 +202,8 @@ class Protocols:
 
         # Apply first two qubit gates
         controls = [N-3, N-4]
-        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits, sigma)
+        rho = self.apply_two_qubit_gates(rho, N, controls,
+                                         operation_qubits, sigma)
 
         # Apply second set of gates
         controls = [N-1, N-2]
@@ -238,8 +239,9 @@ class Protocols:
 
         # Measure this procedures ancillas
         projections = [0] * N_ancillas
-        probs, collapsed_rho = self.collapse_ancillas_forced(rho, N, N_ancillas,
-                                                         projections)
+        probs, collapsed_rho = self.collapse_ancillas_forced(rho, N,
+                                                             N_ancillas,
+                                                             projections)
         return probs, collapsed_rho
 
     def two_dots(self, rho_initial, operation_qubits, sigma):
@@ -359,16 +361,32 @@ class Protocols:
         Perform the monolithic stabilizer protocol.
         Uses 4 data qubits and 1 ancillas.
         """
-
         # Append the initialized ancilla to the state|
-        ancilla = qt.snot() * qt.basis(2, 0)
-        ancilla = ancilla * ancilla.dag()
+        # NOTE: Naomi starts adding error to the initialized
+        plus = qt.snot() * qt.basis(2, 0)
+        plus = plus * plus.dag()
+        minus = qt.snot() * qt.basis(2, 1)
+        minus = minus * minus.dag()
+        ancilla = (1 - self.pm)*plus + self.pm*minus
+
+        # ancilla = qt.snot() * qt.basis(2, 0)
+        # ancilla = ancilla * ancilla.dag()
         rho = qt.tensor(rho_initial, ancilla)
         N = len(rho.dims[0])
+        N_ancillas = 1
 
         # Apply two qubit gates
         controls = [N-1]*len(parity_targets)
-        targets = parity_targets
-        rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
-        measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=1)
-        return measurements, rho
+        rho = self.apply_two_qubit_gates(rho, N, controls,
+                                         parity_targets, stabilizer)
+
+        # Get both projections of the state
+        p_even, rho_even = self.collapse_ancillas_forced(rho,
+                                                         N,
+                                                         N_ancillas,
+                                                         [0])
+        p_odd, rho_odd = self.collapse_ancillas_forced(rho,
+                                                       N,
+                                                       N_ancillas,
+                                                       [1])
+        return [p_even, p_odd], [rho_even, rho_odd]

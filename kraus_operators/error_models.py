@@ -27,6 +27,7 @@ def single_qubit_gate_noise(rho, p, N=1, pos=0):
         res += p/3.*(noise * rho * noise.dag())
     return res
 
+
 def single_qubit_gate(rho, gate, p, N=1, pos=0):
     new_rho = gate * rho * gate.dag()
     new_rho = single_qubit_gate_noise(new_rho, p, N, pos)
@@ -53,6 +54,7 @@ def two_qubit_gate_noise(rho, p, N=2, pos1=0, pos2=1):
         res += p/15. * (noise * rho * noise.dag())
     return res
 
+
 def two_qubit_gate(rho, gate, p, N=2, pos1=0, pos2=1):
     new_rho = gate * rho * gate.dag()
     new_rho = two_qubit_gate_noise(new_rho, p, N, pos1, pos2)
@@ -62,7 +64,8 @@ def two_qubit_gate(rho, gate, p, N=2, pos1=0, pos2=1):
 def measure_single_Zbasis(rho, p, N=1, pos=0):
     X = qt.rx(np.pi, N, pos)
     rho = (1 - p)*rho + p*(X * rho * X.dag())
-    measurement, collapsed_rho = ops.random_measure_single_Zbasis(rho, N, pos, True)
+    measurement, collapsed_rho = ops.random_measure_single_Zbasis(rho, N,
+                                                                  pos, True)
     return measurement, collapsed_rho
 
 
@@ -76,13 +79,16 @@ def measure_single_Zbasis_forced(rho, p, project, N=1, pos=0):
 def measure_single_Xbasis(rho, p, N=1, pos=0):
     Z = qt.rz(np.pi, N, pos)
     rho = (1 - p)*rho + p*(Z * rho * Z.dag())
-    measurement, collapsed_rho = ops.random_measure_single_Xbasis(rho, N, pos, True)
+    measurement, collapsed_rho = ops.random_measure_single_Xbasis(rho, N,
+                                                                  pos, True)
     return measurement, collapsed_rho
+
 
 def measure_single_Xbasis_forced(rho, p, project, N=1, pos=0):
     Z = qt.rz(np.pi, N, pos)
     rho = (1 - p)*rho + p*(Z * rho * Z.dag())
-    p, collapsed_rho = ops.forced_measure_single_Xbasis(rho, N, pos, project, True)
+    p, collapsed_rho = ops.forced_measure_single_Xbasis(rho, N, pos,
+                                                        project, True)
     return p, collapsed_rho
 
 

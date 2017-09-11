@@ -126,6 +126,7 @@ def collapse_single_Xbasis_ket(psi, project, N=1, pos=0, dimRed=False):
         collapsed_psi = H * collapsed_psi
     return collapsed_psi
 
+
 def collapse_single_Zbasis(rho, project, N=1, pos=0, dimRed=False):
     """
     Collapse the state in the postion of a single qubit.
@@ -136,6 +137,8 @@ def collapse_single_Zbasis(rho, project, N=1, pos=0, dimRed=False):
     else:
         p = projector_single_qubit_Zbasis(project, N, pos)
     collapsed_rho = p * rho * p.dag()
+    if collapsed_rho.tr() == 0:
+        return collapsed_rho
     return collapsed_rho/collapsed_rho.tr()
 
 
@@ -144,7 +147,7 @@ def p_measurement_single_Zbasis(rho, measure, N=1, pos=0, dimRed=False):
     Calculate the probability of measuring the value "measure".
     """
     p = projector_single_qubit_Zbasis(measure, N, pos)
-    return np.linalg.norm((p * rho).tr())
+    return (p * rho * p.dag()).tr()
 
 
 def projector_single_qubit_Zbasis_dimRed(project, N=1, pos=0):
