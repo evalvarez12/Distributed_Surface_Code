@@ -25,75 +25,58 @@ targets = [0, 2, 4, 6]
 parity = "Z"
 # Get the probabilities and the collapsed states
 ps, rhos = prot.monolithic(rho_initial, targets, parity)
-# print("measurement: ", measurement)
 
 # Odd and even reference collapsed states
 even_psi = prot.parity_projection_ket(psi_initial, targets, 0, parity)
 odd_psi = prot.parity_projection_ket(psi_initial, targets, 1, parity)
 
-
-
-f1 = prot.fidelity(rhos[0], even_psi)
-f2 = prot.fidelity(rhos[1], odd_psi)
-print(f1)
-print(f2)
-print(ps[0][0]*f1 + ps[1][0]*f2)
-print("LIE")
-print(prot.fidelity(rhos[1], even_psi))
-print(prot.fidelity(rhos[0], odd_psi))
-
 # Get all errors
-pauli_errs = pauli_errors.get_pauli_errors(2*system_size, targets)
+pauli_errs = pauli_errors.get_pauli_errors(targets, 2*system_size)
 
 # Funtion to realize the decomposition
-# def decompose(rhos, psis, subfix):
-#     for err_type in pauli_errs:
-#         # Save the names of the errors
-#         names = err_type[1][1]
-#
-#         # Array to store all fidelities results
-#         errs = []
-#
-#         # Do the comparation with no pauli error
-#         if err_type[0] == "A":
-#             errs += [prot.fidelity(rhos[0], psis[0])] + [prot.fidelity(rhos[1], psis[1])]
-#             names = ["I"] + names
-#
-#         for permut in err_type[1][0]:
-#             # errs_permut = []
-#             errs_permut = 0
-#             for e in permut:
-#                 e_psi0 = e * psis[0]
-#                 e_psi1 = e * psis[1]
-#
-#                 # errs_permut += [prot.fidelity(rho, e_psi)]
-#                 errs_permut += prot.fidelity(rhos[0], e_psi0) + prot.fidelity(rhos[1], e_psi1)
-#             errs += [errs_permut]
-#
-#         # Convert to arrays
-#         errs_array = np.array(errs)
-#         names_array = np.array(names)
-#
-#         # Save arrays
-#         np.save("data/errors_" + subfix + err_type[0], errs_array)
-#         np.save("data/errors_names_" + subfix + err_type[0], names_array)
+def decompose(ps, rhos, psis):
+    for err_type in pauli_errs:
+        # Save the names of the errors
+        type_name = err_type[1]
 
-#
-# decompose(rhos, [good_psi, bad_psi], "good_")
-# # decompose(rhos, bad_psi, measurement, "bad_")
-#
-#
-# # Load all data
-# goodA = np.load("data/errors_good_A.npy")
-# badA = np.load("data/errors_bad_A.npy")
-# goodB = np.load("data/errors_good_B.npy")
-# badB = np.load("data/errors_bad_B.npy")
-# goodC = np.load("data/errors_good_C.npy")
-# badC = np.load("data/errors_bad_C.npy")
-# goodD = np.load("data/errors_good_D.npy")
-# badD = np.load("data/errors_bad_D.npy")
-#
-#
+        # Array to store all fidelities results
+        weights = []
+
+        for permut in err_type[0]:
+            # errs_permut = []
+            err_permut_good = 0
+            err_permut_lie = 0
+
+            for e in permut:
+                e_psi0 = e[0] * psis[0]
+                e_psi1 = e[0] * psis[1]
+
+                # print(prot.fidelity(rhos[0], e_psi0))
+                err_permut_good += (ps[0]*prot.fidelity(rhos[0], e_psi0)
+                                    + ps[1]*prot.fidelity(rhos[1], e_psi1))
+
+                err_permut_lie += (ps[0]*prot.fidelity(rhos[0], e_psi1)
+                                   + ps[1]*prot.fidelity(rhos[1], e_psi0))
+
+            weights += [err_permut_good, err_permut_lie, e[1]]
+
+        # Convert to arrays
+        weights_array = np.array(weights)
+
+        # Save arrays
+        np.save("data/decomposition_" + type_name, weights_array)
+
+
+decompose(ps, rhos, [even_psi, odd_psi])
+
+# Load all data
+decomposeI = np.load("data/decomposition_I.npy")
+decomposeA = np.load("data/decomposition_A.npy")
+decomposeB = np.load("data/decomposition_B.npy")
+decomposeC = np.load("data/decomposition_C.npy")
+decomposeD = np.load("data/decomposition_D.npy")
+
+
 # # The ones with D have a systematic err that needs to be removed
 # goodD = goodD[goodD != goodA.max()]
 # badD = badD[badD != badD.max()]

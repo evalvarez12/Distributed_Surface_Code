@@ -389,4 +389,4 @@ class Protocols:
                                                        N,
                                                        N_ancillas,
                                                        [1])
-        return [p_even, p_odd], [rho_even, rho_odd]
+        return [p_even[0], p_odd[0]], [rho_even, rho_odd]
