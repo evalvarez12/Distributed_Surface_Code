@@ -73,6 +73,8 @@ def random_measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
     else:
         collapsed_rho = collapse_single_Zbasis(rho, 1, N, pos, dimRed)
         measurement = -1
+    if collapsed_rho.tr() != 0:
+        collapsed_rho = collapsed_rho/collapsed_rho.tr()
     return measurement, collapsed_rho
 
 
@@ -96,6 +98,8 @@ def forced_measure_single_Zbasis(rho, N=1, pos=0, project=0, dimRed=False):
         raise ZeroDivisionError("p = 0!")
     # Draw the measurement
     collapsed_rho = collapse_single_Zbasis(rho, project, N, pos, dimRed)
+    if collapsed_rho.tr() != 0:
+        collapsed_rho = collapsed_rho/collapsed_rho.tr()
     return p, collapsed_rho
 
 
@@ -110,9 +114,7 @@ def collapse_single_Zbasis_ket(psi, project, N=1, pos=0, dimRed=False):
     else:
         p = projector_single_qubit_Zbasis(project, N, pos)
     collapsed_psi = p * psi
-    if collapsed_psi.norm() == 0:
-        return collapsed_psi
-    return collapsed_psi/collapsed_psi.norm()
+    return collapsed_psi
 
 def collapse_single_Xbasis_ket(psi, project, N=1, pos=0, dimRed=False):
     """
@@ -137,9 +139,7 @@ def collapse_single_Zbasis(rho, project, N=1, pos=0, dimRed=False):
     else:
         p = projector_single_qubit_Zbasis(project, N, pos)
     collapsed_rho = p * rho * p.dag()
-    if collapsed_rho.tr() == 0:
-        return collapsed_rho
-    return collapsed_rho/collapsed_rho.tr()
+    return collapsed_rho
 
 
 def p_measurement_single_Zbasis(rho, measure, N=1, pos=0, dimRed=False):

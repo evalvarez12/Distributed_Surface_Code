@@ -19,13 +19,13 @@ class SurfaceCode:
     Q    PLAQ    Q    PLAQ    Q    PLAQ
     |            |            |
     |            |            |
-    PLAQ -- Q -- STAR -- Q -- STAR -- Q --
+    STAR -- Q -- STAR -- Q -- STAR -- Q --
     |            |            |
     |            |            |
     Q    PLAQ    Q    PLAQ    Q    PLAQ
     |            |            |
     |            |            |
-    PLAQ -- Q -- STAR -- Q -- STAR -- Q --
+    STAR -- Q -- STAR -- Q -- STAR -- Q --
     |            |            |
     |            |            |
 
@@ -52,6 +52,7 @@ class SurfaceCode:
             Topology of the code.
         """
         self.size = size
+        # TODO: this is for toroid check for plannar
         self.numberQubits = 2*size**2
         self.numberStabilizers = size**2
         self.surface = surface
@@ -250,7 +251,7 @@ class SurfaceCode:
         return pos, c, t
 
     def _selectStabilizerRounds(self, stabilizer):
-        """Return useful parameters for stabilizer type."""
+        """Parameters for stabilizer type when using interspersed rounds."""
         if stabilizer == "star":
             pos1 = self.starsRound1
             pos2 = self.starsRound2
@@ -265,15 +266,19 @@ class SurfaceCode:
         return pos1, pos2, c, t
 
     def reset(self):
+        """Reset surface code to default configuration."""
         self.qubits.fill(1)
 
     def getStars(self):
+        """Get the position of  all star qubits."""
         return self.qubits[0][self.tags == "S"]
 
     def getPlaqs(self):
+        """Get the positiono of all plaq qubits."""
         return self.qubits[0][self.tags == "P"]
 
     def measureLogical(self):
+        """Meausure the logical qubits."""
         # TODO is this wrong? X1 and ZI should be perpendicular
         # TODO X1 first row Z1 first column
         X1 = np.prod(self.qubits[0, 0, 1::2])

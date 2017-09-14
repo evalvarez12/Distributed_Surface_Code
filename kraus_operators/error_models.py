@@ -56,9 +56,9 @@ def two_qubit_gate_noise(rho, p, N=2, pos1=0, pos2=1):
 
 
 def two_qubit_gate(rho, gate, p, N=2, pos1=0, pos2=1):
-    new_rho = gate * rho * gate.dag()
-    new_rho = two_qubit_gate_noise(new_rho, p, N, pos1, pos2)
-    return new_rho
+    rho = gate * rho * gate.dag()
+    rho = two_qubit_gate_noise(rho, p, N, pos1, pos2)
+    return rho
 
 
 def measure_single_Zbasis(rho, p, N=1, pos=0):

@@ -25,7 +25,7 @@ def matchToric3D(size, anyons, weights=[1,1]):
     if len(anyons)  == 0:
         return []
 
-    graph = makeGraph(anyons, weights)
+    graph = makeGraphToric(size, anyons, weights)
     print(anyons)
     numberNodes = len(anyons)
     print(graph)
@@ -39,36 +39,31 @@ def matchToric3D(size, anyons, weights=[1,1]):
     return pairs
 
 
-def makeGraph(nodes, weights=[1, 1]):
-    # TODO redo this
+def makeGraphToric(size, nodes, weights=[1, 1]):
     numberNodes = len(nodes)
-    m = 2*numberNodes
+    # m is used to find shortest distance accros the toroid
+    m = 2*size + 1
+
+    # Spatial and time weights
     wT, wS = weights
+
     graph = []
 
     # ind = np.arange(numberNodes)
     # graph = [nodes - nodes[i+1:] for i in range(numberNodes)]
     # graphIdexes = []
     for i in range(numberNodes-1):
-        p1, p2, p3 = nodes[i]
+        px, py, pt = nodes[i]
         for j in range(i+1, numberNodes):
-            q1, q2, q3 = nodes[j]
+            qx, qy, qt = nodes[j]
 
-            wt = (q3 - p3)*wT
-            diffx = abs(q1 - p1)
+            difft = (qt - pt)*wT
+            diffx = abs(qx - px)
             diffx = min([diffx, m-diffx])*wS
-            diffy = abs(q2 - q2)
+            diffy = abs(qy - qy)
             diffy = min([diffy, m-diffy])*wS
 
-            weight = wt + diffx + diffy
+            weight = difft + diffx + diffy
             graph += [[i, j, weight]]
     # List of values for time distance weights
     return graph
-
-def weightNorm(pos, m, weights):
-    # TODO: use this?
-    # pos = [[px, py, pt], [px, py, pt]]
-    swT, wS = weights
-    res = abs(pos)
-    res = (pos[:, 0]%m + pos[:, 1]%m)*wS + pos[:, 2]*wT
-    return res

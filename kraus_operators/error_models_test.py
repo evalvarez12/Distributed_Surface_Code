@@ -16,9 +16,10 @@ class TestErrorModels(unittest.TestCase):
 
     def test_two_qubit_error(self):
         print("----------Test two qubit error-----------")
-        p = 1
+        p = .09
         rho_noise = errs.two_qubit_gate_noise(rho_test, p, 2, 0, 1)
         print(rho_noise)
+        print(rho_noise.tr())
         print(Fidelity(rho_noise, psi_test))
 
     def test_measurement_error(self):

@@ -75,3 +75,37 @@ def get_pauli_errors(error_positions, system_size):
                   [error_combinations(3, error_positions, system_size), "C"],
                   [error_combinations(4, error_positions, system_size), "D"]]
     return all_errors
+
+def symbol_product(symbolA, symbolB):
+    # Turn symbols into lists
+    list_A = list(symbolA)
+    list_B = list(symbolB)
+    prod = list_A.copy()
+    l = len(list_A)
+
+    # Apply product for each element in list
+    for i in range(l):
+        prod[i] = product_rules(list_A[i], list_B[i])
+
+    # Return the result in a single string
+    return ''.join(prod)
+
+def product_rules(A, B):
+    # Check first for identities
+    if A == "I":
+        return B
+    if B == "I":
+        return A
+
+    # Check arguments
+    if not A in error_symbols or not B in error_symbols:
+        raise ValueError("Arguments are not in {X, Y, Z}")
+
+    # Check if they are equal
+    if A == B:
+        return "I"
+
+    # Find the missing element and return it
+    prod = [A, B]
+    res = list(set(error_symbols) - set(prod))[0]
+    return res

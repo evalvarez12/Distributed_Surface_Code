@@ -7,6 +7,7 @@ import error_models as errs
 import operations as ops
 
 class Protocols:
+    #TODO: separate GHZ creation and stabilizer measurement parts.
     """
     Class for holding all protocols.
 
@@ -276,6 +277,7 @@ class Protocols:
         Perform the expedient protocol.
         Uses 4 data qubits and 12 ancillas.
         """
+        N_ancillas = 4
         # Phase 1
         # First pair Bell state purification
         rho = self.append_bell_pair(rho_initial)
@@ -307,16 +309,24 @@ class Protocols:
         # Phase 3
         # Apply two qubit gates
         controls = [N-1, N-2, N-3, N-4]
-        targets = parity_targets
-        rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
-        measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=4)
-        return measurements, rho
+        rho = self.apply_two_qubit_gates(rho, N, controls,
+                                         parity_targets, stabilizer)
+        projections_even = [0, 0, 0, 0]
+        p_even, rho_even = self.collapse_ancillas_forced(rho, N,
+                                                         N_ancillas,
+                                                         projections_even)
+        projections_odd = [0, 1, 1, 1]
+        p_odd, rho_odd = self.collapse_ancillas_forced(rho, N,
+                                                       N_ancillas,
+                                                       projections_odd)
+        return np.array([p_even, p_odd]), [rho_even, rho_odd]
 
     def stringent(self, rho_initial, parity_targets, stabilizer):
         """
         Perform the stringent protocol.
         Uses 4 data qubits and 12 ancillas.
         """
+        N_ancillas = 4
         # Phase 1
         # First pair Bell state purification
         rho = self.append_bell_pair(rho_initial)
@@ -353,8 +363,15 @@ class Protocols:
         controls = [N-1, N-2, N-3, N-4]
         targets = parity_targets
         rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
-        measurements, rho = self.collapse_ancillas(rho, N, N_ancillas=4)
-        return measurements, rho
+        projections_even = [0, 0, 0, 0]
+        p_even, rho_even = self.collapse_ancillas_forced(rho, N,
+                                                         N_ancillas,
+                                                         projections_even)
+        projections_odd = [0, 1, 1, 1]
+        p_odd, rho_odd = self.collapse_ancillas_forced(rho, N,
+                                                       N_ancillas,
+                                                       projections_odd)
+        return np.array([p_even, p_odd]), [rho_even, rho_odd]
 
     def monolithic(self, rho_initial, parity_targets, stabilizer):
         """
@@ -389,4 +406,4 @@ class Protocols:
                                                        N,
                                                        N_ancillas,
                                                        [1])
-        return [p_even[0], p_odd[0]], [rho_even, rho_odd]
+        return np.array([p_even, p_odd]), [rho_even, rho_odd]
