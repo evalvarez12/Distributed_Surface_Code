@@ -111,11 +111,11 @@ class NoiseModel:
         for k, v in self.pauli_basis.items():
             if self.faulty_measurement:
                 # Decomposition when no faulty measurement
-                symOK = k + "OK"
+                symOK = k + "_OK"
                 self.chi[symOK] = self._fidelity(self.rho, v * self.psi_basis[0])
 
                 # Decomposition when there is a faulty measurement
-                symNOK = k + "NOK"
+                symNOK = k + "_NOK"
                 self.chi[symNOK] = self._fidelity(self.rho, v * self.psi_basis[1])
             else:
                 # Decompose through all the Pauli basis
@@ -131,6 +131,7 @@ class NoiseModel:
 
     def _chi_reduce_permutations(self):
         syms = list(self.chi.keys())
+        prod_parity = self.basis_parity * self.system_size
         for k in syms:
             if k not in self.chi:
                 continue
@@ -142,11 +143,11 @@ class NoiseModel:
 
             if self.faulty_measurement:
                 if "N" in symbol:
-                    symbol = symbol.replace("NOK", "")
-                    residue = "NOK"
+                    symbol = symbol.replace("_NOK", "")
+                    residue = "_NOK"
                 else:
-                    symbol = symbol.replace("OK", "")
-                    residue = "OK"
+                    symbol = symbol.replace("_OK", "")
+                    residue = "_OK"
 
             perms = [''.join(p) for p in itertools.permutations(symbol)]
             perms = set(perms)
@@ -160,14 +161,15 @@ class NoiseModel:
                     # print("He is in chi: ", p_symbol)
                     p_sum += self.chi[p_symbol]
                     del self.chi[p_symbol]
-                # If success try with the parity correspondant
-                # else:
-                #     str_symbol = pauli_basis.symbol_product(str_symbol,
-                #                                             self.basis_parity)
-                #     p_symbol = str_symbol + residue
-                #     print("Will try thi one: ", p_symbol)
-                #     p_sum += self.chi[p_symbol]
-                #     del self.chi[p_symbol]
+                # If not success try with the parity correspondant
+                else:
+                    str_symbol = pauli_basis.symbol_product(str_symbol,
+                                                            prod_parity)
+                    p_symbol = str_symbol + residue
+                    # print("Will try thi one: ", p_symbol)
+                    if p_symbol in self.chi:
+                        p_sum += self.chi[p_symbol]
+                        del self.chi[p_symbol]
 
             if p_sum != 0:
                 self.chi[k] = p_sum
