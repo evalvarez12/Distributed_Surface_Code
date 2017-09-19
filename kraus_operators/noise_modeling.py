@@ -6,6 +6,7 @@ created-on: 30/06/17
 """
 import numpy as np
 import qutip as qt
+import itertools
 import pauli_basis
 import operations as ops
 
@@ -19,6 +20,7 @@ class NoiseModel:
         # Create the initial state
         self.psi_basis = [self._choi_state_ket(system_size)]
         self.faulty_measurement = False
+        self.basis_parity = ""
         # The state comes organized in an ordered manner
         self.targets = list(range(system_size))
         self.pauli_basis = pauli_basis.get_basis(self.targets, 2 * system_size)
@@ -96,6 +98,7 @@ class NoiseModel:
         self._remove_sym_pauli_basis(parity)
         # Mark that parity symmetry is used to indicate faulty_measurement
         self.faulty_measurement = True
+        self.basis_parity = parity * self.system_size
 
     def _choi_state_ket(self, N):
         """
@@ -129,6 +132,65 @@ class NoiseModel:
         for v in self.chi.values():
             total += v
         return total
+
+    def _chi_reduce_permutations(self):
+        syms = list(self.chi.keys())
+        for k in syms:
+            if k not in self.chi:
+                continue
+
+            # print("KEY: ", k)
+            symbol = k
+            p_sum = 0
+            residue = ""
+
+            if self.faulty_measurement:
+                if "N" in symbol:
+                    symbol = symbol.replace("NOK", "")
+                    residue = "NOK"
+                else:
+                    symbol = symbol.replace("OK", "")
+                    residue = "OK"
+
+            perms = [''.join(p) for p in itertools.permutations(symbol)]
+            perms = set(perms)
+            for p in perms:
+                str_symbol = ''.join(p)
+
+                p_symbol = str_symbol + residue
+                # print("Peruting: ", p_symbol)
+                # Try with the current symbol permutation
+                if p_symbol in self.chi:
+                    # print("He is in chi: ", p_symbol)
+                    p_sum += self.chi[p_symbol]
+                    del self.chi[p_symbol]
+                # If success try with the parity correspondant
+                # else:
+                #     str_symbol = pauli_basis.symbol_product(str_symbol,
+                #                                             self.basis_parity)
+                #     p_symbol = str_symbol + residue
+                #     print("Will try thi one: ", p_symbol)
+                #     p_sum += self.chi[p_symbol]
+                #     del self.chi[p_symbol]
+
+            if p_sum != 0:
+                self.chi[k] = p_sum
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################# CODE LIMBO #############################################
+
 #         for err_type in pauli_errs:
 #             # Save the names of the errors
 #             type_name = err_type[1]
