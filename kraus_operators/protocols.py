@@ -25,12 +25,6 @@ class Protocols:
         self.pg = pg
         self.pn = pn
 
-    def fidelity(self, rhoA, stateB):
-        """
-        Fidelity for the special case when one of the states is a pure state.
-        """
-        return (stateB.dag() * rhoA * stateB).norm()
-
     def generate_bell_pair(self):
         """Generate a raw Bell pair."""
         bell = errs.bell_pair(self.pn)
@@ -69,22 +63,6 @@ class Protocols:
                                       targets[i])
         return rho
 
-    def parity_projection_ket(self, psi, targets, measurement, parity):
-        plus = qt.snot() * qt.basis(2, 0)
-        full_psi = qt.tensor(psi, plus)
-        N = len(full_psi.dims[0])
-        control = N-1
-        if parity == "X":
-            for t in targets:
-                full_psi = qt.cnot(N, control, t) * full_psi
-        if parity == "Z":
-            for t in targets:
-                full_psi = qt.cphase(np.pi, N, control, t) * full_psi
-
-        collapsed_psi = ops.collapse_single_Xbasis_ket(full_psi, measurement,
-                                                       N, N-1, True)
-        return collapsed_psi
-
     def measure_single(self, rho, N, pos, basis):
         """
         Measure a single qubit in the state.
@@ -120,16 +98,6 @@ class Protocols:
                                                                    N,
                                                                    pos)
         return p, collapsed_state
-
-    def operational_state_ket(self, N):
-        """
-        Create a bipartite state.
-        Also known as operational state.
-        """
-        state = qt.bell_state('00')
-        for i in range(1, N):
-            state = qt.tensor(qt.bell_state('00'), state)
-        return state
 
     def collapse_ancillas(self, rho, N, N_ancillas):
         """
