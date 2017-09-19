@@ -1,3 +1,8 @@
+"""
+Deprecated code for making projections
+Some functions may be useful later, especially
+number_to_ket.
+"""
 import qutip as qt
 import numpy as np
 
