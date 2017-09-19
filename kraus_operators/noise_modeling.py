@@ -15,12 +15,12 @@ class NoiseModel:
     Class to hold all the thigs used.
     """
 
-    def __init__(self, system_size, superoperator_function):
+    def __init__(self, system_size, superoperator_function, parity):
         """Init fucntion to prepare all required assets."""
         # Create the initial state
         self.psi_basis = [self._choi_state_ket(system_size)]
         self.faulty_measurement = False
-        self.basis_parity = ""
+        self.basis_parity = parity
         # The state comes organized in an ordered manner
         self.targets = list(range(system_size))
         self.pauli_basis = pauli_basis.get_basis(self.targets, 2 * system_size)
@@ -30,16 +30,13 @@ class NoiseModel:
 
         # Apply the superoperator to the choi state
         self.rho = self.psi_basis[0] * self.psi_basis[0].dag()
-        self.rho = superoperator_function(self.rho, self.targets, "Z")
+        self.rho = superoperator_function(self.rho, self.targets, self.basis_parity)
 
         # Empty dictionary to store the chi matrix
         self.chi = {}
 
-    def _remove_sym_pauli_basis(self, symmetry):
-        if symmetry == "X":
-            sym = "X" * self.system_size
-        if symmetry == "Z":
-            sym = "Z" * self.system_size
+    def _remove_sym_pauli_basis(self):
+        sym = self.basis_parity * self.system_size
 
         syms = list(self.pauli_basis.keys())
         for k in syms:
@@ -63,15 +60,15 @@ class NoiseModel:
         """
         return (stateB.dag() * rhoA * stateB).norm()
 
-    def _parity_projection_ket(self, psi, targets, measurement, parity):
+    def _parity_projection_ket(self, psi, targets, measurement):
         plus = qt.snot() * qt.basis(2, 0)
         full_psi = qt.tensor(psi, plus)
         N = len(full_psi.dims[0])
         control = N-1
-        if parity == "X":
+        if self.basis_parity == "X":
             for t in targets:
                 full_psi = qt.cnot(N, control, t) * full_psi
-        if parity == "Z":
+        if self.basis_parity == "Z":
             for t in targets:
                 full_psi = qt.cphase(np.pi, N, control, t) * full_psi
 
@@ -82,23 +79,20 @@ class NoiseModel:
             collapsed_psi = collapsed_psi/collapsed_psi.norm()
         return collapsed_psi
 
-    def separate_basis_parity(self, parity):
+    def separate_basis_parity(self):
         psi_even = self._parity_projection_ket(self.psi_basis[0],
                                                self.targets,
-                                               0,
-                                               parity)
+                                               0)
         psi_odd = self._parity_projection_ket(self.psi_basis[0],
                                               self.targets,
-                                              1,
-                                              parity)
+                                              1)
 
         # Separate into even and odd parity
         self.psi_basis = [psi_even, psi_odd]
         # Remove the duplicated pauli vecs
-        self._remove_sym_pauli_basis(parity)
+        self._remove_sym_pauli_basis()
         # Mark that parity symmetry is used to indicate faulty_measurement
         self.faulty_measurement = True
-        self.basis_parity = parity * self.system_size
 
     def _choi_state_ket(self, N):
         """
@@ -126,6 +120,8 @@ class NoiseModel:
             else:
                 # Decompose through all the Pauli basis
                 self.chi[k] = self._fidelity(self.rho, v * self.psi_basis[0])
+        # Call function to reduce permuations
+        self._chi_reduce_permutations()
 
     def check_total_num(self):
         total = 0
