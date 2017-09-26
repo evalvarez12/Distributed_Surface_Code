@@ -49,7 +49,7 @@ class NoiseModel:
                 continue
 
             # To improve readability keep the simpliest symbol
-            if "I" in k:
+            if k.count("I") > k_equiv.count("I"):
                 del self.pauli_basis[k_equiv]
             else:
                 del self.pauli_basis[k]
@@ -128,6 +128,9 @@ class NoiseModel:
         for v in self.chi.values():
             total += v
         return total
+
+    def reset_chi(self):
+        self.chi = {}
 
     def _chi_reduce_permutations(self):
         syms = list(self.chi.keys())

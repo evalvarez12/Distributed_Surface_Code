@@ -62,7 +62,8 @@ def combinations(n_operators, ops_positions, system_size):
         # Get the operator gate for each case
         for i in ops_permutations:
             # Both operator and symbol are saved
-            operators[i] = string_to_operator(i, ops_positions, system_size)
+            if i not in operators:
+                operators[i] = string_to_operator(i, ops_positions, system_size)
     return operators
 
 

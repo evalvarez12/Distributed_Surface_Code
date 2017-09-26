@@ -51,6 +51,11 @@ class TestPauliBasis(unittest.TestCase):
         res = pb.symbol_product(symA, symB)
         self.assertEqual(res, "XZZI")
 
+    def test_combinations(self):
+        system_size = 4
+        basis = pb.get_basis(list(range(system_size)), system_size)
+        print(len(basis))
+
 
 if __name__ == '__main__':
     unittest.main()
