@@ -15,8 +15,8 @@ cumulativeProbs, errs = errors.processErrors(errors.errTestVec, errors.errorStar
 
 class TestMatching(unittest.TestCase):
 
-    def test_weightNorm(self):
-        print(cumulativeProbs)
+    def test_weight_norm(self):
+        print(cumulative_probs)
         print(errs[0])
         print(errs[1])
         print(errs[2])

@@ -30,30 +30,30 @@ errorStar2 = [[1, [I, I]], [1, [I, X]], [-1, [I, Z]], [-1, [I, Y]],
               [-1, [Y, Y]], [1, [Z, X]], [1, [Y, X]], [-1, [X, X]]]
 
 
-errTestVec = [0.926639, 0.006904, 0.003904, 0.003904, 0.000012, 0.000024, 0.000012,
+err_test_vec = [0.926639, 0.006904, 0.003904, 0.003904, 0.000012, 0.000024, 0.000012,
               0.000048, 0.000048, 0.001062, 0.042477, 0.006868, 0.003904, 0.003904,
               0.000012, 0.000024, 0.000012, 0.000048, 0.000048, 0.000147]
 
-def processErrors(errorProbabilities, errorList):
+def process_errors(errorProbabilities, errorList):
             # TODO whats the point of this?
-            sortList = sorted(zip(errorProbabilities, errorList), reverse=True)
+            sort_list = sorted(zip(error_probabilities, error_list), reverse=True)
             # Separate errors and probabilities
-            probs, errors = zip(*sortList)
+            probs, errors = zip(*sort_list)
             # Cumulative probalities of the errors
-            cumulativeProbs = np.cumsum(np.array(probs))
+            cumulative_probs = np.cumsum(np.array(probs))
 
-            numberErrors = len(errorList)
-            measurementErr = np.zeros(numberErrors)
-            errQubit1 = np.zeros((numberErrors,2))
-            errQubit2 = np.zeros((numberErrors,2))
-            for i in range(numberErrors):
-                measurementErr[i] = errorList[i][0]
-                errQubit1[i] = errorList[i][1][0]
-                errQubit2[i] = errorList[i][1][1]
+            number_errors = len(error_list)
+            measurement_err = np.zeros(number_errors)
+            err_qubit1 = np.zeros((number_errors,2))
+            err_qubit2 = np.zeros((number_errors,2))
+            for i in range(number_errors):
+                measurement_err[i] = error_list[i][0]
+                err_qubit1[i] = error_list[i][1][0]
+                err_qubit2[i] = error_list[i][1][1]
 
             # Errors in shape:
             # [[e1X, e2X, e3X, ...], [e1Z, e2Z, e3Z, ...]]
-            errQubit1 = errQubit1.transpose()
-            errQubit2 = errQubit2.transpose()
-            errors = (measurementErr, errQubit1, errQubit2)
-            return cumulativeProbs, errors
+            err_qubit1 = err_qubit1.transpose()
+            err_qubit2 = err_qubit2.transpose()
+            errors = (measurement_err, err_qubit1, err_qubit2)
+            return cumulative_probs, errors

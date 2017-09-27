@@ -1,67 +1,47 @@
 import blossom5.pyMatch as pm
+import numpy as np
 
-
-# TODO is this important?
-# global time_lookup, weight_lookup
-#
-# timeCutOff = 15
-# spaceCutOff = 2 * 20
-#
-# time_lookup = {}
-# for t in range(cutoff + 1):
-#     time_lookup[t] = t
-#
-# weight_lookup = {}
-# for i in range(m):
-#     weight_lookup[i] = {}
-#     for j in range(m):
-#         diff = abs(i - j)
-#         weight_lookup[i][j] = min([diff, m-diff])
-
-
-
-def matchToric3D(size, anyons, weights=[1,1]):
-
+def match_toric3D(size, anyons, weights=[1,1]):
+    # TODO consideration when toroid and when planar
     if len(anyons)  == 0:
         return []
 
-    graph = makeGraphToric(size, anyons, weights)
-    print(anyons)
-    numberNodes = len(anyons)
-    print(graph)
+    graph = make_graph_toric(size, anyons, weights)
+    # print(graph)
     # matching: indexes to which anyon conects
-    matching = pm.getMatching(numberNodes, graph)
-    print(matching)
-    pairsInd = [[i, matching[i]] for i in range(numberNodes) if matching[i]>i]
-    print(pairsInd)
-    pairs = [] if len(pairsInd)==0 else [[anyons[p]] for p in pairsInd]
+    number_nodes = len(anyons)
+    matching = pm.getMatching(number_nodes, graph)
+    # print(matching)
+    pairs_ind = [[i, matching[i]] for i in range(number_nodes) if matching[i]>i]
+    # print(pairs_ind)
+    pairs = [] if len(pairs_ind)==0 else [anyons[p] for p in pairs_ind]
+    # Pairs format:
+    # np.array([[pair1, pair2], [pair1, pair2], ...])
+    return np.array(pairs)
 
-    return pairs
 
-
-def makeGraphToric(size, nodes, weights=[1, 1]):
-    numberNodes = len(nodes)
+def make_graph_toric(size, nodes, weights=[1, 1]):
+    # Nodes array format is:
+    # [[x1, y1, t1], [x2, y2, t2], [x3, y3, t3], ...]
+    number_nodes = len(nodes)
     # m is used to find shortest distance accros the toroid
     m = 2*size + 1
 
     # Spatial and time weights
-    wT, wS = weights
+    wt, ws = weights
 
     graph = []
-
-    # ind = np.arange(numberNodes)
-    # graph = [nodes - nodes[i+1:] for i in range(numberNodes)]
-    # graphIdexes = []
-    for i in range(numberNodes-1):
+    # TODO do without this loops?
+    for i in range(number_nodes-1):
         px, py, pt = nodes[i]
-        for j in range(i+1, numberNodes):
+        for j in range(i+1, number_nodes):
             qx, qy, qt = nodes[j]
 
-            difft = (qt - pt)*wT
+            difft = (qt - pt)*wt
             diffx = abs(qx - px)
-            diffx = min([diffx, m-diffx])*wS
-            diffy = abs(qy - qy)
-            diffy = min([diffy, m-diffy])*wS
+            diffx = min([diffx, m-diffx])*ws
+            diffy = abs(qy - py)
+            diffy = min([diffy, m-diffy])*ws
 
             weight = difft + diffx + diffy
             graph += [[i, j, weight]]

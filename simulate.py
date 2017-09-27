@@ -16,17 +16,22 @@ size = 3
 sc = surface_code.SurfaceCode(size)
 lc = layers.Layers(size)
 
-sc._applyNoiseQubit(.5, .5)
+sc._apply_noise_qubit(.2, 0)
 
-sc.measureAllStabilizer("star")
-sc.measureAllStabilizer("plaq")
+sc.measure_stabilizer_type("star")
+# sc.measure_stabilizer_type("plaq")
 
-lc.add(sc.getStars(), sc.getPlaqs())
+lc.add(sc.get_stars(), sc.get_plaqs())
 
 
-anyonStar, anyonPlaq = lc.findAnyons()
-print(anyonStar)
-# print(anyonPlaq)
+anyon_star, anyon_plaq = lc.find_anyons_all()
+print("Anyons________>")
+print(anyon_star)
+print("-----------------<")
+# print(anyon_plaq)
 
-match = matching.matchToric3D(size, anyonStar)
+match = matching.match_toric3D(size, anyon_star)
+print("Matchings------->")
 print(match)
+print("Decoding now----->")
+sc.correct_error("star", match)
