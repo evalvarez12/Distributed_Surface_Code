@@ -58,18 +58,13 @@ class SurfaceCode:
             self.number_stabs = distance**2
             self.side = 2*distance
 
-            ind1 = np.arange(1, self.side, 2)
-            ind2 = np.arange(0, self.side , 2)
-
-
-
-        if self.surface == "plannar":
+        elif self.surface == "planar":
             self.number_data_qubits = distance**2 + (distance - 1)**2
             self.number_stabs = (distance - 1)*distance
             self.side = 2*distance - 1
 
-            ind1 = np.arange(1, self.side, 2)
-            ind2 = np.arange(0, self.side - 1, 2)
+        ind1 = np.arange(1, self.side, 2)
+        ind2 = np.arange(0, self.side, 2)
 
         # Array with the quibits to mark erors
         # self.qubits[0] marks the X errors
@@ -141,7 +136,7 @@ class SurfaceCode:
 
         # TODO nearest indices func here: toroid planar
         t, b, l, r = self._stabilizer_qubits(pos)
-
+        print("b: ", b)
         vals_t = self.qubits[c][t[0], t[1]]
         vals_b = self.qubits[c][b[0], b[1]]
         vals_l = self.qubits[c][l[0], l[1]]
@@ -149,10 +144,10 @@ class SurfaceCode:
 
         if self.surface == "planar":
             # Invalidate the over border "results"
-            vals_t[np.where(t[0] == -2)] = 1
-            vals_b[np.where(b[0] == -2)] = 1
-            vals_l[np.where(l[1] == -2)] = 1
-            vals_r[np.where(r[1] == -2)] = 1
+            vals_t[np.where(t[0] == -1)] = 1
+            vals_b[np.where(b[0] == -1)] = 1
+            vals_l[np.where(l[1] == -1)] = 1
+            vals_r[np.where(r[1] == -1)] = 1
 
         self.qubits[0][pos[0], pos[1]] = (vals_t
                                           * vals_b
@@ -180,10 +175,10 @@ class SurfaceCode:
         elif self.surface == "planar":
             # Mark the list indices which go outside of the lattice
             # with -1 for latter removal
-            bottom[bottom > self.side] = -2
-            right[right > self.side] = -2
-            top[top <= -1] = -2
-            left[left <= -1] = -2
+            bottom[bottom >= self.side] = -1
+            right[right >= self.side] = -1
+            top[top <= -1] = -1
+            left[left <= -1] = -1
 
         return top, bottom, left, right
 
@@ -328,13 +323,15 @@ class SurfaceCode:
         if stabilizer == "star":
             data = self.qubits[0].copy()
             data[self.tags == "S"] *= 2
+            data[self.tags == "P"] = 1
         if stabilizer == "plaq":
             data = self.qubits[0].copy()
             data[self.tags == "Q"] = self.qubits[1][self.tags == "Q"]
             data[self.tags == "P"] *= 2
+            data[self.tags == "S"] = 1
 
         plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
-        plt.colorbar()
+        # plt.colorbar()
         plt.show()
 
     def reset(self):
@@ -365,8 +362,8 @@ class SurfaceCode:
             Z = [Z1, Z2]
         elif self.surface == "planar":
             # X first column - Z first row
-            X = np.prod(self.qubits[0, 0::2, 0])
-            Z = np.prod(self.qubits[1, 0, 0::2])
+            X = [np.prod(self.qubits[0, 0::2, 0])]
+            Z = [np.prod(self.qubits[1, 0, 0::2])]
         return X, Z
 
 
@@ -406,3 +403,8 @@ class SurfaceCode:
             print(stepsx)
             print(stepsy)
             self.qubits[c][stepsx, stepsy] *= -1
+
+    # def connect_coords(self, start, end, loop=False):
+    #     if loop:
+    #         distance = np.abs(end - start) % self.side
+    #     steps = np.arange(start, end, ::2)

@@ -1,9 +1,9 @@
 import blossom5.pyMatch as pm
 import numpy as np
 
-def match_toric3D(size, anyons, weights=[1,1]):
+def match_toric3D(size, anyons, weights=[1, 1]):
     # TODO consideration when toroid and when planar
-    if len(anyons)  == 0:
+    if len(anyons) == 0:
         return []
 
     graph = make_graph_toric(size, anyons, weights)
@@ -14,7 +14,7 @@ def match_toric3D(size, anyons, weights=[1,1]):
     # print(matching)
     pairs_ind = [[i, matching[i]] for i in range(number_nodes) if matching[i]>i]
     # print(pairs_ind)
-    pairs = [] if len(pairs_ind)==0 else [anyons[p] for p in pairs_ind]
+    pairs = [] if len(pairs_ind) == 0 else [anyons[p] for p in pairs_ind]
     # Pairs format:
     # np.array([[pair1, pair2], [pair1, pair2], ...])
     return np.array(pairs)
