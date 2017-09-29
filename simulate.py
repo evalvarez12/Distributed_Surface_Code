@@ -5,33 +5,47 @@ created-on: 23/07/17
 @author: eduardo
 """
 import numpy as np
-
+import matplotlib.pyplot as plt
 import surface_code
 import layers
 import matching
 
 
-size = 3
+distance = 20
+topology = "toroid"
 
-sc = surface_code.SurfaceCode(size)
-lc = layers.Layers(size)
+sc = surface_code.SurfaceCode(distance, topology)
+lc = layers.Layers(sc)
 
-sc._apply_noise_qubit(.2, 0)
-
+sc._apply_noise_qubit(.1, .0)
 sc.measure_stabilizer_type("star")
-# sc.measure_stabilizer_type("plaq")
+sc.measure_stabilizer_type("plaq")
 
-lc.add(sc.get_stars(), sc.get_plaqs())
+sc.plot("star")
 
+lc.add()
 
 anyon_star, anyon_plaq = lc.find_anyons_all()
 print("Anyons________>")
 print(anyon_star)
+print(anyon_plaq)
 print("-----------------<")
 # print(anyon_plaq)
 
-match = matching.match_toric3D(size, anyon_star)
+match_star = matching.match_toric3D(distance, anyon_star)
+match_plaq = matching.match_toric3D(distance, anyon_plaq)
+
 print("Matchings------->")
-print(match)
+# print(match)
 print("Decoding now----->")
-sc.correct_error("star", match)
+sc.correct_error("star", match_star)
+sc.correct_error("plaq", match_plaq)
+sc.measure_stabilizer_type("star")
+sc.measure_stabilizer_type("plaq")
+
+if (sc.qubits[0][sc.tags != "Q"] == -1).any():
+    print("FAILURE CORRECTING")
+else:
+    print("SUCCESS CORRECTION")
+print(sc.measure_logical())
+sc.plot("star")

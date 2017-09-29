@@ -20,11 +20,12 @@ class TestSurfaceCode(unittest.TestCase):
     """Test class for the surface code."""
 
     def test_structure(self):
+        print("-------------------Testing structure------------------------")
         stars_position = np.array([[0, 0, 0, 2, 2, 2, 4, 4, 4],
-                                  [0, 2, 4, 0, 2, 4, 0, 2, 4]])
+                                  [1, 3, 5, 1, 3, 5, 1, 3, 5]])
 
         plaqs_position = np.array([[1, 1, 1, 3, 3, 3, 5, 5, 5],
-                                  [1, 3, 5, 1, 3, 5, 1, 3, 5]])
+                                  [0, 2, 4, 0, 2, 4, 0, 2, 4]])
 
         np.testing.assert_array_equal(stars_position, sc.stars)
         np.testing.assert_array_equal(plaqs_position, sc.plaqs)
@@ -52,13 +53,13 @@ class TestSurfaceCode(unittest.TestCase):
         print(sc.qubits[0])
 
 
-    def test_two_rand_stab_qubits(self):
-        print("____________________________")
-        test_pos = np.array([[0, 1], [0, 2]])
-        a,b = sc._two_rand_stab_qubits(test_pos)
-        print(test_pos)
-        print(a)
-        print(b)
+    # def test_two_rand_stab_qubits(self):
+    #     print("____________________________")
+    #     test_pos = np.array([[0, 1], [0, 2]])
+    #     a,b = sc._two_rand_stab_qubits(test_pos)
+    #     print(test_pos)
+    #     print(a)
+    #     print(b)
 
     # def test_
 

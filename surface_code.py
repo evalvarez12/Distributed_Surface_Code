@@ -7,27 +7,26 @@ created on: 19/07/17
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import colors
 
 
 class SurfaceCode:
     """
     Surface code class for either the toric or planar surfaces.
 
-    STAR -- Q -- STAR -- Q -- STAR -- Q --
-    |            |            |
-    |            |            |
-    Q    PLAQ    Q    PLAQ    Q    PLAQ
-    |            |            |
-    |            |            |
-    STAR -- Q -- STAR -- Q -- STAR -- Q --
-    |            |            |
-    |            |            |
-    Q    PLAQ    Q    PLAQ    Q    PLAQ
-    |            |            |
-    |            |            |
-    STAR -- Q -- STAR -- Q -- STAR -- Q --
-    |            |            |
-    |            |            |
+    Q -- S -- Q -- S -- Q -- S --
+         |         |         |
+    P    Q    P    Q    P    Q
+         |         |         |
+    Q -- S -- Q -- S -- Q -- S --
+         |         |         |
+    P    Q    P    Q    P    Q
+         |         |         |
+    Q -- S -- Q -- S -- Q -- S --
+         |         |         |
+    P    Q    P    Q    P    Q
+         |         |         |
 
     Implements the operations:
         - Stabilizer measurement
@@ -40,7 +39,7 @@ class SurfaceCode:
     qubits[1] - Z error, stabilizer entries are not used
     """
 
-    def __init__(self, distance, surface="toroid"):
+    def __init__(self, distance, surface):
         """
         Init func.
 
@@ -54,42 +53,73 @@ class SurfaceCode:
         self.distance = distance
         self.surface = surface
         # TODO: this is for toroid check for plannar
-        self.number_qubits = 2*distance**2
-        self.number_stabilizers = distance**2
+        if self.surface == "toroid":
+            self.number_data_qubits = 2*distance**2
+            self.number_stabs = distance**2
+            self.side = 2*distance
+
+            ind1 = np.arange(1, self.side, 2)
+            ind2 = np.arange(0, self.side , 2)
+
+
+
+        if self.surface == "plannar":
+            self.number_data_qubits = distance**2 + (distance - 1)**2
+            self.number_stabs = (distance - 1)*distance
+            self.side = 2*distance - 1
+
+            ind1 = np.arange(1, self.side, 2)
+            ind2 = np.arange(0, self.side - 1, 2)
+
         # Array with the quibits to mark erors
         # self.qubits[0] marks the X errors
         # self.qubits[1] marks the Z erros
-        self.qubits = np.ones((2, 2*distance, 2*distance))
 
-        # Positions of all stabilizers
-        self.plaqs = []
-        self.stars = []
+        starsy, starsx = np.meshgrid(ind1, ind2)
+        plaqsy, plaqsx = np.meshgrid(ind2, ind1)
+
+        self.qubits = np.ones((2, self.side, self.side))
+
+        self.stars = np.vstack((starsx.flatten(), starsy.flatten()))
+        self.plaqs = np.vstack((plaqsx.flatten(), plaqsy.flatten()))
+
         # Array with tags: Q, S or P useful for indexing
-        self.tags = np.ones((2*distance, 2*distance), dtype=str)
+        self.tags = np.ones((self.side, self.side), dtype=str)
         self.tags.fill("Q")
-        for x in range(0, 2*distance, 2):
-            for y in range(0, 2*distance, 2):
-                self.tags[x, y] = "S"
-                self.tags[x+1, y+1] = "P"
-
-                self.stars += [[x, y]]
-                self.plaqs += [[x+1, y+1]]
-        self.stars = np.array(self.stars)
-        self.plaqs = np.array(self.plaqs)
+        self.tags[self.stars[0], self.stars[1]] = "S"
+        self.tags[self.plaqs[0], self.plaqs[1]] = "P"
 
         # Fill the unused second entries of the stabilizers
         # with a 9 to mark
-        self.qubits[1][self.tags != "Q"] = 9
-
-        # transform to [[x1,x2,x3,...],[y1,y2,y3,...]]
-        self.stars = self.stars.transpose()
-        self.plaqs = self.plaqs.transpose()
+        self.qubits[1][self.tags != "Q"] = 0
 
         # Generate insterspersed stabilizer positions
         self.stars_round1 = self.stars[:, ::2]
         self.stars_round2 = self.stars[:, 1::2]
         self.plaqs_round1 = self.plaqs[:, ::2]
         self.plaqs_round2 = self.plaqs[:, 1::2]
+
+        # Color map stuff for plot
+        self.cmap = colors.ListedColormap(['red', 'orange', 'white', 'green'])
+        bounds = [-2.5, -1.5, 0, 1.5, 2.5]
+        self.cmap_norm = colors.BoundaryNorm(bounds, self.cmap.N)
+
+        # NOTE DEPRECATED
+        # for x in range(0, 2*distance, 2):
+        #     for y in range(0, 2*distance, 2):
+        #         self.tags[x, y] = "S"
+        #         self.tags[x+1, y+1] = "P"
+        #
+        #         self.stars += [[x, y]]
+        #         self.plaqs += [[x+1, y+1]]
+        # self.stars = np.array(self.stars)
+        # self.plaqs = np.array(self.plaqs)
+
+
+        # # transform to [[x1,x2,x3,...],[y1,y2,y3,...]]
+        # self.stars = self.stars.transpose()
+        # self.plaqs = self.plaqs.transpose()
+
 
     def measure_stabilizer(self, pos, c, p_not_complete=0):
         """
@@ -111,18 +141,51 @@ class SurfaceCode:
 
         # TODO nearest indices func here: toroid planar
         t, b, l, r = self._stabilizer_qubits(pos)
-        self.qubits[0][pos[0], pos[1]] = (self.qubits[c][t[0], t[1]] *
-                                          self.qubits[c][b[0], b[1]] *
-                                          self.qubits[c][l[0], l[1]] *
-                                          self.qubits[c][r[0], r[1]])
 
-    def _incomplete_measuerement(self, pos, p_not_complete):
-        """Find stabilizers that are able to do a complete measurement."""
-        # Calculate stabilizers that dont complete the measurement
-        incomplete = (np.random.rand(len(pos)) < p_not_complete)
-        # Remove them from the positions list
-        new_pos = np.delete(pos, np.where(incomplete), 1)
-        return new_pos
+        vals_t = self.qubits[c][t[0], t[1]]
+        vals_b = self.qubits[c][b[0], b[1]]
+        vals_l = self.qubits[c][l[0], l[1]]
+        vals_r = self.qubits[c][r[0], r[1]]
+
+        if self.surface == "planar":
+            # Invalidate the over border "results"
+            vals_t[np.where(t[0] == -2)] = 1
+            vals_b[np.where(b[0] == -2)] = 1
+            vals_l[np.where(l[1] == -2)] = 1
+            vals_r[np.where(r[1] == -2)] = 1
+
+        self.qubits[0][pos[0], pos[1]] = (vals_t
+                                          * vals_b
+                                          * vals_l
+                                          * vals_r)
+        # NOTE DEPRECATED!
+        # self.qubits[0][pos[0], pos[1]] = (self.qubits[c][t[0], t[1]] *
+        #                                   self.qubits[c][b[0], b[1]] *
+        #                                   self.qubits[c][l[0], l[1]] *
+        #                                   self.qubits[c][r[0], r[1]])
+
+    def _stabilizer_qubits(self, pos):
+        """Find qubits corresponing to the given stabilizers."""
+        top = pos + np.array([[-1], [0]])
+        bottom = pos + np.array([[1], [0]])
+        left = pos + np.array([[0], [-1]])
+        right = pos + np.array([[0], [1]])
+
+        if self.surface == "toroid":
+            # Take the mod to account for cyclic boundaries
+            bottom = bottom % self.side
+            right = right % self.side
+            # Top and left are automatically accounted for
+            # when -1 is the index
+        elif self.surface == "planar":
+            # Mark the list indices which go outside of the lattice
+            # with -1 for latter removal
+            bottom[bottom > self.side] = -2
+            right[right > self.side] = -2
+            top[top <= -1] = -2
+            left[left <= -1] = -2
+
+        return top, bottom, left, right
 
     def measure_stabilizer_type(self, stabilizer, p_not_complete=0):
         """
@@ -135,45 +198,38 @@ class SurfaceCode:
         pos, c, t = self._select_stabilizer(stabilizer)
         self.measure_stabilizer(pos, c, p_not_complete)
 
+    def _incomplete_measuerement(self, pos, p_not_complete):
+        """Find stabilizers that are able to do a complete measurement."""
+        # Calculate stabilizers that dont complete the measurement
+        incomplete = (np.random.rand(len(pos)) < p_not_complete)
+        # Remove them from the positions list
+        new_pos = np.delete(pos, np.where(incomplete), 1)
+        return new_pos
+
     def _stabilizer_lie(self, tag, p_lie):
         """Add measurement errot to a type of stabilizers."""
         # Add measurement error
-        lie = 2*(np.random.rand(self.number_stabilizers) > p_lie) - 1
+        lie = 2*(np.random.rand(self.number_stabs) > p_lie) - 1
         self.qubits[0][self.tags == tag] *= lie
 
     def _stabilizer_lie_all(self, p_lie):
         """Add measurement error to BOTH stars and plaqs stabilizers."""
         # Add measurement error to BOTH stabilizers
-        lie = 2*(np.random.rand(2*self.number_stabilizers) > p_lie) - 1
-        self.qubits[0][self.tags != "Q"] *= lie
-
-    def _stabilizer_qubits(self, pos):
-        """Find qubits corresponing to the given stabilizers."""
-        top = pos + np.array([[-1], [0]])
-        bottom = pos + np.array([[1], [0]])
-        left = pos + np.array([[0], [-1]])
-        right = pos + np.array([[0], [1]])
-
-        if self.surface == "toroid":
-            bottom = bottom % (2*self.distance)
-            right = right % (2*self.distance)
-
-        # TODO add this plane
-        # if self.surface == "plane":
-
-        return top, bottom, left, right
+        self._stabilizer_lie("S", p_lie)
+        self._stabilizer_lie("P", p_lie)
 
     def _apply_noise_qubit(self, pX, pZ):
         """Apply random error to the data qubits."""
         # Create the noise elements
         p = np.array([[pX], [pZ]])
-        noise = 2*(np.random.rand(2, self.number_qubits) > p) - 1
+        noise = 2*(np.random.rand(2, self.number_data_qubits) > p) - 1
 
         # Apply the noise
         self.qubits[:, self.tags == "Q"] *= noise
 
     def _apply_operation_error(self, pos, error):
         """Apply operation error."""
+        # NOTE This will change
         pos_qubit1, pos_qubit2 = self.two_rand_stab_qubits(pos)
 
         err_measurement, err_qubit1, err_qubit2 = error
@@ -191,6 +247,7 @@ class SurfaceCode:
         Does a noisy measurement on the stabilizer type.
         The measurement is done in 2 rounds of interspersed stabilizers.
         """
+        # NOTE this will change
         # Specify stabilizer
         pos1, pos2, c, t = self._select_stabilizerRounds(stabilizer)
 
@@ -210,32 +267,33 @@ class SurfaceCode:
         self.operation_error(pos2, error_vec[err_index[len(pos1):]])
 
 
-    def _two_rand_stab_qubits(self, pos):
-        """Select to random corresponding qubits for each stabilizer."""
-        options = np.array([[-1, 0], [1, 0], [0, -1], [0, 1]])
-        # TODO optimize this for
-        # Draw the selected options
-        choices = np.array([np.random.choice([0, 1, 2, 3], 2, False) for i in range(len(pos[0]))])
-        choices = choices.transpose()
-        # print("-----------CHOICES--------")
-        # print(choices)
-        # print("--------------------------")
-        displacement1 = options[choices[0]].transpose()
-        displacement2 = options[choices[1]].transpose()
-
-        # Position of the selected qubits
-        a = pos + displacement1
-        b = pos + displacement2
-
-        # Adjust for surface type
-        if self.surface == "toroid":
-            a = a % (2*self.distance)
-            b = b % (2*self.distance)
-
-        # TODO add this plane
-        # if self.surface == "plane":
-
-        return a, b
+    # NOTE: This will be DEPRECATED
+    # def _two_rand_stab_qubits(self, pos):
+    #     """Select to random corresponding qubits for each stabilizer."""
+    #     options = np.array([[-1, 0], [1, 0], [0, -1], [0, 1]])
+    #     # TODO optimize this for
+    #     # Draw the selected options
+    #     choices = np.array([np.random.choice([0, 1, 2, 3], 2, False) for i in range(len(pos[0]))])
+    #     choices = choices.transpose()
+    #     # print("-----------CHOICES--------")
+    #     # print(choices)
+    #     # print("--------------------------")
+    #     displacement1 = options[choices[0]].transpose()
+    #     displacement2 = options[choices[1]].transpose()
+    #
+    #     # Position of the selected qubits
+    #     a = pos + displacement1
+    #     b = pos + displacement2
+    #
+    #     # Adjust for surface type
+    #     if self.surface == "toroid":
+    #         a = a % (2*self.distance)
+    #         b = b % (2*self.distance)
+    #
+    #     # TODO add this plane
+    #     # if self.surface == "plane":
+    #
+    #     return a, b
 
     def _select_stabilizer(self, stabilizer):
         """Return useful parameters for stabilizer type."""
@@ -251,7 +309,7 @@ class SurfaceCode:
         return pos, c, t
 
     def _select_stabilizer_rounds(self, stabilizer):
-        """Parameters for stabilizer type when using interspersed rounds."""
+        """Parameter for stabilizer type when using interspersed rounds."""
         if stabilizer == "star":
             pos1 = self.stars_round1
             pos2 = self.stars_round2
@@ -265,38 +323,58 @@ class SurfaceCode:
 
         return pos1, pos2, c, t
 
+    def plot(self, stabilizer):
+        """Plot the surface code."""
+        if stabilizer == "star":
+            data = self.qubits[0].copy()
+            data[self.tags == "S"] *= 2
+        if stabilizer == "plaq":
+            data = self.qubits[0].copy()
+            data[self.tags == "Q"] = self.qubits[1][self.tags == "Q"]
+            data[self.tags == "P"] *= 2
+
+        plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
+        plt.colorbar()
+        plt.show()
+
     def reset(self):
         """Reset surface code to default configuration."""
         self.qubits.fill(1)
-        self.qubits[1][self.tags != "Q"] = 9
+        self.qubits[1][self.tags != "Q"] = 0
 
     def get_stars(self):
-        """Get the position of  all star qubits."""
+        """Get the values of  all star qubits."""
         return self.qubits[0][self.tags == "S"]
 
     def get_plaqs(self):
-        """Get the positiono of all plaq qubits."""
+        """Get the values of all plaq qubits."""
         return self.qubits[0][self.tags == "P"]
 
     def measure_logical(self):
         """Meausure the logical qubits."""
-        # X1 first row - Z1 second row
-        X1 = np.prod(self.qubits[0, 0, 1::2])
-        Z1 = np.prod(self.qubits[1, 1, 0::2])
+        if self.surface == "toroid":
+            # TODO check here
+            # X1 second row - Z1 first row
+            X1 = np.prod(self.qubits[0, 1, 1::2])
+            Z1 = np.prod(self.qubits[1, 0, 0::2])
 
-        # X2 first column - Z1 second column
-        X2 = np.prod(self.qubits[0, 1::2, 0])
-        Z2 = np.prod(self.qubits[1, 0::2, 1])
-
-        return [[X1, X2], [Z1, Z2]]
+            # X2 first column - Z1 second column
+            X2 = np.prod(self.qubits[0, 0::2, 0])
+            Z2 = np.prod(self.qubits[1, 1::2, 1])
+            X = [X1, X2]
+            Z = [Z1, Z2]
+        elif self.surface == "planar":
+            # X first column - Z first row
+            X = np.prod(self.qubits[0, 0::2, 0])
+            Z = np.prod(self.qubits[1, 0, 0::2])
+        return X, Z
 
 
     def correct_error(self, error_type, match):
-        # TODO redo all  of this?
+        # TODO do for the plannar
         _, c, t = self._select_stabilizer(error_type)
 
-
-        m = 2*self.distance
+        m = self.side
         for pair in match:
             print("Pair:", pair)
             px, py, _ = pair[0]
