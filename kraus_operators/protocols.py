@@ -287,8 +287,9 @@ class Protocols:
         p_odd, rho_odd = self.collapse_ancillas_forced(rho, N,
                                                        N_ancillas,
                                                        projections_odd)
-        # return np.array([p_even, p_odd]), [rho_even, rho_odd]
-        return rho_even
+        p_odd = np.average(p_odd)
+        p_even = np.average(p_even)
+        return [p_even, p_odd], [rho_even, rho_odd]
 
     def stringent(self, rho_initial, parity_targets, stabilizer):
         """
@@ -340,8 +341,9 @@ class Protocols:
         p_odd, rho_odd = self.collapse_ancillas_forced(rho, N,
                                                        N_ancillas,
                                                        projections_odd)
-        # return np.array([p_even, p_odd]), [rho_even, rho_odd]
-        return rho_even
+        p_odd = np.average(p_odd)
+        p_even = np.average(p_even)
+        return [p_even, p_odd], [rho_even, rho_odd]
 
     def monolithic(self, rho_initial, parity_targets, stabilizer):
         """
@@ -376,5 +378,6 @@ class Protocols:
                                                        N,
                                                        N_ancillas,
                                                        [1])
-        # return np.array([p_even, p_odd]), [rho_even, rho_odd]
-        return rho_even
+        p_even = p_even[0]
+        p_odd = p_odd[0]
+        return [p_even, p_odd], [rho_even, rho_odd]

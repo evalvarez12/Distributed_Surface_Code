@@ -16,7 +16,7 @@ class NoiseModel:
     """
 
     def __init__(self, system_size, superoperator_function, parity):
-        """Init fucntion to prepare all required assets."""
+        """Init function to prepare all required assets."""
         # Create the initial state
         self.psi_basis = [self._choi_state_ket(system_size)]
         self.faulty_measurement = False
@@ -29,8 +29,8 @@ class NoiseModel:
         self.system_size = system_size
 
         # Apply the superoperator to the choi state
-        self.rho = self.psi_basis[0] * self.psi_basis[0].dag()
-        self.rho = superoperator_function(self.rho, self.targets, self.basis_parity)
+        self.rhos = self.psi_basis[0] * self.psi_basis[0].dag()
+        self.ps, self.rhos = superoperator_function(self.rhos, self.targets, self.basis_parity)
 
         # Empty dictionary to store the chi matrix
         self.chi = {}
@@ -111,12 +111,17 @@ class NoiseModel:
         for k, v in self.pauli_basis.items():
             if self.faulty_measurement:
                 # Decomposition when no faulty measurement
-                symOK = k + "_OK"
-                self.chi[symOK] = self._fidelity(self.rho, v * self.psi_basis[0])
-
+                sym_ok = k + "_OK"
+                f_even_ok = self._fidelity(self.rhos[0], v * self.psi_basis[0])
+                f_odd_ok = self._fidelity(self.rhos[1], v * self.psi_basis[1])
+                self.chi[sym_ok] = (self.ps[0] * f_even_ok
+                                   + self.ps[1] * f_odd_ok)
                 # Decomposition when there is a faulty measurement
-                symNOK = k + "_NOK"
-                self.chi[symNOK] = self._fidelity(self.rho, v * self.psi_basis[1])
+                sym_lie = k + "_LIE"
+                f_even_lie = self._fidelity(self.rhos[0], v * self.psi_basis[1])
+                f_odd_lie = self._fidelity(self.rhos[1], v * self.psi_basis[0])
+                self.chi[sym_lie] = (self.ps[0] * f_even_lie
+                                    + self.ps[1] * f_odd_lie)
             else:
                 # Decompose through all the Pauli basis
                 self.chi[k] = self._fidelity(self.rho, v * self.psi_basis[0])
@@ -145,9 +150,9 @@ class NoiseModel:
             residue = ""
 
             if self.faulty_measurement:
-                if "N" in symbol:
-                    symbol = symbol.replace("_NOK", "")
-                    residue = "_NOK"
+                if "L" in symbol:
+                    symbol = symbol.replace("_LIE", "")
+                    residue = "_LIE"
                 else:
                     symbol = symbol.replace("_OK", "")
                     residue = "_OK"

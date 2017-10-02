@@ -11,13 +11,13 @@ import layers
 import matching
 
 
-distance = 5
-topology = "planar"
+distance = 40
+topology = "toroid"
 
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
-for i in range(1):
-    sc._apply_noise_qubit(.09, .0)
+for i in range(3):
+    sc._apply_noise_qubit(.1, .0)
     sc.measure_stabilizer_type("star")
     sc.measure_stabilizer_type("plaq")
 
