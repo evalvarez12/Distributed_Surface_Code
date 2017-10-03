@@ -4,18 +4,18 @@ import protocols
 
 # Set error values
 ps = 0.0
-pm = 0.006
-pg = 0.006
+pm = 0.0075
+pg = 0.0075
 pn = 0.1
 
 # Initial parameters
-system_size = 3
+system_size = 4
 parity = "X"
 
 # Initialize objects
 prot = protocols.Protocols(ps, pm, pg, pn)
 # Model takes the superoperator as a parameter
-model = noise_modeling.NoiseModel(system_size, prot.expedient, parity)
+model = noise_modeling.NoiseModel(system_size, prot.stringent, parity)
 
 # Calculate chi matrix
 model.separate_basis_parity()

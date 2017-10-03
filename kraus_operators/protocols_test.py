@@ -50,27 +50,3 @@ for i in range(2):
 rho_initial = rho_initial * rho_initial.dag()
 a = prot.stringent(rho_initial, [0, 1, 2], "X")
 b = prot.expedient(rho_initial, [0, 1, 2], "X")
-
-
-# print("----------------PARITY MEASUREMENT-------------")
-# psi = qt.bell_state('00')
-# targets = [0, 2]
-# psi_collapsed = prot.parity_projection_ket(psi, targets, 1, "Z")
-# print(psi_collapsed)
-#
-#
-# print("--------------PERFECT COMPARATION-------------")
-# # Compare parity measurements with perfect case
-# psi = qt.tensor(qt.bell_state('00'), qt.bell_state('00'))
-# psi = qt.tensor(psi, psi)
-# targets = [0, 2, 4, 6]
-# psi_ref0 = prot_perf.parity_projection_ket(psi, targets, 0, "Z")
-# rho_ref0 = psi_ref0 * psi_ref0.dag()
-# psi_ref1 = prot_perf.parity_projection_ket(psi, targets, 1, "Z")
-# rho_ref1 = psi_ref1 * psi_ref1.dag()
-
-#
-# m, rho_perf = prot_perf.monolithic(psi * psi.dag(), targets, "Z")
-# print(m)
-# print(rho_ref0 == rho_perf)
-# print(rho_ref1 == rho_perf)

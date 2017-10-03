@@ -3,6 +3,7 @@ Routines for creating the protocols: EXPEDIENT, STRINGENT and MONOLITHIC
 """
 import qutip as qt
 import numpy as np
+import itertools
 import error_models as errs
 import operations as ops
 
@@ -338,6 +339,13 @@ class Protocols:
 
         return rho
 
+    def twirl_ghz(self, ghz):
+        N = len(ghz.dims[0])
+        twirled_state = ghz * 0
+        permutations = itertools.permutations(range(N), N)
+        for p in permutations:
+            twirled_state += ghz.permute(p)
+        return twirled_state/np.math.factorial(N)
 
     def measure_ghz_stabilizer(self, rho_initial, ghz, parity_targets, stabilizer):
         # Apply two qubit gates
@@ -370,6 +378,7 @@ class Protocols:
         # in the state to be parity measured
         N_parity = len(parity_targets)
         ghz = self.make_ghz_expedient(N_parity)
+        ghz = self.twirl_ghz(ghz)
         return self.measure_ghz_stabilizer(rho_initial, ghz,
                                            parity_targets,
                                            stabilizer)
@@ -383,6 +392,7 @@ class Protocols:
         # in the state to be parity measured
         N_parity = len(parity_targets)
         ghz = self.make_ghz_stringent(N_parity)
+        ghz = self.twirl_ghz(ghz)
         return self.measure_ghz_stabilizer(rho_initial, ghz,
                                            parity_targets,
                                            stabilizer)
