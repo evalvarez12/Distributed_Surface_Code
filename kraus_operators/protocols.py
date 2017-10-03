@@ -212,7 +212,8 @@ class Protocols:
 
         # Apply CNOT gates
         controls = [N-1, N-2]
-        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits,
+        rho = self.apply_two_qubit_gates(rho, N, controls,
+                                         operation_qubits,
                                          sigma)
 
         # Measure this procedures ancillas
@@ -239,49 +240,19 @@ class Protocols:
 
         # Apply CNOT gates
         controls = [N-1, N-2]
-        rho = self.apply_two_qubit_gates(rho, N, controls, operation_qubits, sigma)
+        rho = self.apply_two_qubit_gates(rho, N, controls,
+                                         operation_qubits,
+                                         sigma)
 
         # Extra round of single selection
         _, rho = self.single_selection(rho, [N-1, N-2], "Z")
 
         # Measure this procedures ancillas
         projections = [0] * N_ancillas
-        probs, collapsed_rho = self.collapse_ancillas_forced(rho, N, N_ancillas, projections)
+        probs, collapsed_rho = self.collapse_ancillas_forced(rho, N,
+                                                             N_ancillas,
+                                                             projections)
         return probs, collapsed_rho
-
-    def make_ghz4_expedient_DEPREC(self):
-        """
-        Perform the expedient protocol to generate a GHZ sate of four qubits.
-        Uses 12 ancillas.
-        """
-        N_ancillas = 4
-        # Phase 1
-        # First pair Bell state purification
-        rho = self.generate_bell_pair()
-        N = len(rho.dims[0])
-        operational_ancillas = [N-1, N-2]
-        _, rho = self.double_selection(rho, operational_ancillas, "Z")
-        _, rho = self.double_selection(rho, operational_ancillas, "X")
-
-        # Second pair Bell state purification
-        rho = self.append_bell_pair(rho)
-        N = len(rho.dims[0])
-        operational_ancillas = [N-1, N-2]
-        _, rho = self.double_selection(rho, operational_ancillas, "Z")
-        _, rho = self.double_selection(rho, operational_ancillas, "X")
-
-        # Phase 2
-        # Define pairs to form the GHZ state
-        pair1 = [N-1, N-3]
-        pair2 = [N-2, N-4]
-        # Pair 1 operations
-        _, rho = self.one_dot(rho, pair1, "Z")
-        _, rho = self.one_dot(rho, pair1, "Z")
-
-        #Pair 2 operations
-        _, rho = self.one_dot(rho, pair2, "Z")
-        _, rho = self.one_dot(rho, pair2, "Z")
-        return rho
 
     def make_ghz_expedient(self, N_ghz):
         """
@@ -316,7 +287,6 @@ class Protocols:
 
         # Define pairs to form the GHZ state
         pairs = [[i, i + 2] for i in range(N_ghz - 2)]
-        print(pairs)
         # Perform the pair operations
         for p in pairs:
             _, rho = self.one_dot(rho, p, "Z")
@@ -324,32 +294,81 @@ class Protocols:
 
         return rho
 
+    def make_ghz_stringent(self, N_ghz):
+        """
+        Perform the expedient protocol to generate a GHZ sate of four qubits.
+        Uses 12 ancillas.
+        """
+        if N_ghz < 2:
+            raise ValueError("Number of qubits in GHZ invalid")
+
+        # Calculate number of bell pairs required
+        N_pairs = np.int(N_ghz / 2)
+
+        # Phase 1
+        # Make first pair Bell state purification
+        rho = self.generate_bell_pair()
+        N = len(rho.dims[0])
+        operational_ancillas = [N-1, N-2]
+        _, rho = self.double_selection(rho, operational_ancillas, "Z")
+        _, rho = self.double_selection(rho, operational_ancillas, "X")
+        _, rho = self.two_dots(rho, operational_ancillas, "Z")
+        _, rho = self.two_dots(rho, operational_ancillas, "X")
+
+        # Additional Bell states purification
+        for i in range(N_pairs - 1):
+            rho = self.append_bell_pair(rho)
+            N = len(rho.dims[0])
+            operational_ancillas = [N-1, N-2]
+            _, rho = self.double_selection(rho, operational_ancillas, "Z")
+            _, rho = self.double_selection(rho, operational_ancillas, "X")
+            _, rho = self.two_dots(rho, operational_ancillas, "Z")
+            _, rho = self.two_dots(rho, operational_ancillas, "X")
+
+        # Append single qubit if number of qubits is not pair
+        if N_ghz % 2:
+            rho = qt.tensor(rho, self.generate_noisy_plus())
+
+        # Define pairs to form the GHZ state
+        pairs = [[i, i + 2] for i in range(N_ghz - 2)]
+        # Perform the pair operations
+        for p in pairs:
+            _, rho = self.two_dots(rho, p, "Z")
+            _, rho = self.two_dots(rho, p, "Z")
+
+        return rho
+
+
     def measure_ghz_stabilizer(self, rho_initial, ghz, parity_targets, stabilizer):
         # Apply two qubit gates
         N_ghz = len(ghz.dims[0])
         rho = qt.tensor(rho_initial, ghz)
         N = len(rho.dims[0])
+        # Controls are the last qubits in rho
         controls = list(range(N - N_ghz, N))
-        # controls = [N-1, N-2, N-3, N-4]
         rho = self.apply_two_qubit_gates(rho, N, controls,
                                          parity_targets, stabilizer)
-        projections_even = [0, 0, 0, 0]
+        projections_even = [0] * N_ghz
         p_even, rho_even = self.collapse_ancillas_forced(rho, N,
                                                          N_ghz,
                                                          projections_even)
-        projections_odd = [0, 1, 1, 1]
+        projections_odd = [0] * N_ghz
+        projections_odd[-1] = 1
         p_odd, rho_odd = self.collapse_ancillas_forced(rho, N,
                                                        N_ghz,
                                                        projections_odd)
-        p_odd = np.average(p_odd)
-        p_even = np.average(p_even)
+        p_odd = p_odd[-1]
+        p_even = p_even[-1]
         return [p_even, p_odd], [rho_even, rho_odd]
 
-    def expedient(self, rho_initial, N_parity, parity_targets, stabilizer):
+    def expedient(self, rho_initial, parity_targets, stabilizer):
         """
         Perform the expedient protocol.
         Uses 4 data qubits and 12 ancillas.
         """
+        # GHZ number of qubits is same as the number of qubits
+        # in the state to be parity measured
+        N_parity = len(parity_targets)
         ghz = self.make_ghz_expedient(N_parity)
         return self.measure_ghz_stabilizer(rho_initial, ghz,
                                            parity_targets,
@@ -358,58 +377,17 @@ class Protocols:
     def stringent(self, rho_initial, parity_targets, stabilizer):
         """
         Perform the stringent protocol.
-        Uses 4 data qubits and 12 ancillas.
+        Uses 4 ancillas per data qubit at maximum.
         """
-        N_ancillas = 4
-        # Phase 1
-        # First pair Bell state purification
-        rho = self.append_bell_pair(rho_initial)
-        N = len(rho.dims[0])
-        operational_ancillas = [N-1, N-2]
-        _, rho = self.double_selection(rho, operational_ancillas, "Z")
-        _, rho = self.double_selection(rho, operational_ancillas, "X")
-        _, rho = self.two_dots(rho, operational_ancillas, "Z")
-        _, rho = self.two_dots(rho, operational_ancillas, "X")
+        # GHZ number of qubits is same as the number of qubits
+        # in the state to be parity measured
+        N_parity = len(parity_targets)
+        ghz = self.make_ghz_stringent(N_parity)
+        return self.measure_ghz_stabilizer(rho_initial, ghz,
+                                           parity_targets,
+                                           stabilizer)
 
-        # Second pair Bell state purification
-        rho = self.append_bell_pair(rho)
-        N = len(rho.dims[0])
-        operational_ancillas = [N-1, N-2]
-        _, rho = self.double_selection(rho, operational_ancillas, "Z")
-        _, rho = self.double_selection(rho, operational_ancillas, "X")
-        _, rho = self.two_dots(rho, operational_ancillas, "Z")
-        _, rho = self.two_dots(rho, operational_ancillas, "X")
-
-        # Phase 2
-        # Define pairs to form the GHZ state
-        pair1 = [N-1, N-3]
-        pair2 = [N-2, N-4]
-        # Pair 1 operations
-        _, rho = self.two_dots(rho, pair1, "Z")
-        _, rho = self.two_dots(rho, pair1, "Z")
-
-        # Pair 2 operations
-        _, rho = self.two_dots(rho, pair2, "Z")
-        _, rho = self.two_dots(rho, pair2, "Z")
-
-        # Phase 3
-        # Apply two qubit gates
-        controls = [N-1, N-2, N-3, N-4]
-        targets = parity_targets
-        rho = self.apply_two_qubit_gates(rho, N, controls, targets, stabilizer)
-        projections_even = [0, 0, 0, 0]
-        p_even, rho_even = self.collapse_ancillas_forced(rho, N,
-                                                         N_ancillas,
-                                                         projections_even)
-        projections_odd = [0, 1, 1, 1]
-        p_odd, rho_odd = self.collapse_ancillas_forced(rho, N,
-                                                       N_ancillas,
-                                                       projections_odd)
-        p_odd = np.average(p_odd)
-        p_even = np.average(p_even)
-        return [p_even, p_odd], [rho_even, rho_odd]
-
-    def monolithic(self, rho_initial, parity_targets, stabilizer):
+    def local_stabilizer(self, rho_initial, parity_targets, stabilizer):
         """
         Perform the monolithic stabilizer protocol.
         Uses 4 data qubits and 1 ancillas.
@@ -417,9 +395,6 @@ class Protocols:
         # Append the initialized ancilla to the state|
         # NOTE: Naomi starts adding error to the initialized
         ancilla = self.generate_noisy_plus()
-
-        # ancilla = qt.snot() * qt.basis(2, 0)
-        # ancilla = ancilla * ancilla.dag()
         rho = qt.tensor(rho_initial, ancilla)
         N = len(rho.dims[0])
         N_ancillas = 1

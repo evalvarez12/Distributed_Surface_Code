@@ -6,8 +6,7 @@ rho = errs.bell_pair(.4)
 rho_ideal = qt.bell_state("00")
 # print(de.fidelity(rho, rho_ideal))
 
-prot = protocols.Protocols(0.1, 0.1, 0.1, .1)
-prot_ideal = protocols.Protocols(0, 0, 0, 0)
+prot = protocols.Protocols(0.01, 0.01, 0.01, .01)
 prot_perf = protocols.Protocols(0., 0., 0., 0.,)
 
 print("------------------SINGLE SELECTION-------------------")
@@ -35,15 +34,22 @@ print("p = ", p)
 print(qt.fidelity(double, rho_ideal))
 
 
-
-print("-----------------MONOLITHIC------------------")
-rho_initial = qt.snot() * qt.basis(2, 1)
+print("-----------------LOCAL STABILIZER------------------")
+rho_initial = qt.snot() * qt.basis(2, 0)
 for i in range(3):
-    rho_initial = qt.tensor(rho_initial, qt.snot()*qt.basis(2, 1))
+    rho_initial = qt.tensor(rho_initial, qt.snot() * qt.basis(2, 1))
 rho_initial = rho_initial * rho_initial.dag()
-m, rho = prot.monolithic(rho_initial, [0, 1, 2, 3], "X")
+m, rho = prot_perf.local_stabilizer(rho_initial, [0, 1, 2, 3], "X")
 print(rho)
 print(m)
+
+print("--------------STRINGENT/EXPEDIENT")
+rho_initial = qt.snot() * qt.basis(2, 0)
+for i in range(2):
+    rho_initial = qt.tensor(rho_initial, qt.snot() * qt.basis(2, 1))
+rho_initial = rho_initial * rho_initial.dag()
+a = prot.stringent(rho_initial, [0, 1, 2], "X")
+b = prot.expedient(rho_initial, [0, 1, 2], "X")
 
 
 # print("----------------PARITY MEASUREMENT-------------")

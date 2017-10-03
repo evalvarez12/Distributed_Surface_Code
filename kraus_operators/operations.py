@@ -92,10 +92,10 @@ def forced_measure_single_Zbasis(rho, N=1, pos=0, project=0, dimRed=False):
             dimentions N - 1
     """
     # Calculate the actual probability of doing the measurement
-    p = p_measurement_single_Zbasis(rho, 0, N, pos, dimRed)
+    p = p_measurement_single_Zbasis(rho, project, N, pos, dimRed)
     # print("P", project, p)
-    if p == 0:
-        raise ZeroDivisionError("p = 0!")
+    # if p == 0:
+    #     raise ZeroDivisionError("p = 0!")
     # Draw the measurement
     collapsed_rho = collapse_single_Zbasis(rho, project, N, pos, dimRed)
     if collapsed_rho.tr() != 0:
@@ -146,8 +146,9 @@ def p_measurement_single_Zbasis(rho, measure, N=1, pos=0, dimRed=False):
     """
     Calculate the probability of measuring the value "measure".
     """
-    p = projector_single_qubit_Zbasis(measure, N, pos)
-    return (p * rho * p.dag()).tr()
+    P = projector_single_qubit_Zbasis(measure, N, pos)
+    p = (P * rho * P.dag()).tr()
+    return p
 
 
 def projector_single_qubit_Zbasis_dimRed(project, N=1, pos=0):
