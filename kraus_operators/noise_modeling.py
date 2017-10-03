@@ -38,7 +38,7 @@ class NoiseModel:
 
     def save_chi(self, file_name):
         pickle_out = open("data/" + file_name, "wb")
-        picke.dump(self.chi, pickle_out)
+        pickle.dump(self.chi, pickle_out)
         pickle_out.close()
 
     def _remove_sym_pauli_basis(self):

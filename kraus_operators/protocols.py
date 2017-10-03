@@ -8,7 +8,6 @@ import error_models as errs
 import operations as ops
 
 class Protocols:
-    #TODO: separate GHZ creation and stabilizer measurement parts.
     """
     Class for holding all protocols.
 
@@ -21,6 +20,13 @@ class Protocols:
     """
 
     def __init__(self, ps, pm, pg, pn):
+        self.ps = ps
+        self.pm = pm
+        self.pg = pg
+        self.pn = pn
+
+    def change_parameters(self, ps, pm, pg, pn):
+        """Function to change the parameters of all the operations."""
         self.ps = ps
         self.pm = pm
         self.pg = pg
