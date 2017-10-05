@@ -1,7 +1,7 @@
-import decompose
+import generate
 
 
-generator = decompose.Generator()
+generator = generate.Generator()
 
 # Initial parameters
 ps = 0.0
@@ -13,5 +13,4 @@ parity = "X"
 function = "LOCAL"
 
 # Calculate chi matrix
-model = decompose.Generator()
 chi = generator.ask_model(ps=ps, pm=pm, pg=pg, pn=pn, stab_size=system_size, parity="X", protocol=function)

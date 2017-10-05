@@ -54,7 +54,7 @@ class NoiseModel:
             if k_equiv not in self.pauli_basis:
                 continue
 
-            # To improve readability keep the simpliest symbol
+            # To improve readability keep the simpNOKst symbol
             if k.count("I") > k_equiv.count("I"):
                 del self.pauli_basis[k_equiv]
             else:
@@ -123,11 +123,11 @@ class NoiseModel:
                 self.chi[sym_ok] = (self.ps[0] * f_even_ok
                                    + self.ps[1] * f_odd_ok)
                 # Decomposition when there is a faulty measurement
-                sym_lie = k + "_LIE"
-                f_even_lie = self._fidelity(self.rhos[0], v * self.psi_basis[1])
-                f_odd_lie = self._fidelity(self.rhos[1], v * self.psi_basis[0])
-                self.chi[sym_lie] = (self.ps[0] * f_even_lie
-                                    + self.ps[1] * f_odd_lie)
+                sym_NOK = k + "_NOK"
+                f_even_NOK = self._fidelity(self.rhos[0], v * self.psi_basis[1])
+                f_odd_NOK = self._fidelity(self.rhos[1], v * self.psi_basis[0])
+                self.chi[sym_NOK] = (self.ps[0] * f_even_NOK
+                                    + self.ps[1] * f_odd_NOK)
             else:
                 # Decompose through all the Pauli basis
                 self.chi[k] = self._fidelity(self.rho, v * self.psi_basis[0])
@@ -156,9 +156,9 @@ class NoiseModel:
             residue = ""
 
             if self.faulty_measurement:
-                if "L" in symbol:
-                    symbol = symbol.replace("_LIE", "")
-                    residue = "_LIE"
+                if "N" in symbol:
+                    symbol = symbol.replace("_NOK", "")
+                    residue = "_NOK"
                 else:
                     symbol = symbol.replace("_OK", "")
                     residue = "_OK"

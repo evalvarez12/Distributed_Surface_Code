@@ -11,12 +11,12 @@ import layers
 import matching
 
 
-distance = 40
-topology = "toroid"
+distance = 10
+topology = "planar"
 
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
-for i in range(3):
+for i in range(1):
     sc._apply_noise_qubit(.1, .0)
     sc.measure_stabilizer_type("star")
     sc.measure_stabilizer_type("plaq")
@@ -27,8 +27,8 @@ for i in range(3):
 
     anyon_star, anyon_plaq = lc.find_anyons_all()
     print("Anyons________>")
-    print(anyon_star)
-    print(anyon_plaq)
+    # print(anyon_star)
+    # print(anyon_plaq)
     print("-----------------<")
     # print(anyon_plaq)
 
@@ -36,7 +36,7 @@ for i in range(3):
     match_plaq = matching.match_toric3D(distance, anyon_plaq)
 
     print("Matchings------->")
-    # print(match)
+    print(match_star)
     print("Decoding now----->")
     sc.correct_error("star", match_star)
     sc.correct_error("plaq", match_plaq)

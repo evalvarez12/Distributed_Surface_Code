@@ -135,8 +135,8 @@ class SurfaceCode:
             pos = self._incomplete_measuerement(pos, p_not_complete)
 
         # TODO nearest indices func here: toroid planar
+        # TODO replace this with fancy indexing
         t, b, l, r = self._stabilizer_qubits(pos)
-        print("b: ", b)
         vals_t = self.qubits[c][t[0], t[1]]
         vals_b = self.qubits[c][b[0], b[1]]
         vals_l = self.qubits[c][l[0], l[1]]
@@ -144,6 +144,7 @@ class SurfaceCode:
 
         if self.surface == "planar":
             # Invalidate the over border "results"
+            # NOTE this needs to change
             vals_t[np.where(t[0] == -1)] = 1
             vals_b[np.where(b[0] == -1)] = 1
             vals_l[np.where(l[1] == -1)] = 1
@@ -236,6 +237,20 @@ class SurfaceCode:
 
         # Apply error to stabilizer
         self.qubitts[0][pos[0], pos[1]] *= err_measurement
+
+    def operation_error(self, pos, stabilizer):
+        pos, measurement_err, qubit_err = self.errors.get_errors(pos,
+                                                                 stabilizer)
+
+        # NOTE Working here
+        self.qubits[:, pos_qubit1[0], pos_qubit1[1]] *= err_qubit1
+        self.qubits[:, pos_qubit2[0], pos_qubit2[1]] *= err_qubit2
+
+
+        # Apply error to stabilizer
+        self.qubitts[0][pos[0], pos[1]] *= err_measurement
+
+
 
     def noisy_measurement(self, stabilizer, error_vec, error_sum, p_not_complete=0):
         """
@@ -368,43 +383,61 @@ class SurfaceCode:
 
 
     def correct_error(self, error_type, match):
-        # TODO do for the plannar
         _, c, t = self._select_stabilizer(error_type)
 
-        m = self.side
-        for pair in match:
-            print("Pair:", pair)
-            px, py, _ = pair[0]
-            qx, qy, _ = pair[1]
+        #Taking the transpose of match gives:
+        # [[[p1x, p2x, p3x, ...], [q1x, q2x, q3x, ...]],
+        #  [[p1y, p2y, p3y, ...], [q1y, q2y, q3y, ...]],
+        #  [[p1t, p2t, p3t, ...], [q1t, q2t, q3t, ...]]]
+        match = match.transpose()
 
-            dx = (qx - px) % m
-            dy = (qy - py) % m
+        # Distances in each coordinate
+        dx = np.abs(match[0][0] - match[0][1])
+        dy = np.abs(match[1][0] - match[1][1])
+        dt = np.abs(match[2][0] - match[2][1])
 
-            if dx < m - dx:
-                endx = qx
-                stepsx = np.arange(1, dx, 2)
-                stepsx = (stepsx + px) % m
-                coord_y = np.ones_like(stepsx)*py
-            else:
-                endx = px
-                stepsx = np.arange(1, m - dx, 2)
-                stepsx = (stepsx + qx) % m
-                coord_y = np.ones_like(stepsx)*qy
 
-            if dy < m - dy:
-                stepsy = (np.arange(1, dy, 2) + py) % m
+        if self.surface == "planar":
+            for i in range(len(dx)):
+                # Start and end points of the path
+                startx = match[0][0][i]
+                endx = match[0][1][i]
+                starty = match[1][0][i]
+                # Create steps and join them
+                stepsx = np.arange(1, dx[i], 2) + startx
+                stepsy = np.arange(1, dy[i], 2) + starty
+                stepsx = np.append(stepsx, [endx] * len(stepsy))
+                stepsy = np.append([starty] * len(stepsx), stepsy)
 
-            else:
-                stepsy = (np.arange(1, m - dy, 2) + qy) % m
+                # Apply error correction path
+                self.qubits[c][stepsx, stepsy] *= -1
 
-            stepsx = np.append(stepsx, [endx] * len(stepsy)).astype(int)
-            stepsy = np.append(coord_y, stepsy).astype(int)
+        elif self.surface == "toroid":
+            for i in range(len(dx)):
 
-            print(stepsx)
-            print(stepsy)
-            self.qubits[c][stepsx, stepsy] *= -1
+                if dx[i] < self.distance:
+                    # "Normal" path in the surface
+                    startx = match[0][0][i]
+                    endx = match[0][1][i]
+                else:
+                    # Path in the far side of the torus
+                    d = dx[i] % self.distance
+                    startx = match[0][1][i]
+                    endx = match[0][0][i]
 
-    # def connect_coords(self, start, end, loop=False):
-    #     if loop:
-    #         distance = np.abs(end - start) % self.side
-    #     steps = np.arange(start, end, ::2)
+                stepsx = np.arange(1, dx[i], 2) + startx
+                stepsx = stepsx % self.side
+
+                if dy[i] < self.distance:
+                    starty = match[1][0][i]
+                else:
+                    d = dy[i] % self.distance
+                    starty = match[1][1][i]
+                stepsy = np.arange(1, dy[i], 2) + starty
+                stepsy = stepsy % self.side
+                # Join all stepss
+                stepsx = np.append(stepsx, [endx] * len(stepsy))
+                stepsy = np.append([starty] * len(stepsx), stepsy)
+
+                # Apply error correction path
+                self.qubits[c][stepsx, stepsy] *= -1

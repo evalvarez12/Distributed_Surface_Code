@@ -1,7 +1,7 @@
 import noise_modeling
 import protocols
 import pickle
-
+import os
 
 class Generator:
     def __init__(self):
@@ -41,7 +41,9 @@ class Generator:
         param_names = "_".join(param_names)
         file_name = [protocol, parity, str(stab_size)]
         file_name = "_".join(file_name)
-        file_name = "data/" + file_name + "_" + param_names + ".dict"
+        script_path = os.path.dirname(os.path.realpath(__file__))
+        file_name = (script_path + "/data/" + file_name
+                     + "_" + param_names + ".dict")
         return file_name
 
     def load_model(self, ps, pm, pg, pn, stab_size, parity, protocol):
