@@ -63,6 +63,8 @@ class SurfaceCode:
             self.number_stabs = (distance - 1)*distance
             self.side = 2*distance - 1
 
+
+
         ind1 = np.arange(1, self.side, 2)
         ind2 = np.arange(0, self.side, 2)
 
@@ -83,10 +85,21 @@ class SurfaceCode:
         self.tags.fill("Q")
         self.tags[self.stars[0], self.stars[1]] = "S"
         self.tags[self.plaqs[0], self.plaqs[1]] = "P"
-
         # Fill the unused second entries of the stabilizers
         # with a 9 to mark
-        self.qubits[1][self.tags != "Q"] = 0
+        self.qubits[1, self.tags != "Q"] = 0
+
+
+        # Plane tags to mark boundary stabilizers
+        # Only for planar topology
+        if self.surface == "planar":
+            self.plane = np.ones((self.side, self.side), dtype=str)
+            self.plane.fill("o")
+            self.plane[0] = "t"
+            self.plane[-1] = "b"
+            self.plane[:, 0] = "l"
+            self.plane[:, -1] = "r"
+            self.plane[self.tags == "Q"] = "-"
 
         # Generate insterspersed stabilizer positions
         self.stars_round1 = self.stars[:, ::2]
@@ -114,7 +127,16 @@ class SurfaceCode:
         # # transform to [[x1,x2,x3,...],[y1,y2,y3,...]]
         # self.stars = self.stars.transpose()
         # self.plaqs = self.plaqs.transpose()
+    def measure_stabilizer_type(self, stabilizer, p_not_complete=0):
+        """
+        Measure ALL stabilizers of a given type.
 
+        Parameters
+        ----------
+        stabilizer: string - either "star" or "plaq"
+        """
+        pos, c, t = self._select_stabilizer(stabilizer)
+        self.measure_stabilizer(pos, c, p_not_complete)
 
     def measure_stabilizer(self, pos, c, p_not_complete=0):
         """
@@ -133,34 +155,44 @@ class SurfaceCode:
 
         if p_not_complete != 0:
             pos = self._incomplete_measuerement(pos, p_not_complete)
+        if self.surface == "toroid":
+            self.measure_stabilizer_bulk(pos, c)
+        elif self.surface == "planar":
+            # Separate all stabilizers in bulk and boundaries.
+            bulk_stabs = pos[:, self.plane[pos[0], pos[1]] == "o"]
+            self.measure_stabilizer_bulk(bulk_stabs, c)
+            self.measure_stabilizer_edges(pos, c)
 
-        # TODO nearest indices func here: toroid planar
-        # TODO replace this with fancy indexing
-        t, b, l, r = self._stabilizer_qubits(pos)
-        vals_t = self.qubits[c][t[0], t[1]]
-        vals_b = self.qubits[c][b[0], b[1]]
-        vals_l = self.qubits[c][l[0], l[1]]
-        vals_r = self.qubits[c][r[0], r[1]]
+    def measure_stabilizer_bulk(self, pos, c):
+            stab_qubits = self._stabilizer_qubits_bulk(pos)
+            # Get all values on a multi dimensional array
+            vals = self.qubits[c, stab_qubits[:, 0], stab_qubits[:, 1]]
+            # Product over the desired dimension
+            vals = np.prod(vals, axis=0)
+            # Set the measurement results to the stabilizers
+            self.qubits[0, pos[0], pos[1]] = vals
 
-        if self.surface == "planar":
-            # Invalidate the over border "results"
-            # NOTE this needs to change
-            vals_t[np.where(t[0] == -1)] = 1
-            vals_b[np.where(b[0] == -1)] = 1
-            vals_l[np.where(l[1] == -1)] = 1
-            vals_r[np.where(r[1] == -1)] = 1
+    def measure_stabilizer_boundary(self, pos, c):
+            borders = ["t", "b", "l", "r"]
+            for b in borders:
+                self.measure_stabilizer_edge(pos, b, c)
 
-        self.qubits[0][pos[0], pos[1]] = (vals_t
-                                          * vals_b
-                                          * vals_l
-                                          * vals_r)
-        # NOTE DEPRECATED!
-        # self.qubits[0][pos[0], pos[1]] = (self.qubits[c][t[0], t[1]] *
-        #                                   self.qubits[c][b[0], b[1]] *
-        #                                   self.qubits[c][l[0], l[1]] *
-        #                                   self.qubits[c][r[0], r[1]])
+    def measure_stabilizer_edge(self, pos, edge, c):
+            # Separate all stabilizers in top, bottom, etc.
+            edge_stabs = pos[:, self.plane[pos[0], pos[1]] == egde]
 
-    def _stabilizer_qubits(self, pos):
+            # Get corresponding qubits
+            edge_qubits = self._stabilizer_qubits_boundary(edge_stabs, edge)
+
+            # Get all values on a multi dimensional array
+            vals = self.qubits[c, edge_qubits[:, 0], edge_qubits[:, 1]]
+            # Product over the desired dimension
+            vals = np.prod(vals, axis=0)
+            # Set the measurement results to the stabilizers
+            self.qubits[0, edge_stabs[0], edge_stabs[1]] = vals
+
+
+    def _stabilizer_qubits_bulk(self, pos):
         """Find qubits corresponing to the given stabilizers."""
         top = pos + np.array([[-1], [0]])
         bottom = pos + np.array([[1], [0]])
@@ -169,30 +201,35 @@ class SurfaceCode:
 
         if self.surface == "toroid":
             # Take the mod to account for cyclic boundaries
-            bottom = bottom % self.side
-            right = right % self.side
             # Top and left are automatically accounted for
             # when -1 is the index
-        elif self.surface == "planar":
-            # Mark the list indices which go outside of the lattice
-            # with -1 for latter removal
-            bottom[bottom >= self.side] = -1
-            right[right >= self.side] = -1
-            top[top <= -1] = -1
-            left[left <= -1] = -1
+            bottom = bottom % self.side
+            right = right % self.side
 
-        return top, bottom, left, right
+        stab_qubits = np.stack((top, bottom, left, right), 0)
+        return stab_qubits
 
-    def measure_stabilizer_type(self, stabilizer, p_not_complete=0):
-        """
-        Measure ALL stabilizers of a given type.
+    def _stabilizer_qubits_boundary(self, pos, bound):
+        """Find qubits corresponing to the given stabilizers."""
+        if bound == "t":
+            a = pos + np.array([[1], [0]])
+            b = pos + np.array([[0], [-1]])
+            c = pos + np.array([[0], [1]])
+        elif bound == "b":
+            a = pos + np.array([[-1], [0]])
+            b = pos + np.array([[0], [-1]])
+            c = pos + np.array([[0], [1]])
+        elif bound == "l":
+            a = pos + np.array([[-1], [0]])
+            b = pos + np.array([[1], [0]])
+            c = pos + np.array([[0], [1]])
+        elif bound == "r":
+            a = pos + np.array([[-1], [0]])
+            b = pos + np.array([[1], [0]])
+            c = pos + np.array([[0], [-1]])
 
-        Parameters
-        ----------
-        stabilizer: string - either "star" or "plaq"
-        """
-        pos, c, t = self._select_stabilizer(stabilizer)
-        self.measure_stabilizer(pos, c, p_not_complete)
+        stab_qubits = np.stack((a, b, c), 0)
+        return stab_qubits
 
     def _incomplete_measuerement(self, pos, p_not_complete):
         """Find stabilizers that are able to do a complete measurement."""
@@ -206,7 +243,7 @@ class SurfaceCode:
         """Add measurement errot to a type of stabilizers."""
         # Add measurement error
         lie = 2*(np.random.rand(self.number_stabs) > p_lie) - 1
-        self.qubits[0][self.tags == tag] *= lie
+        self.qubits[0, self.tags == tag] *= lie
 
     def _stabilizer_lie_all(self, p_lie):
         """Add measurement error to BOTH stars and plaqs stabilizers."""
@@ -236,7 +273,26 @@ class SurfaceCode:
         self.qubits[:, pos_qubit2[0], pos_qubit2[1]] *= err_qubit2
 
         # Apply error to stabilizer
-        self.qubitts[0][pos[0], pos[1]] *= err_measurement
+        self.qubitts[0, pos[0], pos[1]] *= err_measurement
+
+    def separate_bulk_boundary(self, pos):
+        # Mask to identify bulk from boundary
+        maskx = np.ones_like(pos[0], dtype=bool)
+        masky = np.ones_like(pos[0], dtype=bool)
+        # Top
+        maskx[pos[0] == 0] = False
+        # Bottom
+        maskx[pos[0] == self.side - 1] = False
+        # Left
+        masky[pos[1] == 0] = False
+        # Right
+        masky[pos[1] == self.side - 1] = False
+
+        bulk = np.concatenate((pos[:, maskx], pos[:, masky]), 1)
+        boundary = np.concatenate((pos[:, np.invert(maskx)],
+                                   pos[:, np.invert(masky)]), 1)
+        return bulk, boundary
+
 
     def operation_error(self, pos, stabilizer):
         pos, measurement_err, qubit_err = self.errors.get_errors(pos,
@@ -248,7 +304,7 @@ class SurfaceCode:
 
 
         # Apply error to stabilizer
-        self.qubitts[0][pos[0], pos[1]] *= err_measurement
+        self.qubitts[0, pos[0], pos[1]] *= err_measurement
 
 
 
@@ -266,7 +322,7 @@ class SurfaceCode:
         err_index = np.zeros(self.number_stabilizers)
         for i in range(self.number_stabilizers):
             # Index of the actual error is the last True in less than rand number
-            err_index[i] = np.where(error_sum > err[i])[0][0]
+            err_index[i] = np.where(error_sum > err[i])[0, 0]
 
         self.operation_error(pos1, error_vec[err_index[:len(pos1)]])
         self.measure_stabilizer(pos1, c, p_not_complete)
@@ -341,26 +397,27 @@ class SurfaceCode:
             data[self.tags == "P"] = 1
         if stabilizer == "plaq":
             data = self.qubits[0].copy()
-            data[self.tags == "Q"] = self.qubits[1][self.tags == "Q"]
+            data[self.tags == "Q"] = self.qubits[1, self.tags == "Q"]
             data[self.tags == "P"] *= 2
             data[self.tags == "S"] = 1
 
+        plt.figure()
         plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
         # plt.colorbar()
-        plt.show()
+        # plt.show()
 
     def reset(self):
         """Reset surface code to default configuration."""
         self.qubits.fill(1)
-        self.qubits[1][self.tags != "Q"] = 0
+        self.qubits[1, self.tags != "Q"] = 0
 
     def get_stars(self):
         """Get the values of  all star qubits."""
-        return self.qubits[0][self.tags == "S"]
+        return self.qubits[0, self.tags == "S"]
 
     def get_plaqs(self):
         """Get the values of all plaq qubits."""
-        return self.qubits[0][self.tags == "P"]
+        return self.qubits[0, self.tags == "P"]
 
     def measure_logical(self):
         """Meausure the logical qubits."""
@@ -385,59 +442,55 @@ class SurfaceCode:
     def correct_error(self, error_type, match):
         _, c, t = self._select_stabilizer(error_type)
 
-        #Taking the transpose of match gives:
-        # [[[p1x, p2x, p3x, ...], [q1x, q2x, q3x, ...]],
-        #  [[p1y, p2y, p3y, ...], [q1y, q2y, q3y, ...]],
-        #  [[p1t, p2t, p3t, ...], [q1t, q2t, q3t, ...]]]
-        match = match.transpose()
-
-        # Distances in each coordinate
-        dx = np.abs(match[0][0] - match[0][1])
-        dy = np.abs(match[1][0] - match[1][1])
-        dt = np.abs(match[2][0] - match[2][1])
-
-
+        m = self.side
         if self.surface == "planar":
-            for i in range(len(dx)):
-                # Start and end points of the path
-                startx = match[0][0][i]
-                endx = match[0][1][i]
-                starty = match[1][0][i]
-                # Create steps and join them
-                stepsx = np.arange(1, dx[i], 2) + startx
-                stepsy = np.arange(1, dy[i], 2) + starty
-                stepsx = np.append(stepsx, [endx] * len(stepsy))
-                stepsy = np.append([starty] * len(stepsx), stepsy)
+            for pair in match:
+                px, py, _ = pair[0]
+                qx, qy, _ = pair[1]
+
+                dx = np.abs(qx - px)
+                dy = np.abs(qy - py)
+
+                stepsx = np.arange(1, dx, 2) + px
+                stepsy = np.arange(1, dy, 2) + py
+                lx = len(stepsx)
+                stepsx = np.append(stepsx, [qx] * len(stepsy))
+                stepsy = np.append([py] * lx, stepsy)
 
                 # Apply error correction path
-                self.qubits[c][stepsx, stepsy] *= -1
+                self.qubits[c, stepsx, stepsy] *= -1
 
         elif self.surface == "toroid":
-            for i in range(len(dx)):
+            for pair in match:
+                print("Pair:", pair)
+                px, py, _ = pair[0]
+                qx, qy, _ = pair[1]
 
-                if dx[i] < self.distance:
-                    # "Normal" path in the surface
-                    startx = match[0][0][i]
-                    endx = match[0][1][i]
+                dx = (qx - px) % m
+                dy = (qy - py) % m
+
+                if dx < self.distance:
+                    endx = qx
+                    stepsx = np.arange(1, dx, 2)
+                    stepsx = (stepsx + px) % m
+                    coord_y = np.ones_like(stepsx) * py
                 else:
-                    # Path in the far side of the torus
-                    d = dx[i] % self.distance
-                    startx = match[0][1][i]
-                    endx = match[0][0][i]
+                    endx = px
+                    stepsx = np.arange(1, m - dx, 2)
+                    stepsx = (stepsx + qx) % m
+                    coord_y = np.ones_like(stepsx) * qy
 
-                stepsx = np.arange(1, dx[i], 2) + startx
-                stepsx = stepsx % self.side
+                if dy < self.distance:
+                    stepsy = (np.arange(1, dy, 2) + py) % m
 
-                if dy[i] < self.distance:
-                    starty = match[1][0][i]
                 else:
-                    d = dy[i] % self.distance
-                    starty = match[1][1][i]
-                stepsy = np.arange(1, dy[i], 2) + starty
-                stepsy = stepsy % self.side
-                # Join all stepss
-                stepsx = np.append(stepsx, [endx] * len(stepsy))
-                stepsy = np.append([starty] * len(stepsx), stepsy)
+                    stepsy = (np.arange(1, m - dy, 2) + qy) % m
 
-                # Apply error correction path
-                self.qubits[c][stepsx, stepsy] *= -1
+                coord_x = np.ones_like(stepsy) * endx
+
+                stepsx = np.append(stepsx, coord_x).astype(int)
+                stepsy = np.append(coord_y, stepsy).astype(int)
+
+                print(stepsx)
+                print(stepsy)
+                self.qubits[c, stepsx, stepsy] *= -1
