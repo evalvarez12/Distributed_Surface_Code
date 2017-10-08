@@ -87,39 +87,65 @@ def match_planar_3D(size, anyons, stabilizer, weights=[1, 1]):
     # NOTE: Use max time separation?
     # max_time_separation = 10
 
-    if len(anyons) == 0:
+    N = len(anyons)
+    if N == 0:
         return []
 
-    nodes1, nodes2, weights = make_nodes_planar(size, anyons,
-                                                stabilizer,
-                                                weights)
-    N = len(weights)
+    anyons = add_virtual_anyons(size, anyons, stabilizer)
+
+    print("With virtual")
+    print(anyons)
+    nodes1, nodes2, weights = make_nodes_planar(anyons, weights)
     print("NUMBER nodes:", N)
-    print("NODES:")
+    print("NODES:", len(nodes1), len(nodes2), len(weights))
     print(nodes1, nodes2, weights)
 
-    matching = pm.getMatching_fast(N, nodes1, nodes2, weights)
+    matching = pm.getMatching_fast(2*N, nodes1, nodes2, weights)
     # REFORMAT MATCHING PAIRS
     # Take <matching> and turn it into a list of paired anyon positions.
-    pairs_ind = [[i, matching[i]] for i in range(N) if matching[i] > i]
+    pairs_ind = [[i, matching[i]] for i in range(2*N) if matching[i] > i]
 
     pairs = [] if len(pairs_ind) == 0 else [anyons[p] for p in pairs_ind]
 
-    return pairs
+    pairs = np.array(pairs)
+    # Remove unwanted pairs
+    # Get the indices of the wanted pairs
+    if stabilizer == "star":
+        c = 1
+    else:
+        c = 0
+    ind = np.invert(np.prod(pairs[:, :, c] == -1, 1).astype(bool))
+    pairs = pairs[ind]
+    ind = np.invert(np.prod(pairs[:, :, c] == (2*size - 1), 1).astype(bool))
+    pairs = pairs[ind]
 
-def make_nodes_planar(size, nodes, stabilizer, edges_weights=[1, 1]):
+    return np.array(pairs)
+
+def add_virtual_anyons(size, anyons, stabilizer):
+    N = len(anyons)
+    virtual = anyons.copy()
+    if stabilizer == "star":
+        virtual[:, 1] = -1
+        virtual[:, 1][np.where(anyons[:, 1] > size)[0]] = (2*size - 1)
+    else:
+        virtual[:, 0] = -1
+        virtual[:, 0][np.where(anyons[:, 0] > size)[0]] = (2*size - 1)
+    return np.concatenate((anyons, virtual))
+
+def make_nodes_planar(nodes, edges_weights=[1, 1]):
     nodes1 = []
     nodes2 = []
     weights = []
 
-    N = len(nodes)
+    N = int(len(nodes)/2)
+    print(N)
     ws, wt = edges_weights
     wb = ws
-    # Steps 1: Complete graph between all real nodes
+    # Steps 1: Complete graph between all real nodes and real and virtual nodes
     for i in range(N - 1):
         px, py, pt = nodes[i]
 
-        for j in range(i+1, N):
+        for j in range(i+1, 2*N):
             qx, qy, qt = nodes[j]
 
             difft = (qt - pt)*wt
@@ -131,58 +157,18 @@ def make_nodes_planar(size, nodes, stabilizer, edges_weights=[1, 1]):
             nodes2 += [j]
             weights += [weight]
 
-    # Step 2: Generate list of boundary nodes linked to each real node
+    for i in range(N, 2*N - 1):
+        px, py, pt = nodes[i]
 
-    boundary_nodes = []
-
-    if stabilizer == "star":
-        for i in range(N):
-            px, py, pt = nodes[i]
-            bx, bt = px, pt
-            by = -1 if py < size else (2*size + 1)
-
-            # difft = (qt - pt)*wt
-            diffx = abs(bx - px)*ws
-            diffy = abs(by - py)*ws
-            weight = diffx + diffy
-
-            nodes1 += [i]
-            nodes2 += [i + N]
-            weights += [weight]
-
-            boundary_nodes += [(bx, by, bt)]
-
-    elif stabilizer == "plaq":
-        for i in range(N):
-            px, py, pt = nodes[i]
-            bx, bt = px, pt
-            bx = -1 if px < size else (2*size + 1)
-
-            # difft = (qt - pt)*wt
-            diffx = abs(bx - px)*ws
-            diffy = abs(by - py)*ws
-            weight = diffx + diffy
-
-            nodes1 += [i]
-            nodes2 += [i + N]
-            weights += [int(weight*wb/ws)]
-
-            boundary_nodes += [(bx, by, bt)]
-
-    # Step 3: Complete graph between all boundary nodes
-
-    for i in range(N - 1):
-        px, py, pt = boundary_nodes[i]
-
-        for j in range(i+1, N):
-            qx, qy, qt = boundary_nodes[j]
+        for j in range(i+1, 2*N):
+            qx, qy, qt = nodes[j]
             wt = (qt-pt)
 
-            if wt >= 5:
-                break
+            # if wt >= 10:
+            #     break
 
-            nodes1 += [N+i]
-            nodes2 += [N+j]
+            nodes1 += [i]
+            nodes2 += [j]
             weights += [0]
 
     return nodes1, nodes2, weights

@@ -456,17 +456,24 @@ class SurfaceCode:
                 px, py, _ = pair[0]
                 qx, qy, _ = pair[1]
 
-                dx = np.abs(qx - px)
-                dy = np.abs(qy - py)
+                dx = qx - px
+                sx = np.sign(dx)
+                dx = np.abs(dx)
+                dy = qy - py
+                sy = np.sign(dy)
+                dy = np.abs(dy)
 
-                stepsx = np.arange(1, dx, 2) + px
-                stepsy = np.arange(1, dy, 2) + py
+                stepsx = sx*np.arange(1, dx, 2) + px
+                stepsy = sy*np.arange(1, dy, 2) + py
                 coord_x = np.ones_like(stepsy) * qx
                 coord_y = np.ones_like(stepsx) * py
                 stepsx = np.append(stepsx, coord_x)
                 stepsy = np.append(coord_y, stepsy)
 
                 # Apply error correction path
+                print("STEPS")
+                print(stepsx)
+                print(stepsy)
                 self.qubits[c, stepsx, stepsy] *= -1
 
         elif self.surface == "toroid":
