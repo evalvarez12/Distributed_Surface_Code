@@ -1,7 +1,7 @@
-import noise_modeling
-import protocols
 import pickle
 import os
+from . import noise_modeling
+from . import protocols
 
 class Generator:
     def __init__(self):

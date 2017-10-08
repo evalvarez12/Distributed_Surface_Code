@@ -9,6 +9,7 @@ created on: 19/07/17
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
+import errors
 
 
 class SurfaceCode:
@@ -112,21 +113,11 @@ class SurfaceCode:
         bounds = [-2.5, -1.5, 0, 1.5, 2.5]
         self.cmap_norm = colors.BoundaryNorm(bounds, self.cmap.N)
 
-        # NOTE DEPRECATED
-        # for x in range(0, 2*distance, 2):
-        #     for y in range(0, 2*distance, 2):
-        #         self.tags[x, y] = "S"
-        #         self.tags[x+1, y+1] = "P"
-        #
-        #         self.stars += [[x, y]]
-        #         self.plaqs += [[x+1, y+1]]
-        # self.stars = np.array(self.stars)
-        # self.plaqs = np.array(self.plaqs)
 
+    def init_error_obj(self, ps, pm, pg, pn, protocol):
+        self.errors = errors.Generator(surface=self.surface, ps=ps, pm=pm,
+                                       pg=pg, pn=pn, protocol=protocol)
 
-        # # transform to [[x1,x2,x3,...],[y1,y2,y3,...]]
-        # self.stars = self.stars.transpose()
-        # self.plaqs = self.plaqs.transpose()
     def measure_stabilizer_type(self, stabilizer, p_not_complete=0):
         """
         Measure ALL stabilizers of a given type.
@@ -161,7 +152,7 @@ class SurfaceCode:
             # Separate all stabilizers in bulk and boundaries.
             bulk_stabs = pos[:, self.plane[pos[0], pos[1]] == "o"]
             self.measure_stabilizer_bulk(bulk_stabs, c)
-            self.measure_stabilizer_edges(pos, c)
+            self.measure_stabilizer_boundary(pos, c)
 
     def measure_stabilizer_bulk(self, pos, c):
             stab_qubits = self._stabilizer_qubits_bulk(pos)
@@ -175,21 +166,21 @@ class SurfaceCode:
     def measure_stabilizer_boundary(self, pos, c):
             borders = ["t", "b", "l", "r"]
             for b in borders:
-                self.measure_stabilizer_edge(pos, b, c)
+                self.measure_stabilizer_side(pos, b, c)
 
-    def measure_stabilizer_edge(self, pos, edge, c):
+    def measure_stabilizer_side(self, pos, bord, c):
             # Separate all stabilizers in top, bottom, etc.
-            edge_stabs = pos[:, self.plane[pos[0], pos[1]] == egde]
+            bord_stabs = pos[:, self.plane[pos[0], pos[1]] == bord]
 
             # Get corresponding qubits
-            edge_qubits = self._stabilizer_qubits_boundary(edge_stabs, edge)
+            bord_qubits = self._stabilizer_qubits_boundary(bord_stabs, bord)
 
             # Get all values on a multi dimensional array
-            vals = self.qubits[c, edge_qubits[:, 0], edge_qubits[:, 1]]
+            vals = self.qubits[c, bord_qubits[:, 0], bord_qubits[:, 1]]
             # Product over the desired dimension
             vals = np.prod(vals, axis=0)
             # Set the measurement results to the stabilizers
-            self.qubits[0, edge_stabs[0], edge_stabs[1]] = vals
+            self.qubits[0, bord_stabs[0], bord_stabs[1]] = vals
 
 
     def _stabilizer_qubits_bulk(self, pos):
@@ -295,18 +286,35 @@ class SurfaceCode:
 
 
     def operation_error(self, pos, stabilizer):
-        pos, measurement_err, qubit_err = self.errors.get_errors(pos,
-                                                                 stabilizer)
+        if self.surface == "toroid":
+            N = len(pos)
+            m_err, q_err = self.errors.get_errors(N, stabilizer)
+            stab_qubits = self._stabilizer_qubits_bulk(pos)
 
-        # NOTE Working here
-        self.qubits[:, pos_qubit1[0], pos_qubit1[1]] *= err_qubit1
-        self.qubits[:, pos_qubit2[0], pos_qubit2[1]] *= err_qubit2
+            # Apply error to stabilizer
+            self.qubits[0, pos[0], pos[1]] *= m_err
+            self.qubits[:, stab_qubits[0], stab_qubits[1]] *= q_err
+        elif self.surface == "planar":
+            # First the bulk stabilizers
+            bulk_stabs = pos[:, self.plane[pos[0], pos[1]] == "o"]
+            N_bulk = len(bulk_stabs)
+            m_err, q_err = self.errors.get_errors(N, stabilizer)
+            bulk_qubits = self._stabilizer_qubits_bulk(bulk_stabs)
 
+            # Apply error to stabilizer
+            self.qubits[0, bulk_stabs[0], bulk_stabs[1]] *= m_err
+            self.qubits[:, bulk_qubits[0], bulk_qubits[1]] *= q_err
 
-        # Apply error to stabilizer
-        self.qubitts[0, pos[0], pos[1]] *= err_measurement
+            # Now the boundaries
+            for b in ["t", "b", "l", "r"]:
+                bord_stabs = pos[:, self.plane[pos[0], pos[1]] == b]
+                N_bord = len(bord_stabs)
+                m_err, q_err = self.errors.get_errors(N_bord, stabilizer,
+                                                      border=True)
+                bord_qubits = self._stabilizer_qubits_boundary(bord_stabs, b)
 
-
+                self.qubits[0, bord_stabs[0], bord_stabs[1]] *= m_err
+                self.qubits[:, bord_qubits[0], bord_qubits[1]] *= q_err
 
     def noisy_measurement(self, stabilizer, error_vec, error_sum, p_not_complete=0):
         """
@@ -453,9 +461,10 @@ class SurfaceCode:
 
                 stepsx = np.arange(1, dx, 2) + px
                 stepsy = np.arange(1, dy, 2) + py
-                lx = len(stepsx)
-                stepsx = np.append(stepsx, [qx] * len(stepsy))
-                stepsy = np.append([py] * lx, stepsy)
+                coord_x = np.ones_like(stepsy) * qx
+                coord_y = np.ones_like(stepsx) * py
+                stepsx = np.append(stepsx, coord_x)
+                stepsy = np.append(coord_y, stepsy)
 
                 # Apply error correction path
                 self.qubits[c, stepsx, stepsy] *= -1

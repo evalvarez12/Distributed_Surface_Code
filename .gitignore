@@ -8,5 +8,5 @@
 *.so
 *.pyc
 
-# Kraus decomposition data
-kraus_operators/data
+# Decomposition data
+decomposition/data

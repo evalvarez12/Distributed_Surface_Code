@@ -2,104 +2,119 @@
 Complete list of errors for the noisy operators.
 """
 import numpy as np
-import decomposition.generate
+import decomposition.generate as gen
 
 I, X, Y, Z = [1, 1], [-1, 1], [-1, -1], [1, -1]
 
-class Errors:
+class Generator:
     def __init__(self, surface, ps, pm, pg, pn, protocol):
-        self.generator = generate.Generator()
+        self.generator = gen.Generator()
 
         chi_star = self.generator.ask_model(ps, pm, pg, pn, 4,
                                             "X", protocol)
         chi_plaq = self.generator.ask_model(ps, pm, pg, pn, 4,
                                             "Z", protocol)
-        self.chi = [chi_star, chi_plaq]
-        self.errors = {}
+        # self.chi = [chi_star, chi_plaq]
 
-        # for k in self.chi.values():
-        #     self.errors[k] = self.symbol_to_error(k)
-
+        self.chi_keys = [np.array(list(chi_star.keys())),
+                         np.array(list(chi_plaq.keys()))]
+        self.chi_vals = [np.array(list(chi_star.values())),
+                         np.array(list(chi_plaq.values()))]
+        self.errors = [self.symbol_to_error_list(self.chi_keys[0]),
+                       self.symbol_to_error_list(self.chi_keys[1])]
+        self.indexes = range(len(self.chi_keys[0]))
 
         if surface == "planar":
-            chi_star_border = self.generator.ask_model(ps, pm, pg, pn, 4,
+            chi_star_border = self.generator.ask_model(ps, pm, pg, pn, 3,
                                                        "X", protocol)
-            chi_plaq_border = self.generator.ask_model(ps, pm, pg, pn, 4,
+            chi_plaq_border = self.generator.ask_model(ps, pm, pg, pn, 3,
                                                        "Z", protocol)
-            self.chi_border = [chi_star_border, chi_plaq_border]
-            self.error_border = {}
+            # self.chi_border = [chi_star_border, chi_plaq_border]
 
-            # for k in self.chi_border.values():
-            #     self.errors_border[k] = self.symbol_to_error(k)
+            self.chi_keys_border = [np.array(list(chi_star_border.keys())),
+                                    np.array(list(chi_plaq_border.keys()))]
+            self.chi_vals_border = [np.array(list(chi_star_border.values())),
+                                    np.array(list(chi_plaq_border.values()))]
+            self.errors_border = [self.symbol_to_error_list(self.chi_keys_border[0], True),
+                                  self.symbol_to_error_list(self.chi_keys_border[1], True)]
+            self.indexes_border = range(len(self.chi_keys_border[0]))
 
-def process_chi(self):
-    for k in self.chi.keys():
-        self.error[k] = symbol_to_error(k)
+    def get_errors(self, num_errors, stabilizer, border=False):
+        if stabilizer == "X":
+            c = 0
+        elif stabilizer == "Z":
+            c = 1
 
-def symbol_to_error(self, symbol):
-    measurement = 1
-    if "N" in symbol:
-        measurement = -1
+        if border:
+            i = self.indexes_border
+            v = self.chi_vals_border[c]
+            e = self.errors_border[c]
+        else:
+            i = self.indexes
+            v = self.chi_vals[c]
+            e = self.errors[c]
 
-    symbol = symbol.replace("_NOK", "")
-    l_symbol = list(symbol)
-    errors = [pauli_error(s) for s in l_symbol]
-    return measurement, errors
+        e_index = np.array(np.random.choice(i, num_errors, p=v))
+        m_errors = e[0][e_index]
+        # Qubit erros format:
+        # array([[[ 1., -1.],
+        #         [ 1., -1.]],
+        #
+        #        [[ 1.,  1.],
+        #         [ 1.,  1.]],   All 4 data qubits for each stabilizer
+        #                        q_errors[0] gives the error for all qubits
+        #        [[ 1., -1.],    on top of the stabilizer.
+        #         [ 1.,  1.]],   q_errors[1] for the bottom and so on.
+        #
+        #        [[ 1.,  1.],
+        #         [ 1.,  1.]]])
+        q_errors = e[1][:, :, e_index]
 
-def get_errors(self, stab_positions, stabilizer, border=False):
-    errors_sym = self.choose_error(len(stab_positions), stabilizer, border)
-    if border:
-        no_err = "III_OK"
-        d_qubits = 3
-    else:
-        no_err = "IIII_OK"
-        d_qubits = 4
+        # Swap axes to make it manageable
+        q_errors = np.swapaxes(q_errors, 0, 1)
+        return m_errors, q_errors
 
-    # Remove where no errors ocurred
-    stab_positions = stab_positions[errors_sym != no_err]
-    errors_sym = errors_sym[errors_sym != no_err]
+    def symbol_to_error_list(self, symbol_list, border=False):
+        N = len(symbol_list)
+        if border:
+            d_qubits = 3
+        else:
+            d_qubits = 4
 
-    # Arrays to save errors
-    N = len(errors_sym)
-    measurement_errors = np.ones(N)
-    qubit_errors = np.ones((d_qubits, 2, N))
-    qubit1
-    for i in range(N):
-        m_err, q_err = self.symbol_to_error(errors_sym[i])
-        measurement_errors[i] *= m_err
-        # NOTE: Shuffle the errors on the data qubits
-        # np.random.shuffle(q_err)
+        qubit_errs = np.ones((d_qubits, 2, N))
+        measurement_errs = np.ones(N)
+        for i in range(N):
+            m, q = self.symbol_to_error(symbol_list[i])
 
-        # Get all the errors of the data qubits for a given stabilizer
-        qubit_errors[:, :, i] *= q_err
+            # NOTE: Shuffle to take a random permutation of the error
+            np.random.shuffle(q)
 
-    return stab_positions, measurement_errors, qubit_errors
+            measurement_errs[i] *= m
+            qubit_errs[:, :, i] *= q
 
-def choose_error(self, num_errors, stabilizer, border):
-    if stabilizer == "X":
-        c = 0
-    elif stabilizer == "Z":
-        c = 1
+        return [measurement_errs, qubit_errs]
 
-    if border:
-        k = list(self.chi_border[c].keys())
-        v = list(self.chi_border[c].values())
-    else:
-        k = list(self.chi[c].keys())
-        v = list(self.chi[c].values())
+    def symbol_to_error(self, symbol):
+        if "N" in symbol:
+            measurement = -1
+            symbol = symbol.replace("_NOK", "")
+        else:
+            measurement = 1
+            symbol = symbol.replace("_OK", "")
 
-    errors_keys = np.random.choice(k, num_errors, p=v)
-    return errors_keys
+        l_symbol = list(symbol)
+        errors = [self.pauli_error(s) for s in l_symbol]
+        return measurement, errors
 
-def pauli_error(s):
-    if s == "I":
-        return I
-    elif s == "X":
-        return X
-    elif s == "Y":
-        return Y
-    elif s == "Z":
-        return Z
+    def pauli_error(self, s):
+        if s == "I":
+            return I
+        elif s == "X":
+            return X
+        elif s == "Y":
+            return Y
+        elif s == "Z":
+            return Z
 
 
 

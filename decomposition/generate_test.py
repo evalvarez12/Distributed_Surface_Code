@@ -13,4 +13,5 @@ parity = "X"
 function = "LOCAL"
 
 # Calculate chi matrix
-chi = generator.ask_model(ps=ps, pm=pm, pg=pg, pn=pn, stab_size=system_size, parity="X", protocol=function)
+chi = generator.ask_model(ps=ps, pm=pm, pg=pg, pn=pn, stab_size=system_size,
+                          parity=parity, protocol=function)

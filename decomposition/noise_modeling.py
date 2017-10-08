@@ -8,8 +8,8 @@ import numpy as np
 import qutip as qt
 import pickle
 import itertools
-import pauli_basis
-import operations as ops
+from . import pauli_basis
+from . import operations as ops
 
 class NoiseModel:
     """

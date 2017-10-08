@@ -12,28 +12,33 @@ import matching
 
 
 distance = 10
-topology = "toroid"
+topology = "planar"
 
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
 for i in range(1):
-    sc._apply_noise_qubit(.2, .0)
+    sc._apply_noise_qubit(.01, .0)
     sc.measure_stabilizer_type("star")
     sc.measure_stabilizer_type("plaq")
 
 
     lc.add()
 
-    anyon_star, anyon_plaq = lc.find_anyons_all()
+    anyons_star, anyons_plaq = lc.find_anyons_all()
     print("Anyons________>")
-    print(anyon_star)
+    print(anyons_star)
     # print(anyon_plaq)
     print("-----------------<")
     # print(anyon_plaq)
 
     sc.plot("star")
-    match_star = matching.match_toric3D(distance, anyon_star)
-    match_plaq = matching.match_toric3D(distance, anyon_plaq)
+    if topology == "toroid":
+        match_star = matching.match_toric_3D(distance, anyons_star)
+        match_plaq = matching.match_toric_3D(distance, anyons_plaq)
+    else:
+        match_star = matching.match_planar_3D(distance, anyons_star, "star")
+        match_plaq = matching.match_planar_3D(distance, anyons_plaq, "plaq")
+
 
     print("Matchings------->")
     print(match_star)

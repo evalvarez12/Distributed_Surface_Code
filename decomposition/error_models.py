@@ -7,7 +7,7 @@ created-on: 05/06/17
 
 import qutip as qt
 import numpy as np
-import operations as ops
+from . import operations as ops
 
 # sigmas = [qt.qeye(2), qt.sigmax(), qt.sigmay(), qt.sigmaz()]
 

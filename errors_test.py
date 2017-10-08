@@ -10,16 +10,17 @@ import numpy as np
 import numpy.testing as nptest
 import errors
 
+# Initial parameters
+ps = 0.0
+pm = 0.009
+pg = 0.009
+pn = 0.0
+system_size = 4
+function = "LOCAL"
+surface = "planar"
+# Create object
+errors = errors.Generator(surface=surface, ps=ps, pm=pm,
+                          pg=pg, pn=pn, protocol=function)
 
-cumulativeProbs, errs = errors.processErrors(errors.errTestVec, errors.errorStar1)
-
-class TestMatching(unittest.TestCase):
-
-    def test_weight_norm(self):
-        print(cumulative_probs)
-        print(errs[0])
-        print(errs[1])
-        print(errs[2])
-
-if __name__ == '__main__':
-    unittest.main()
+e=errors.get_errors(5, "X", True)
+print(e)
