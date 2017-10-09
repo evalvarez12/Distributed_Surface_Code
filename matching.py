@@ -67,7 +67,7 @@ def make_graph_toric(size, nodes, weights=[1, 1]):
     # List of values for time distance weights
     return graph
 
-def match_planar_3D(size, anyons, stabilizer, weights=[1, 1]):
+def match_planar_3D(size, anyons, stabilizer, time, weights=[1, 1]):
     """
     Finds a matching to fix the errors in a 3D planar code given the positions.
 
@@ -94,14 +94,21 @@ def match_planar_3D(size, anyons, stabilizer, weights=[1, 1]):
         return []
 
     # Append virtal anyons
-    virtual_space = add_virtual_space(size, anyons, stabilizer)
-    anyons = np.concatenate((anyons, virtual_space))
+    anyons = add_virtual_space(size, anyons, stabilizer)
+    anyons = add_virtual_time(time, anyons)
+
+    print("all anyons")
+    print(anyons)
 
     nodes1, nodes2, weights = make_nodes_planar(anyons, weights)
-    print(nodes1, nodes2, weights)
+    print(len(weights))
+    print(nodes1)
+    print(nodes2)
+    print(weights)
+
     if len(weights) == 0:
         return []
-    matching = pm.getMatching_fast(2*N, nodes1, nodes2, weights)
+    matching = pm.getMatching_fast(4*N, nodes1, nodes2, weights)
     # REFORMAT MATCHING PAIRS
     # Take <matching> and turn it into a list of paired anyon positions.
     pairs_ind = [[i, matching[i]] for i in range(2*N) if matching[i] > i]
@@ -109,8 +116,18 @@ def match_planar_3D(size, anyons, stabilizer, weights=[1, 1]):
     pairs = [] if len(pairs_ind) == 0 else [anyons[p] for p in pairs_ind]
 
     pairs = np.array(pairs)
+
+    print("Pairs")
+    print(pairs)
+
     # Remove unwanted pairs
-    # Get the indices of the wanted pairs
+    pairs = pairs_remove_out_space(size, stabilizer, pairs)
+    pairs = pairs_remove_out_time(time, pairs)
+
+    return pairs
+
+
+def pairs_remove_out_space(size, stabilizer, pairs):
     if stabilizer == "star":
         c = 1
     else:
@@ -123,7 +140,19 @@ def match_planar_3D(size, anyons, stabilizer, weights=[1, 1]):
     ind = np.invert(np.prod(out, 1).astype(bool))
     pairs = pairs[ind]
 
-    return np.array(pairs)
+    return pairs
+
+
+def pairs_remove_out_time(total_time, pairs):
+    # Get the pairs where both are outside
+    out = np.logical_or(pairs[:, :, 2] == -1,
+                        pairs[:, :, 2] == total_time)
+    # Invert to get the indices of the rest
+    ind = np.invert(np.prod(out, 1).astype(bool))
+    pairs = pairs[ind]
+
+    return pairs
+
 
 def add_virtual_space(size, anyons, stabilizer):
     N = len(anyons)
@@ -134,32 +163,35 @@ def add_virtual_space(size, anyons, stabilizer):
     else:
         virtual[:, 0] = -1
         virtual[:, 0][np.where(anyons[:, 0] > size)[0]] = (2*size - 1)
-    return virtual
-    # return np.concatenate((anyons, virtual))
+    return np.concatenate((anyons, virtual))
+
 
 def add_virtual_time(total_time, anyons):
     N = len(anyons)
     t = int(total_time/2)
     virtual = anyons.copy()
     virtual[:, 2] = -1
-    virtual[:, 2][np.where(anyons[:, 2] > t)[0]] = time + 1
+    virtual[:, 2][np.where(anyons[:, 2] > t)[0]] = total_time
+    return np.concatenate((anyons, virtual))
 
 def make_nodes_planar(nodes, edges_weights=[1, 1]):
     nodes1 = []
     nodes2 = []
     weights = []
 
-    N = int(len(nodes)/2)
+    # Number of non virtual nodes
+    N = int(len(nodes)/4)
+    print("N: ", N)
     ws, wt = edges_weights
     wb = ws
-    # Steps 1: Complete graph between all real nodes and real and virtual nodes
+    # Make graph between all real and real and real and virutal nodes
     for i in range(N):
         px, py, pt = nodes[i]
 
-        for j in range(i+1, 2*N):
+        for j in range(i+1, 4*N):
             qx, qy, qt = nodes[j]
 
-            difft = (qt - pt)*wt
+            difft = abs(qt - pt)*wt
             diffx = abs(qx - px)*ws
             diffy = abs(qy - py)*ws
             weight = diffx + diffy + difft
@@ -168,10 +200,11 @@ def make_nodes_planar(nodes, edges_weights=[1, 1]):
             nodes2 += [j]
             weights += [weight]
 
-    for i in range(N, 2*N - 1):
+    # Make graph between virtual nodes
+    for i in range(N, 4*N - 1):
         px, py, pt = nodes[i]
 
-        for j in range(i+1, 2*N):
+        for j in range(i+1, 4*N):
             qx, qy, qt = nodes[j]
             wt = (qt-pt)
 
