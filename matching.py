@@ -27,6 +27,8 @@ def match_toric_3D(size, anyons, weights=[1, 1]):
     # print(graph)
     # matching: indexes to which anyon conects
     number_nodes = len(anyons)
+    if number_nodes % 2 == 1:
+        raise ValueError("Number of nodes is odd!")
     matching = pm.getMatching(number_nodes, graph)
     # print(matching)
     pairs_ind = [[i, matching[i]] for i in range(number_nodes) if matching[i] > i]
@@ -91,15 +93,14 @@ def match_planar_3D(size, anyons, stabilizer, weights=[1, 1]):
     if N == 0:
         return []
 
-    anyons = add_virtual_anyons(size, anyons, stabilizer)
+    # Append virtal anyons
+    virtual_space = add_virtual_space(size, anyons, stabilizer)
+    anyons = np.concatenate((anyons, virtual_space))
 
-    print("With virtual")
-    print(anyons)
     nodes1, nodes2, weights = make_nodes_planar(anyons, weights)
-    print("NUMBER nodes:", N)
-    print("NODES:", len(nodes1), len(nodes2), len(weights))
     print(nodes1, nodes2, weights)
-
+    if len(weights) == 0:
+        return []
     matching = pm.getMatching_fast(2*N, nodes1, nodes2, weights)
     # REFORMAT MATCHING PAIRS
     # Take <matching> and turn it into a list of paired anyon positions.
@@ -114,14 +115,17 @@ def match_planar_3D(size, anyons, stabilizer, weights=[1, 1]):
         c = 1
     else:
         c = 0
-    ind = np.invert(np.prod(pairs[:, :, c] == -1, 1).astype(bool))
-    pairs = pairs[ind]
-    ind = np.invert(np.prod(pairs[:, :, c] == (2*size - 1), 1).astype(bool))
+
+    # Get the pairs where both are outside
+    out = np.logical_or(pairs[:, :, c] == -1,
+                        pairs[:, :, c] == 2*size - 1)
+    # Invert to get the indices of the rest
+    ind = np.invert(np.prod(out, 1).astype(bool))
     pairs = pairs[ind]
 
     return np.array(pairs)
 
-def add_virtual_anyons(size, anyons, stabilizer):
+def add_virtual_space(size, anyons, stabilizer):
     N = len(anyons)
     virtual = anyons.copy()
     if stabilizer == "star":
@@ -130,7 +134,15 @@ def add_virtual_anyons(size, anyons, stabilizer):
     else:
         virtual[:, 0] = -1
         virtual[:, 0][np.where(anyons[:, 0] > size)[0]] = (2*size - 1)
-    return np.concatenate((anyons, virtual))
+    return virtual
+    # return np.concatenate((anyons, virtual))
+
+def add_virtual_time(total_time, anyons):
+    N = len(anyons)
+    t = int(total_time/2)
+    virtual = anyons.copy()
+    virtual[:, 2] = -1
+    virtual[:, 2][np.where(anyons[:, 2] > t)[0]] = time + 1
 
 def make_nodes_planar(nodes, edges_weights=[1, 1]):
     nodes1 = []
@@ -138,11 +150,10 @@ def make_nodes_planar(nodes, edges_weights=[1, 1]):
     weights = []
 
     N = int(len(nodes)/2)
-    print(N)
     ws, wt = edges_weights
     wb = ws
     # Steps 1: Complete graph between all real nodes and real and virtual nodes
-    for i in range(N - 1):
+    for i in range(N):
         px, py, pt = nodes[i]
 
         for j in range(i+1, 2*N):

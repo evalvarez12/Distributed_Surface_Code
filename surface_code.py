@@ -51,6 +51,8 @@ class SurfaceCode:
         surface = "toroid" : string, optional
             Topology of the code.
         """
+        if surface != "toroid" and surface != "planar":
+            raise ValueError("Incorrect surface argument SurfaceCode")
         self.distance = distance
         self.surface = surface
         # TODO: this is for toroid check for plannar
@@ -63,8 +65,6 @@ class SurfaceCode:
             self.number_data_qubits = distance**2 + (distance - 1)**2
             self.number_stabs = (distance - 1)*distance
             self.side = 2*distance - 1
-
-
 
         ind1 = np.arange(1, self.side, 2)
         ind2 = np.arange(0, self.side, 2)
@@ -117,6 +117,11 @@ class SurfaceCode:
     def init_error_obj(self, ps, pm, pg, pn, protocol):
         self.errors = errors.Generator(surface=self.surface, ps=ps, pm=pm,
                                        pg=pg, pn=pn, protocol=protocol)
+
+    def measure_all_stablizers(self, p_not_complete=0):
+        """Measure all stabilizer in the code."""
+        self.measure_stabilizer_type("star", p_not_complete)
+        self.measure_stabilizer_type("plaq", p_not_complete)
 
     def measure_stabilizer_type(self, stabilizer, p_not_complete=0):
         """
@@ -236,13 +241,13 @@ class SurfaceCode:
         lie = 2*(np.random.rand(self.number_stabs) > p_lie) - 1
         self.qubits[0, self.tags == tag] *= lie
 
-    def _stabilizer_lie_all(self, p_lie):
+    def apply_measurement_error(self, p_lie):
         """Add measurement error to BOTH stars and plaqs stabilizers."""
         # Add measurement error to BOTH stabilizers
         self._stabilizer_lie("S", p_lie)
         self._stabilizer_lie("P", p_lie)
 
-    def _apply_noise_qubit(self, pX, pZ):
+    def apply_qubit_error(self, pX, pZ):
         """Apply random error to the data qubits."""
         # Create the noise elements
         p = np.array([[pX], [pZ]])
@@ -450,6 +455,8 @@ class SurfaceCode:
     def correct_error(self, error_type, match):
         _, c, t = self._select_stabilizer(error_type)
 
+
+
         m = self.side
         if self.surface == "planar":
             for pair in match:
@@ -507,6 +514,7 @@ class SurfaceCode:
                 stepsx = np.append(stepsx, coord_x).astype(int)
                 stepsy = np.append(coord_y, stepsy).astype(int)
 
+                print("Steps")
                 print(stepsx)
                 print(stepsy)
                 self.qubits[c, stepsx, stepsy] *= -1
