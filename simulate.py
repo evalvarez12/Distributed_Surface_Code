@@ -12,13 +12,13 @@ import matching
 
 
 distance = 10
-topology = "toroid"
-time_steps = 10
+topology = "planar"
+time_steps = 5
 weights = [1, 2]
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
 for i in range(time_steps):
-    sc.apply_qubit_error(.005, .0)
+    sc.apply_qubit_error(.009, .0)
     sc.measure_all_stablizers()
     sc._stabilizer_lie("S", .009)
     lc.add()
@@ -36,7 +36,7 @@ print("-----------------<")
 
 sc.plot("star")
 
-if topology == "toroid":
+if topology == "toric":
     match_star = matching.match_toric_3D(distance, anyons_star, time, weights=weights)
     match_plaq = matching.match_toric_3D(distance, anyons_plaq, time,weights=weights)
 else:

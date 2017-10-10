@@ -19,7 +19,7 @@ def match_toric_3D(size, anyons, time, weights=[1, 1]):
     --------
     A list containing all the input anyon positions grouped into pairs. [[[x0,y0,t0],[x1,y1,t1]],[[x2,y2,t2],...
     """
-    # TODO consideration when toroid and when planar
+    # TODO consideration when toric and when planar
     if len(anyons) == 0:
         return []
 
@@ -51,7 +51,7 @@ def match_toric_3D(size, anyons, time, weights=[1, 1]):
     print(pairs)
 
     # Remove unwanted pairs
-    pairs = pairs_remove_out_time(time, pairs)
+    pairs = pairs_remove_out_toric(time, pairs)
 
     return pairs
 
@@ -61,7 +61,7 @@ def make_graph_toric(size, nodes, weights=[1, 1]):
     # [[x1, y1, t1], [x2, y2, t2], [x3, y3, t3], ...]
     N = int(len(nodes)/2)
     print("N: ", N)
-    # m is used to find shortest distance accros the toroid
+    # m is used to find shortest distance accros the toric
     m = 2*size
 
     # Spatial and time weights
@@ -132,15 +132,13 @@ def match_planar_3D(size, anyons, stabilizer, time, weights=[1, 1]):
     print("all anyons")
     print(anyons)
 
-    nodes1, nodes2, weights = make_nodes_planar(anyons, weights)
-    print(len(nodes1), len(nodes2), len(weights))
-    print(nodes1)
-    print(nodes2)
-    print(weights)
+    graph = make_nodes_planar(anyons, weights)
+    print(len(graph))
+    print(graph)
 
     if len(weights) == 0:
         return []
-    matching = pm.getMatching_fast(4*N, nodes1, nodes2, weights)
+    matching = pm.getMatching(4*N, graph)
     # REFORMAT MATCHING PAIRS
     # Take <matching> and turn it into a list of paired anyon positions.
     pairs_ind = [[i, matching[i]] for i in range(2*N) if matching[i] > i]
@@ -153,34 +151,55 @@ def match_planar_3D(size, anyons, stabilizer, time, weights=[1, 1]):
     print(pairs)
 
     # Remove unwanted pairs
-    pairs = pairs_remove_out_space(size, stabilizer, pairs)
-    pairs = pairs_remove_out_time(time, pairs)
+    # pairs = pairs_remove_out_space(size, stabilizer, pairs)
+    # pairs = pairs_remove_out_time(time, pairs)
+    pairs = pairs_remove_out_planar(size, time, stabilizer, pairs)
 
     return pairs
 
 
-def pairs_remove_out_space(size, stabilizer, pairs):
+def pairs_remove_out_planar(size, total_time, stabilizer, pairs):
     if stabilizer == "star":
         c = 1
     else:
         c = 0
 
-    # Get the pairs where both are outside
+    # Get the pairs where both are outside in space
     out = np.logical_or(pairs[:, :, c] == -1,
                         pairs[:, :, c] == 2*size - 1)
     # Invert to get the indices of the rest
     ind = np.invert(np.prod(out, 1).astype(bool))
     pairs = pairs[ind]
 
-    return pairs
+    # Get the pairs where both are outside in time
+    out = np.prod(pairs[:, :, 2] == total_time, 1)
+    # Invert to get the indices of the rest
+    ind = np.invert(out.astype(bool))
+    pairs = pairs[ind]
 
+    # Get the pairs where both are outside in space-time
+    out = np.logical_or(pairs[:, :, 2] == total_time,
+                        pairs[:, :, c] == 2*size - 1)
+    # Invert to get the indices of the rest
+    ind = np.invert(np.prod(out, 1).astype(bool))
+    pairs = pairs[ind]
 
-def pairs_remove_out_time(total_time, pairs):
-    # Get the pairs where both are outside
-    out = np.logical_or(pairs[:, :, 2] == -1,
+    # Get the pairs where both are outside in space-time
+    out = np.logical_or(pairs[:, :, c] == -1,
                         pairs[:, :, 2] == total_time)
     # Invert to get the indices of the rest
     ind = np.invert(np.prod(out, 1).astype(bool))
+    pairs = pairs[ind]
+
+
+    return pairs
+
+
+def pairs_remove_out_toric(total_time, pairs):
+    # Get the pairs where both are outside in time
+    out = np.prod(pairs[:, :, 2] == total_time, 1)
+    # Invert to get the indices of the rest
+    ind = np.invert(out.astype(bool))
     pairs = pairs[ind]
 
     return pairs
@@ -190,11 +209,11 @@ def add_virtual_space(size, anyons, stabilizer):
     N = len(anyons)
     virtual = anyons.copy()
     if stabilizer == "star":
-        virtual[:, 1] = -2
-        virtual[:, 1][np.where(anyons[:, 1] > size)[0]] = (2*size)
+        virtual[:, 1] = -1
+        virtual[:, 1][np.where(anyons[:, 1] > size)[0]] = (2*size - 1)
     else:
-        virtual[:, 0] = -2
-        virtual[:, 0][np.where(anyons[:, 0] > size)[0]] = (2*size)
+        virtual[:, 0] = -1
+        virtual[:, 0][np.where(anyons[:, 0] > size)[0]] = (2*size - 1)
     return np.concatenate((anyons, virtual))
 
 
@@ -207,15 +226,12 @@ def add_virtual_time(total_time, anyons):
     return np.concatenate((anyons, virtual))
 
 def make_nodes_planar(nodes, edges_weights=[1, 1]):
-    nodes1 = []
-    nodes2 = []
-    weights = []
+    graph = []
 
     # Number of non virtual nodes
     N = int(len(nodes)/4)
     print("N: ", N)
     ws, wt = edges_weights
-    wb = ws
     # Make graph between all real and real and real and virutal nodes
     for i in range(N):
         px, py, pt = nodes[i]
@@ -228,23 +244,21 @@ def make_nodes_planar(nodes, edges_weights=[1, 1]):
             diffy = abs(qy - py)*ws
             weight = diffx + diffy + difft
 
-            nodes1 += [i]
-            nodes2 += [j]
-            weights += [weight]
+            graph += [[i, j, weight]]
 
     # Make graph between virtual nodes
+    # spatial-spatial and time-time have weight 0
+    # time- spatial have weight 1
     for i in range(N, 4*N - 1):
-        px, py, pt = nodes[i]
+        # px, py, pt = nodes[i]
 
         for j in range(i+1, 4*N):
-            qx, qy, qt = nodes[j]
+            # qx, qy, qt = nodes[j]
             wt = (qt-pt)
 
             # if wt >= 10:
             #     break
 
-            nodes1 += [i]
-            nodes2 += [j]
-            weights += [0]
+            graph += [[i, j, 0]]
 
-    return nodes1, nodes2, weights
+    return graph

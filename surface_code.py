@@ -48,15 +48,15 @@ class SurfaceCode:
         ----------
         distance : int
             The distance of the surface of the surface code.
-        surface = "toroid" : string, optional
+        surface = "toric" : string, optional
             Topology of the code.
         """
-        if surface != "toroid" and surface != "planar":
+        if surface != "toric" and surface != "planar":
             raise ValueError("Incorrect surface argument SurfaceCode")
         self.distance = distance
         self.surface = surface
-        # TODO: this is for toroid check for plannar
-        if self.surface == "toroid":
+        # TODO: this is for toric check for plannar
+        if self.surface == "toric":
             self.number_data_qubits = 2*distance**2
             self.number_stabs = distance**2
             self.side = 2*distance
@@ -151,7 +151,7 @@ class SurfaceCode:
 
         if p_not_complete != 0:
             pos = self._incomplete_measuerement(pos, p_not_complete)
-        if self.surface == "toroid":
+        if self.surface == "toric":
             self.measure_stabilizer_bulk(pos, c)
         elif self.surface == "planar":
             # Separate all stabilizers in bulk and boundaries.
@@ -195,7 +195,7 @@ class SurfaceCode:
         left = pos + np.array([[0], [-1]])
         right = pos + np.array([[0], [1]])
 
-        if self.surface == "toroid":
+        if self.surface == "toric":
             # Take the mod to account for cyclic boundaries
             # Top and left are automatically accounted for
             # when -1 is the index
@@ -291,7 +291,7 @@ class SurfaceCode:
 
 
     def operation_error(self, pos, stabilizer):
-        if self.surface == "toroid":
+        if self.surface == "toric":
             N = len(pos)
             m_err, q_err = self.errors.get_errors(N, stabilizer)
             stab_qubits = self._stabilizer_qubits_bulk(pos)
@@ -365,7 +365,7 @@ class SurfaceCode:
     #     b = pos + displacement2
     #
     #     # Adjust for surface type
-    #     if self.surface == "toroid":
+    #     if self.surface == "toric":
     #         a = a % (2*self.distance)
     #         b = b % (2*self.distance)
     #
@@ -436,7 +436,7 @@ class SurfaceCode:
 
     def measure_logical(self):
         """Meausure the logical qubits."""
-        if self.surface == "toroid":
+        if self.surface == "toric":
             # TODO check here
             # X1 second row - Z1 first row
             X1 = np.prod(self.qubits[0, 1, 1::2])
@@ -502,7 +502,7 @@ class SurfaceCode:
                 print(stepsy)
                 self.qubits[c, stepsx, stepsy] *= -1
 
-        elif self.surface == "toroid":
+        elif self.surface == "toric":
             for pair in match:
                 print("Pair:", pair)
                 px, py, pt = pair[0]
