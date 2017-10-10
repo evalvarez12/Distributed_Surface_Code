@@ -11,16 +11,16 @@ import layers
 import matching
 
 
-distance = 5
-topology = "planar"
+distance = 10
+topology = "toroid"
 time_steps = 10
-
+weights = [1, 2]
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
 for i in range(time_steps):
     sc.apply_qubit_error(.005, .0)
     sc.measure_all_stablizers()
-    sc._stabilizer_lie("S", .005)
+    sc._stabilizer_lie("S", .009)
     lc.add()
 
 # # sc.measure_all_stablizers()
@@ -37,11 +37,11 @@ print("-----------------<")
 sc.plot("star")
 
 if topology == "toroid":
-    match_star = matching.match_toric_3D(distance, anyons_star)
-    match_plaq = matching.match_toric_3D(distance, anyons_plaq)
+    match_star = matching.match_toric_3D(distance, anyons_star, time, weights=weights)
+    match_plaq = matching.match_toric_3D(distance, anyons_plaq, time,weights=weights)
 else:
-    match_star = matching.match_planar_3D(distance, anyons_star, "star", time)
-    match_plaq = matching.match_planar_3D(distance, anyons_plaq, "plaq", time)
+    match_star = matching.match_planar_3D(distance, anyons_star, "star", time, weights=weights)
+    match_plaq = matching.match_planar_3D(distance, anyons_plaq, "plaq", time, weights=weights)
 
 
 print("Matchings------->")
@@ -54,7 +54,7 @@ sc.correct_error("plaq", match_plaq, time)
 # sc.measure_stabilizer_type("star")
 # sc.measure_stabilizer_type("plaq")
 
-if (sc.qubits[0][sc.tags != "Q"] == -1).any():
+if (sc.qubits[:, sc.tags == "Q"] == -1).any():
     print("FAILURE CORRECTING")
 else:
     print("SUCCESS CORRECTION")
@@ -68,3 +68,4 @@ if -1 in logical[0]:
     print("LOGICAL QUBIT ERR")
 
 plt.show()
+plt.close()

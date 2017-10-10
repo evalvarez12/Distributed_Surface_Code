@@ -414,6 +414,8 @@ class SurfaceCode:
             data[self.tags == "P"] *= 2
             data[self.tags == "S"] = 1
 
+        # Return data to plot
+        # return data, self.cmap, self.cmap_norm
         plt.figure()
         plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
         # plt.colorbar()
@@ -455,24 +457,30 @@ class SurfaceCode:
     def correct_error(self, error_type, match, time=0):
         if len(match) == 0:
             return
-            
+
         _, c, t = self._select_stabilizer(error_type)
         m = self.side
 
         # Index where one pair is on the last time sheet and the other
         # in virtual time
-        ind = np.invert(np.prod(match[:, :, 2] == time, 1)).astype(bool)
-        faulty_stabs = match[ind, 0, :].transpose()
-        print("Faulty Stabs")
-        print(faulty_stabs)
-        self.qubits[0, faulty_stabs[0], faulty_stabs[1]] *= -1
-
-        match = match[np.invert(ind)]
+        # ind = np.invert(np.prod(match[:, :, 2] == time, 1)).astype(bool)
+        # faulty_stabs = match[ind, 0, :].transpose()
+        # print("Faulty Stabs")
+        # print(faulty_stabs)
+        # self.qubits[0, faulty_stabs[0], faulty_stabs[1]] *= -1
+        #
+        # match = match[np.invert(ind)]
 
         if self.surface == "planar":
             for pair in match:
-                px, py, _ = pair[0]
-                qx, qy, _ = pair[1]
+                px, py, pt = pair[0]
+                qx, qy, qt = pair[1]
+
+                if pt == time or pt == time - 1:
+                    if abs(pt - qt) == 1 and px == qx and py == qy:
+                        print("Faulty measurement: ", px, py)
+                        self.qubits[c, px, py] *= -1
+                        continue
 
                 dx = qx - px
                 sx = np.sign(dx)
@@ -497,8 +505,14 @@ class SurfaceCode:
         elif self.surface == "toroid":
             for pair in match:
                 print("Pair:", pair)
-                px, py, _ = pair[0]
-                qx, qy, _ = pair[1]
+                px, py, pt = pair[0]
+                qx, qy, qt = pair[1]
+
+                if pt == time or pt == time - 1:
+                    if abs(pt - qt) == 1 and px == qx and py == qy:
+                        print("Faulty measurement: ", px, py)
+                        self.qubits[c, px, py] *= -1
+                        continue
 
                 dx = (qx - px) % m
                 dy = (qy - py) % m

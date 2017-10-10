@@ -2,7 +2,7 @@ import blossom5.pyMatch as pm
 import numpy as np
 
 
-def match_toric_3D(size, anyons, weights=[1, 1]):
+def match_toric_3D(size, anyons, time, weights=[1, 1]):
     """
     Find a matching to fix the errors in a 3D planar code given the positions
     of '-1' stabilizer outcomes
@@ -23,8 +23,16 @@ def match_toric_3D(size, anyons, weights=[1, 1]):
     if len(anyons) == 0:
         return []
 
+    # Append virtal anyons
+    anyons = add_virtual_time(time, anyons)
+
+    print("all anyons")
+    print(anyons)
+
     graph = make_graph_toric(size, anyons, weights)
-    # print(graph)
+
+    print("GRAPH")
+    print(graph)
     # matching: indexes to which anyon conects
     number_nodes = len(anyons)
     if number_nodes % 2 == 1:
@@ -36,27 +44,38 @@ def match_toric_3D(size, anyons, weights=[1, 1]):
     pairs = [] if len(pairs_ind) == 0 else [anyons[p] for p in pairs_ind]
     # Pairs format:
     # np.array([[pair1, pair2], [pair1, pair2], ...])
-    return np.array(pairs)
+
+    pairs = np.array(pairs)
+
+    print("ALL Pairs")
+    print(pairs)
+
+    # Remove unwanted pairs
+    pairs = pairs_remove_out_time(time, pairs)
+
+    return pairs
 
 
 def make_graph_toric(size, nodes, weights=[1, 1]):
     # Nodes array format is:
     # [[x1, y1, t1], [x2, y2, t2], [x3, y3, t3], ...]
-    number_nodes = len(nodes)
+    N = int(len(nodes)/2)
+    print("N: ", N)
     # m is used to find shortest distance accros the toroid
-    m = 2*size + 1
+    m = 2*size
 
     # Spatial and time weights
-    wt, ws = weights
+    ws, wt = weights
 
     graph = []
     # TODO do without this loops?
-    for i in range(number_nodes-1):
+    # First real-real and real-virtual
+    for i in range(N):
         px, py, pt = nodes[i]
-        for j in range(i+1, number_nodes):
+        for j in range(i+1, 2*N):
             qx, qy, qt = nodes[j]
 
-            difft = (qt - pt)*wt
+            difft = abs(qt - pt)*wt
             diffx = abs(qx - px)
             diffx = min([diffx, m-diffx])*ws
             diffy = abs(qy - py)
@@ -64,6 +83,19 @@ def make_graph_toric(size, nodes, weights=[1, 1]):
 
             weight = difft + diffx + diffy
             graph += [[i, j, weight]]
+
+    # Make graph between virtual nodes
+    for i in range(N, 2*N - 1):
+        px, py, pt = nodes[i]
+
+        for j in range(i+1, 2*N):
+            qx, qy, qt = nodes[j]
+            wt = (qt-pt)
+
+            # if wt >= 10:
+            #     break
+            graph += [[i, j, 0]]
+
     # List of values for time distance weights
     return graph
 
@@ -94,14 +126,14 @@ def match_planar_3D(size, anyons, stabilizer, time, weights=[1, 1]):
         return []
 
     # Append virtal anyons
-    anyons = add_virtual_space(size, anyons, stabilizer)
     anyons = add_virtual_time(time, anyons)
+    anyons = add_virtual_space(size, anyons, stabilizer)
 
     print("all anyons")
     print(anyons)
 
     nodes1, nodes2, weights = make_nodes_planar(anyons, weights)
-    print(len(weights))
+    print(len(nodes1), len(nodes2), len(weights))
     print(nodes1)
     print(nodes2)
     print(weights)
@@ -117,7 +149,7 @@ def match_planar_3D(size, anyons, stabilizer, time, weights=[1, 1]):
 
     pairs = np.array(pairs)
 
-    print("Pairs")
+    print("ALL Pairs")
     print(pairs)
 
     # Remove unwanted pairs
@@ -158,11 +190,11 @@ def add_virtual_space(size, anyons, stabilizer):
     N = len(anyons)
     virtual = anyons.copy()
     if stabilizer == "star":
-        virtual[:, 1] = -1
-        virtual[:, 1][np.where(anyons[:, 1] > size)[0]] = (2*size - 1)
+        virtual[:, 1] = -2
+        virtual[:, 1][np.where(anyons[:, 1] > size)[0]] = (2*size)
     else:
-        virtual[:, 0] = -1
-        virtual[:, 0][np.where(anyons[:, 0] > size)[0]] = (2*size - 1)
+        virtual[:, 0] = -2
+        virtual[:, 0][np.where(anyons[:, 0] > size)[0]] = (2*size)
     return np.concatenate((anyons, virtual))
 
 
@@ -170,8 +202,8 @@ def add_virtual_time(total_time, anyons):
     N = len(anyons)
     t = int(total_time/2)
     virtual = anyons.copy()
-    virtual[:, 2] = -1
-    virtual[:, 2][np.where(anyons[:, 2] > t)[0]] = total_time
+    virtual[:, 2] = total_time
+    # virtual[:, 2][np.where(anyons[:, 2] > t)[0]] = total_time
     return np.concatenate((anyons, virtual))
 
 def make_nodes_planar(nodes, edges_weights=[1, 1]):
