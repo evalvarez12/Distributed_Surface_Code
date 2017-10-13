@@ -476,11 +476,11 @@ class SurfaceCode:
                 px, py, pt = pair[0]
                 qx, qy, qt = pair[1]
 
-                if pt == time or pt == time - 1:
-                    if abs(pt - qt) == 1 and px == qx and py == qy:
-                        print("Faulty measurement: ", px, py)
-                        self.qubits[c, px, py] *= -1
-                        continue
+                # if pt == time or pt == time - 1:
+                #     if abs(pt - qt) == 1 and px == qx and py == qy:
+                #         print("Faulty measurement: ", px, py)
+                #         self.qubits[c, px, py] *= -1
+                #         continue
 
                 dx = qx - px
                 sx = np.sign(dx)

@@ -67,6 +67,22 @@ def make_graph_toric(size, nodes, weights=[1, 1]):
     # Spatial and time weights
     ws, wt = weights
 
+    # NOTE: Cool method for making graph
+    # Copy the nodes to obtain a matrix
+    matrix = np.stack((nodes,)*N)
+
+    # Get the substractions to find all distances
+    matrix = matrix - np.expand_dims(nodes, 1)
+    matrix = np.abs(matrix)
+    # Get the upper triangular part to eliminate duplicates
+    matrix = np.tril(matrix)
+
+    mask = np.tril(np.ones((N,N)))
+    np.fill_diagonal(mask, 0)
+    mask = mask.astype(bool)
+    # weights = [for i in range
+
+
     graph = []
     # TODO do without this loops?
     # First real-real and real-virtual
@@ -84,20 +100,28 @@ def make_graph_toric(size, nodes, weights=[1, 1]):
             weight = difft + diffx + diffy
             graph += [[i, j, weight]]
 
+
+
     # Make graph between virtual nodes
-    for i in range(N, 2*N - 1):
-        px, py, pt = nodes[i]
+    i = list(range(N, 2*N - 1))
+    j = list(range(N + 1, 2*N))
+    z = [0]*(N - 1)
+    graph_virtual = np.stack((i, j, z), 1)
+    graph = np.concatenate((graph, graph_virtual))
 
-        for j in range(i+1, 2*N):
-            qx, qy, qt = nodes[j]
-            wt = (qt-pt)
-
-            # if wt >= 10:
-            #     break
-            graph += [[i, j, 0]]
+    # for i in range(N, 2*N - 1):
+    #     px, py, pt = nodes[i]
+    #
+    #     for j in range(i+1, 2*N):
+    #         qx, qy, qt = nodes[j]
+    #         wt = (qt-pt)
+    #
+    #         # if wt >= 10:
+    #         #     break
+    #         graph += [[i, j, 0]]
 
     # List of values for time distance weights
-    return graph
+    return np.array(graph)
 
 def match_planar_3D(size, anyons, stabilizer, time, weights=[1, 1]):
     """
@@ -126,7 +150,7 @@ def match_planar_3D(size, anyons, stabilizer, time, weights=[1, 1]):
         return []
 
     # Append virtal anyons
-    anyons = add_virtual_time(time, anyons)
+    # anyons = add_virtual_time(time, anyons)
     anyons = add_virtual_space(size, anyons, stabilizer)
 
     print("all anyons")
