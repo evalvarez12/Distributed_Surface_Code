@@ -2,7 +2,7 @@ import blossom5.pyMatch as pm
 import numpy as np
 
 
-def match_toric_3D(size, anyons, time, faulty_measurement=True, weights=[1, 1]):
+def match(size, anyons, surface, stabilizer, time, weights=[1, 1]):
     """
     Find a matching to fix the errors in a 3D planar code given the positions
     of '-1' stabilizer outcomes
@@ -20,50 +20,42 @@ def match_toric_3D(size, anyons, time, faulty_measurement=True, weights=[1, 1]):
     A list containing all the input anyon positions grouped into pairs.
     [[[x0,y0,t0],[x1,y1,t1]],[[x2,y2,t2],...
     """
-    # TODO consideration when toric and when planar
-    if len(anyons) == 0:
+    N_real = len(anyons)
+    if N_real == 0:
         return []
 
     # Append virtal anyons
-    if faulty_measurement:
+    cyclic = True
+    if surface == "planar":
+        anyons = add_virtual_space(size, anyons, stabilizer)
+        cyclic = False
+    if time != 0:
         anyons = add_virtual_time(time, anyons)
+    N = len(anyons)
 
-    print("all anyons")
-    print(anyons)
+    graph = make_graph(size, anyons, N_real, weights, cyclic=cyclic)
 
-    graph = make_graph(size, anyons, weights, cyclic=True)
-
-    print("GRAPH")
-    print(graph)
-    # matching: indexes to which anyon conects
-    number_nodes = len(anyons)
-    if number_nodes % 2 == 1:
+    if N % 2 == 1:
         raise ValueError("Number of nodes is odd!")
-    matching = pm.getMatching(number_nodes, graph)
-    # print("MATCHING")
-    # print(matching)
-    pairs_ind = np.array([[i, matching[i]] for i in range(number_nodes) if matching[i] > i])
+    matching = pm.getMatching(N, graph)
+
+    pairs_ind = np.array([[i, matching[i]] for i in range(N) if matching[i] > i])
     pairs = anyons[pairs_ind]
     # Pairs format:
     # np.array([[pair1, pair2], [pair1, pair2], ...])
 
-    print("ALL Pairs")
-    print(pairs)
-
     # Remove unwanted pairs
-    pairs = pairs_remove_out_toric(time, pairs)
-
+    if surface == "toric":
+        pairs = pairs_remove_out_toric(time, pairs)
+    elif surface == "planar":
+        pairs = pairs_remove_out_planar(size, time, stabilizer, pairs)
     return pairs
 
 
-def make_graph(size, nodes, weights=[1, 1], cyclic=True):
+def make_graph(size, nodes, N_real, weights=[1, 1], cyclic=True):
     # Nodes array format is:
     # [[x1, y1, t1], [x2, y2, t2], [x3, y3, t3], ...]
     N = len(nodes)
-    if cyclic:
-        N_real = int(N/2.)
-    else:
-        N_real = int(N/4.)
     # Spatial and time weights
     ws, wt = weights
 
@@ -102,60 +94,6 @@ def make_graph(size, nodes, weights=[1, 1], cyclic=True):
     graph[graph[:, 0] >= N_real, 2] = 0
 
     return graph
-
-
-def match_planar_3D(size, anyons, stabilizer, time, weights=[1, 1]):
-    """
-    Finds a matching to fix the errors in a 3D planar code given the positions.
-
-    Parameters:
-    -----------
-    size -- The dimension of the code
-    anyon -- A list of the locations of all '-1' value stabilizers in the 3D
-             parity lattice. [[x0,y0,t0],[x1,y1,t1],...]
-    stabilizer -- The stabilizer basis, can take the value "star" or "plaq"
-    weights -- The multiplicative weighting that should be assigned to graph
-               edges in the [space,time] dimensions. Default: [1,1]
-
-    Returns:
-    --------
-    A list containing all the input anyon positions grouped into pairs.
-    [[[x0,y0,t0],[x1,y1,t1]],[[x2,y2,t2],...
-
-    """
-    # NOTE: Use max time separation?
-    # max_time_separation = 10
-
-    N = len(anyons)
-    if N == 0:
-        return []
-
-    # Append virtal anyons
-    anyons = add_virtual_time(time, anyons)
-    anyons = add_virtual_space(size, anyons, stabilizer)
-
-    print("all anyons")
-    print(anyons)
-
-    graph = make_graph(size, anyons, weights, cyclic=False)
-    number_nodes = len(anyons)
-    print(len(graph))
-    print(graph)
-
-    if len(weights) == 0:
-        return []
-    matching = pm.getMatching(number_nodes, graph)
-
-    # Reformat to get matching pairs
-    pairs_ind = np.array([[i, matching[i]] for i in range(number_nodes) if matching[i] > i])
-    pairs = anyons[pairs_ind]
-    print("ALL Pairs")
-    print(pairs)
-
-    # Remove unwanted pairs
-    pairs = pairs_remove_out_planar(size, time, stabilizer, pairs)
-
-    return pairs
 
 
 def pairs_remove_out_planar(size, total_time, stabilizer, pairs):

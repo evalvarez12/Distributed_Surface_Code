@@ -10,42 +10,41 @@ import surface_code
 import layers
 import matching
 
-
+# Define the parameters
 distance = 20
-topology = "planar"
+topology = "toric"
 time_steps = 20
 weights = [1, 1]
+
+# Initialize objects
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
+
+# Perform measurements
 for i in range(time_steps):
     sc.apply_qubit_error(.019, .0)
     sc.measure_all_stablizers()
     sc._stabilizer_lie("S", .00)
     lc.add()
 
-# # sc.measure_all_stablizers()
-# lc.add()
-time = lc.get_time()
 
+time = lc.get_time()
 anyons_star, anyons_plaq = lc.find_anyons_all()
 print("Anyons________>")
 print(anyons_star)
 # print(anyon_plaq)
 print("-----------------<")
-# print(anyon_plaq)
 
 sc.plot("star")
 
-if topology == "toric":
-    match_star = matching.match_toric_3D(distance, anyons_star, time, weights=weights)
-    match_plaq = matching.match_toric_3D(distance, anyons_plaq, time,weights=weights)
-else:
-    match_star = matching.match_planar_3D(distance, anyons_star, "star", time, weights=weights)
-    match_plaq = matching.match_planar_3D(distance, anyons_plaq, "plaq", time, weights=weights)
-
+match_star = matching.match(distance, anyons_star, topology,
+                            "star", time, weights=weights)
+match_plaq = matching.match(distance, anyons_plaq, topology,
+                            "plaq", time, weights=weights)
 
 print("Matchings------->")
 print(match_star)
+
 print("Decoding now----->")
 sc.correct_error("star", match_star, time)
 sc.correct_error("plaq", match_plaq, time)
