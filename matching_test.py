@@ -13,13 +13,12 @@ import matching
 
 class TestMatching(unittest.TestCase):
 
-    def test_weightNorm(self):
-        a = np.array([  ])
-        m = 4
-        res = matching.weightNorm(a, m, [1,1])
-        print(res)
+    def test_make_graph(self):
+        nodes = np.random.randint(20, size=(100, 3))
+        size = 10
+        for i in range(100):
+            graph = matching.make_graph_toric(size, nodes)
 
-    
 
 if __name__ == '__main__':
     unittest.main()
