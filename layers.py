@@ -31,6 +31,13 @@ class Layers:
     def get_time(self):
         return len(self.syndromes_star)
 
+    def reset(self):
+        self.past_syndrome_star = np.ones(self.surface_code.number_stabs)
+        self.past_syndrome_plaq = np.ones(self.surface_code.number_stabs)
+
+        self.syndromes_star = []
+        self.syndromes_plaq = []
+
     def add(self):
         # New layer is obtained by comparing the previous one
         # with the new one, so physical errors are only carried once

@@ -478,7 +478,7 @@ class SurfaceCode:
 
                 if pt == time + 1 or qt == time + 1:
                     if abs(pt - qt) == 2 and px == qx and py == qy:
-                        print("Faulty measurement: ", px, py)
+                        # print("Faulty measurement: ", px, py)
                         self.qubits[0, px, py] *= -1
                         continue
 
@@ -497,20 +497,20 @@ class SurfaceCode:
                 stepsy = np.append(coord_y, stepsy)
 
                 # Apply error correction path
-                print("STEPS")
-                print(stepsx)
-                print(stepsy)
+                # print("STEPS")
+                # print(stepsx)
+                # print(stepsy)
                 self.qubits[c, stepsx, stepsy] *= -1
 
         elif self.surface == "toric":
             for pair in match:
-                print("Pair:", pair)
+                # print("Pair:", pair)
                 px, py, pt = pair[0]
                 qx, qy, qt = pair[1]
 
                 if pt == time + 1 or qt == time + 1:
                     if abs(pt - qt) == 2 and px == qx and py == qy:
-                        print("Faulty measurement: ", px, py)
+                        # print("Faulty measurement: ", px, py)
                         self.qubits[0, px, py] *= -1
                         continue
 
@@ -539,7 +539,7 @@ class SurfaceCode:
                 stepsx = np.append(stepsx, coord_x).astype(int)
                 stepsy = np.append(coord_y, stepsy).astype(int)
 
-                print("Steps")
-                print(stepsx)
-                print(stepsy)
+                # print("Steps")
+                # print(stepsx)
+                # print(stepsy)
                 self.qubits[c, stepsx, stepsy] *= -1
