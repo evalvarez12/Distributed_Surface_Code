@@ -1,4 +1,4 @@
-import blossom5.pyMatch as pm
+import blossom5.py_match as pm
 import numpy as np
 
 
@@ -29,6 +29,7 @@ def match(size, anyons, surface, stabilizer, time, weights=[1, 1]):
     if surface == "planar":
         anyons = add_virtual_space(size, anyons, stabilizer)
         cyclic = False
+    # Time = 0 means assume perfect syndrome extraction. Decode in 2D
     if time != 0:
         anyons = add_virtual_time(time, anyons)
     N = len(anyons)
@@ -37,7 +38,7 @@ def match(size, anyons, surface, stabilizer, time, weights=[1, 1]):
 
     if N % 2 == 1:
         raise ValueError("Number of nodes is odd!")
-    matching = pm.getMatching(N, graph)
+    matching = pm.blossom_match(N, graph)
 
     pairs_ind = np.array([[i, matching[i]] for i in range(N) if matching[i] > i])
     pairs = anyons[pairs_ind]

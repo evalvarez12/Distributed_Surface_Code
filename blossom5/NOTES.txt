@@ -1,1 +1,0 @@
-# Various options can be found in the PerfectMatching.h file - notably the verbose output option

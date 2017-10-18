@@ -13,7 +13,7 @@ import matching
 # Define the parameters
 distance = 20
 topology = "toric"
-time_steps = 20
+time_steps = 1
 weights = [1, 1]
 
 # Initialize objects
@@ -22,7 +22,7 @@ lc = layers.Layers(sc)
 
 # Perform measurements
 for i in range(time_steps):
-    sc.apply_qubit_error(.019, .0)
+    sc.apply_qubit_error(.1, .0)
     sc.measure_all_stablizers()
     sc._stabilizer_lie("S", .00)
     lc.add()
@@ -38,9 +38,9 @@ print("-----------------<")
 sc.plot("star")
 
 match_star = matching.match(distance, anyons_star, topology,
-                            "star", time, weights=weights)
+                            "star", time=0, weights=weights)
 match_plaq = matching.match(distance, anyons_plaq, topology,
-                            "plaq", time, weights=weights)
+                            "plaq", time=0, weights=weights)
 
 print("Matchings------->")
 print(match_star)
@@ -53,10 +53,10 @@ sc.correct_error("plaq", match_plaq, time)
 # sc.measure_stabilizer_type("star")
 # sc.measure_stabilizer_type("plaq")
 
-if (sc.qubits[:, sc.tags == "Q"] == -1).any():
-    print("FAILURE CORRECTING")
-else:
-    print("SUCCESS CORRECTION")
+# if (sc.qubits[:, sc.tags == "Q"] == -1).any():
+#     print("FAILURE CORRECTING")
+# else:
+#     print("SUCCESS CORRECTION")
 logical = sc.measure_logical()
 print(logical)
 
