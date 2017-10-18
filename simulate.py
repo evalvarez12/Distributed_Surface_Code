@@ -11,20 +11,30 @@ import layers
 import matching
 
 # Define the parameters
-distance = 20
+distance = 10
 topology = "toric"
-time_steps = 1
+time_steps = 10
 weights = [1, 1]
+
+# Parameters for noisy measurement
+ps = 0.0
+pm = 0.009
+pg = 0.009
+pn = 0.0
+protocol = "LOCAL"
 
 # Initialize objects
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
+sc.init_error_obj(ps, pm, pg, pn, protocol)
+
 
 # Perform measurements
 for i in range(time_steps):
-    sc.apply_qubit_error(.1, .0)
-    sc.measure_all_stablizers()
-    sc._stabilizer_lie("S", .00)
+    # sc.apply_qubit_error(.1, .0)
+    # sc.measure_all_stablizers()
+    # sc._stabilizer_lie("S", .00)
+    sc.noisy_measurement("star")
     lc.add()
 
 
@@ -38,9 +48,9 @@ print("-----------------<")
 sc.plot("star")
 
 match_star = matching.match(distance, anyons_star, topology,
-                            "star", time=0, weights=weights)
+                            "star", time=time, weights=weights)
 match_plaq = matching.match(distance, anyons_plaq, topology,
-                            "plaq", time=0, weights=weights)
+                            "plaq", time=time, weights=weights)
 
 print("Matchings------->")
 print(match_star)

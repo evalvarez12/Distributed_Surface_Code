@@ -131,7 +131,13 @@ class SurfaceCode:
         ----------
         stabilizer: string - either "star" or "plaq"
         """
-        pos, c, t = self._select_stabilizer(stabilizer)
+        if stabilizer == "star":
+            pos = self.stars
+            c = 0
+        if stabilizer == "plaq":
+            pos = self.plaqs
+            c = 1
+
         self.measure_stabilizer(pos, c, p_not_complete)
 
     def measure_stabilizer(self, pos, c, p_not_complete=0):
@@ -256,20 +262,19 @@ class SurfaceCode:
         # Apply the noise
         self.qubits[:, self.tags == "Q"] *= noise
 
-    def _apply_operation_error(self, pos, error):
-        """Apply operation error."""
-        # NOTE This will change
-        pos_qubit1, pos_qubit2 = self.two_rand_stab_qubits(pos)
-
-        err_measurement, err_qubit1, err_qubit2 = error
-        # TODO care with errors shape
-        # Errors have shape:
-        # [[e1X, e2X, e3X, ...], [e1Z, e2Z, e3Z, ...]]
-        self.qubits[:, pos_qubit1[0], pos_qubit1[1]] *= err_qubit1
-        self.qubits[:, pos_qubit2[0], pos_qubit2[1]] *= err_qubit2
-
-        # Apply error to stabilizer
-        self.qubitts[0, pos[0], pos[1]] *= err_measurement
+    # NOTE: OLD function
+    # def _apply_operation_error(self, pos, error):
+    #     """Apply operation error."""
+    #     pos_qubit1, pos_qubit2 = self.two_rand_stab_qubits(pos)
+    #
+    #     err_measurement, err_qubit1, err_qubit2 = error
+    #     # Errors have shape:
+    #     # [[e1X, e2X, e3X, ...], [e1Z, e2Z, e3Z, ...]]
+    #     self.qubits[:, pos_qubit1[0], pos_qubit1[1]] *= err_qubit1
+    #     self.qubits[:, pos_qubit2[0], pos_qubit2[1]] *= err_qubit2
+    #
+    #     # Apply error to stabilizer
+    #     self.qubitts[0, pos[0], pos[1]] *= err_measurement
 
     def separate_bulk_boundary(self, pos):
         # Mask to identify bulk from boundary
@@ -289,16 +294,31 @@ class SurfaceCode:
                                    pos[:, np.invert(masky)]), 1)
         return bulk, boundary
 
+    def noisy_measurement(self, stabilizer):
+        if stabilizer == "star":
+            pos = self.stars
+            c = 0
+        elif stabilizer == "plaq":
+            pos = self.plaqs
+            c = 1
 
-    def operation_error(self, pos, stabilizer):
+        self.noisy_measurement_specific(pos, c, stabilizer)
+
+    def noisy_measurement_specific(self, pos, c, stabilizer):
         if self.surface == "toric":
-            N = len(pos)
+            N = len(pos[0])
             m_err, q_err = self.errors.get_errors(N, stabilizer)
+            print(q_err)
+            print(m_err)
+            print(pos)
             stab_qubits = self._stabilizer_qubits_bulk(pos)
-
-            # Apply error to stabilizer
+            print(stab_qubits)
+            # Apply error to qubits
+            self.qubits[:, stab_qubits[:, 0], stab_qubits[:, 1]] *= q_err
+            # Measure stabilizers
+            self.measure_stabilizer(pos, c)
+            # Apply errors to measurements
             self.qubits[0, pos[0], pos[1]] *= m_err
-            self.qubits[:, stab_qubits[0], stab_qubits[1]] *= q_err
         elif self.surface == "planar":
             # First the bulk stabilizers
             bulk_stabs = pos[:, self.plane[pos[0], pos[1]] == "o"]
@@ -306,9 +326,12 @@ class SurfaceCode:
             m_err, q_err = self.errors.get_errors(N, stabilizer)
             bulk_qubits = self._stabilizer_qubits_bulk(bulk_stabs)
 
-            # Apply error to stabilizer
+            # Apply error to qubits
+            self.qubits[:, bulk_qubits[:, 0], bulk_qubits[:, 1]] *= q_err
+            # Measure stabilizers
+            self.measure_stabilizer(bulk_stabs, c)
+            # Error to measurements
             self.qubits[0, bulk_stabs[0], bulk_stabs[1]] *= m_err
-            self.qubits[:, bulk_qubits[0], bulk_qubits[1]] *= q_err
 
             # Now the boundaries
             for b in ["t", "b", "l", "r"]:
@@ -318,32 +341,39 @@ class SurfaceCode:
                                                       border=True)
                 bord_qubits = self._stabilizer_qubits_boundary(bord_stabs, b)
 
+                self.qubits[:, bord_qubits[:, 0], bord_qubits[:, 1]] *= q_err
+
+                # Do measurement over border quibits - copied from function
+                vals = self.qubits[c, bord_qubits[:, 0], bord_qubits[:, 1]]
+                vals = np.prod(vals, axis=0)
+                self.qubits[0, bord_stabs[0], bord_stabs[1]] = vals
+
                 self.qubits[0, bord_stabs[0], bord_stabs[1]] *= m_err
-                self.qubits[:, bord_qubits[0], bord_qubits[1]] *= q_err
 
-    def noisy_measurement(self, stabilizer, error_vec, error_sum, p_not_complete=0):
-        """
-        Does a noisy measurement on the stabilizer type.
-        The measurement is done in 2 rounds of interspersed stabilizers.
-        """
-        # NOTE this will change
-        # Specify stabilizer
-        pos1, pos2, c, t = self._select_stabilizerRounds(stabilizer)
-
-        # Find all set of probabilistic errors
-        err = np.random.rand(self.number_stabilizers)
-        err_index = np.zeros(self.number_stabilizers)
-        for i in range(self.number_stabilizers):
-            # Index of the actual error is the last True in less than rand number
-            err_index[i] = np.where(error_sum > err[i])[0, 0]
-
-        self.operation_error(pos1, error_vec[err_index[:len(pos1)]])
-        self.measure_stabilizer(pos1, c, p_not_complete)
-        # TODO :or ?
-        # self.measureStabilizer(pos, c)
-
-        self.measure_stabilizer(pos2, c, p_not_complete)
-        self.operation_error(pos2, error_vec[err_index[len(pos1):]])
+    # NOTE: OLD function
+    # def noisy_measurement(self, stabilizer, error_vec, error_sum, p_not_complete=0):
+    #     """
+    #     Does a noisy measurement on the stabilizer type.
+    #     The measurement is done in 2 rounds of interspersed stabilizers.
+    #     """
+    #     # NOTE this will change
+    #     # Specify stabilizer
+    #     pos1, pos2, c, t = self._select_stabilizerRounds(stabilizer)
+    #
+    #     # Find all set of probabilistic errors
+    #     err = np.random.rand(self.number_stabilizers)
+    #     err_index = np.zeros(self.number_stabilizers)
+    #     for i in range(self.number_stabilizers):
+    #         # Index of the actual error is the last True in less than rand number
+    #         err_index[i] = np.where(error_sum > err[i])[0, 0]
+    #
+    #     self.operation_error(pos1, error_vec[err_index[:len(pos1)]])
+    #     self.measure_stabilizer(pos1, c, p_not_complete)
+    #     # TODO :or ?
+    #     # self.measureStabilizer(pos, c)
+    #
+    #     self.measure_stabilizer(pos2, c, p_not_complete)
+    #     self.operation_error(pos2, error_vec[err_index[len(pos1):]])
 
 
     # NOTE: This will be DEPRECATED
@@ -374,33 +404,44 @@ class SurfaceCode:
     #
     #     return a, b
 
+    # def _select_stabilizer(self, stabilizer):
+    #     """Return useful parameters for stabilizer type."""
+    #     if stabilizer == "star":
+    #         pos = self.stars
+    #         c = 0
+    #         t = "S"
+    #     if stabilizer == "plaq":
+    #         pos = self.plaqs
+    #         c = 1
+    #         t = "P"
+    #
+    #     return pos, c, t
+    #
+
     def _select_stabilizer(self, stabilizer):
         """Return useful parameters for stabilizer type."""
         if stabilizer == "star":
-            pos = self.stars
             c = 0
-            t = "S"
         if stabilizer == "plaq":
-            pos = self.plaqs
             c = 1
-            t = "P"
 
-        return pos, c, t
+        return c
 
-    def _select_stabilizer_rounds(self, stabilizer):
-        """Parameter for stabilizer type when using interspersed rounds."""
-        if stabilizer == "star":
-            pos1 = self.stars_round1
-            pos2 = self.stars_round2
-            c = 0
-            t = "S"
-        if stabilizer == "plaq":
-            pos1 = self.plaqs_round1
-            pos2 = self.plaqs_round2
-            c = 1
-            t = "P"
 
-        return pos1, pos2, c, t
+    # def _select_stabilizer_rounds(self, stabilizer):
+    #     """Parameter for stabilizer type when using interspersed rounds."""
+    #     if stabilizer == "star":
+    #         pos1 = self.stars_round1
+    #         pos2 = self.stars_round2
+    #         c = 0
+    #         t = "S"
+    #     if stabilizer == "plaq":
+    #         pos1 = self.plaqs_round1
+    #         pos2 = self.plaqs_round2
+    #         c = 1
+    #         t = "P"
+    #
+    #     return pos1, pos2, c, t
 
     def plot(self, stabilizer):
         """Plot the surface code."""
@@ -458,7 +499,7 @@ class SurfaceCode:
         if len(match) == 0:
             return
 
-        _, c, t = self._select_stabilizer(error_type)
+        c = self._select_stabilizer(error_type)
         m = self.side
 
         # Index where one pair is on the last time sheet and the other

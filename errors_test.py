@@ -15,7 +15,6 @@ ps = 0.0
 pm = 0.009
 pg = 0.009
 pn = 0.0
-system_size = 4
 function = "LOCAL"
 surface = "planar"
 # Create object

@@ -40,9 +40,9 @@ class Generator:
             self.indexes_border = range(len(self.chi_keys_border[0]))
 
     def get_errors(self, num_errors, stabilizer, border=False):
-        if stabilizer == "X":
+        if stabilizer == "star":
             c = 0
-        elif stabilizer == "Z":
+        elif stabilizer == "plaq":
             c = 1
 
         if border:
