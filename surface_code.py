@@ -308,11 +308,7 @@ class SurfaceCode:
         if self.surface == "toric":
             N = len(pos[0])
             m_err, q_err = self.errors.get_errors(N, stabilizer)
-            print(q_err)
-            print(m_err)
-            print(pos)
             stab_qubits = self._stabilizer_qubits_bulk(pos)
-            print(stab_qubits)
             # Apply error to qubits
             self.qubits[:, stab_qubits[:, 0], stab_qubits[:, 1]] *= q_err
             # Measure stabilizers
@@ -322,8 +318,8 @@ class SurfaceCode:
         elif self.surface == "planar":
             # First the bulk stabilizers
             bulk_stabs = pos[:, self.plane[pos[0], pos[1]] == "o"]
-            N_bulk = len(bulk_stabs)
-            m_err, q_err = self.errors.get_errors(N, stabilizer)
+            N_bulk = len(bulk_stabs[0])
+            m_err, q_err = self.errors.get_errors(N_bulk, stabilizer)
             bulk_qubits = self._stabilizer_qubits_bulk(bulk_stabs)
 
             # Apply error to qubits
@@ -336,7 +332,7 @@ class SurfaceCode:
             # Now the boundaries
             for b in ["t", "b", "l", "r"]:
                 bord_stabs = pos[:, self.plane[pos[0], pos[1]] == b]
-                N_bord = len(bord_stabs)
+                N_bord = len(bord_stabs[0])
                 m_err, q_err = self.errors.get_errors(N_bord, stabilizer,
                                                       border=True)
                 bord_qubits = self._stabilizer_qubits_boundary(bord_stabs, b)

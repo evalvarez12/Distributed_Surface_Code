@@ -1,12 +1,13 @@
 import qutip as qt
 import protocols
 import error_models as errs
+import numpy as np
 
 rho = errs.bell_pair(.4)
 rho_ideal = qt.bell_state("00")
 # print(de.fidelity(rho, rho_ideal))
 
-prot = protocols.Protocols(0.01, 0.01, 0.01, .01)
+prot = protocols.Protocols(0.0, 0.0075, 0.0075, .1)
 prot_perf = protocols.Protocols(0., 0., 0., 0.,)
 
 print("------------------SINGLE SELECTION-------------------")
@@ -50,3 +51,9 @@ for i in range(2):
 rho_initial = rho_initial * rho_initial.dag()
 a = prot.stringent(rho_initial, [0, 1, 2], "X")
 b = prot.expedient(rho_initial, [0, 1, 2], "X")
+
+
+print("----GHZ Fidelity--------------")
+ghz = prot.make_ghz_expedient(4)
+ghz_ideal = prot_perf.make_ghz_expedient(4)
+print((ghz_ideal * ghz * ghz_ideal).tr())

@@ -11,9 +11,9 @@ import layers
 import matching
 
 # Define the parameters
-distance = 10
-topology = "toric"
-time_steps = 10
+distance = 20
+topology = "planar"
+time_steps = 20
 weights = [1, 1]
 
 # Parameters for noisy measurement
@@ -40,10 +40,10 @@ for i in range(time_steps):
 
 time = lc.get_time()
 anyons_star, anyons_plaq = lc.find_anyons_all()
-print("Anyons________>")
-print(anyons_star)
+# print("Anyons________>")
+# print(anyons_star)
 # print(anyon_plaq)
-print("-----------------<")
+# print("-----------------<")
 
 sc.plot("star")
 
@@ -52,10 +52,10 @@ match_star = matching.match(distance, anyons_star, topology,
 match_plaq = matching.match(distance, anyons_plaq, topology,
                             "plaq", time=time, weights=weights)
 
-print("Matchings------->")
-print(match_star)
+# print("Matchings------->")
+# print(match_star)
 
-print("Decoding now----->")
+# print("Decoding now----->")
 sc.correct_error("star", match_star, time)
 sc.correct_error("plaq", match_plaq, time)
 
