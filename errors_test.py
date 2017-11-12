@@ -21,5 +21,5 @@ surface = "planar"
 errors = errors.Generator(surface=surface, ps=ps, pm=pm,
                           pg=pg, pn=pn, protocol=function)
 
-e=errors.get_errors(5, "X", True)
+e=errors.get_errors(5, "star", True)
 print(e)

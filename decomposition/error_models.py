@@ -15,6 +15,17 @@ import operations as ops
 # TODO ask david if the order of the application noise gate is important
 
 
+def env_dephasing(rho, n_steps, e_spin, N=1, pos=0):
+    # e_spin = TRUE or FALSE if electron spin is being used or no
+    # Time it takes to make every operation 2 micro seg
+    # t_step = 2e-6
+    # a0 = 1/2000
+    # a1 = 1/3
+    a = 1/2000 * e_spin + 1/3 * (2e-6)
+    sigma_z = qt.rx(np.pi, N, pos)
+    lamb = np.exp(-a * n_steps)
+    return (1 + lamb)/2 * rho + (1 - lamb)/2 * sigma_z * rho * sigma_z
+
 def get_sigmas(N=1, pos=0):
     sigmas = [qt.qeye([2]*N), qt.rx(np.pi, N, pos), qt.ry(np.pi, N, pos),
               qt.rz(np.pi, N, pos)]
