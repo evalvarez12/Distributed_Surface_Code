@@ -1,5 +1,5 @@
 import qutip as qt
-import protocols
+import protocols_det
 import error_models as errs
 import numpy as np
 
@@ -7,8 +7,8 @@ rho = errs.bell_pair(.4)
 rho_ideal = qt.bell_state("00")
 # print(de.fidelity(rho, rho_ideal))
 
-prot = protocols.Protocols(0.0, 0.0075, 0.0075, .1)
-prot_perf = protocols.Protocols(0., 0., 0., 0.,)
+prot = protocols_det.ProtocolsDeterministic(0.0, 0.0075, 0.0075, .1)
+prot_perf = protocols_det.ProtocolsDeterministic(0., 0., 0., 0.,)
 
 print("------------------SINGLE SELECTION-------------------")
 p, single = prot.single_selection(rho, [0, 1], "Z")

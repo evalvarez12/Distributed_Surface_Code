@@ -15,16 +15,22 @@ import operations as ops
 # TODO ask david if the order of the application noise gate is important
 
 
-def env_dephasing(rho, n_steps, e_spin, N=1, pos=0):
+def env_dephasing(rho, n_steps, e_spin, N, qubits):
+    for i in qubits:
+        rho = env_dephasing_single(rho, n_steps, e_spin, N, i)
+    return rho
+
+def env_dephasing_single(rho, n_steps, e_spin, N=1, pos=0):
     # e_spin = TRUE or FALSE if electron spin is being used or no
-    # Time it takes to make every operation 2 micro seg
+    # NOTE: Time it takes to make every operation 2 micro seg
     # t_step = 2e-6
     # a0 = 1/2000
     # a1 = 1/3
     a = 1/2000 * e_spin + 1/3 * (2e-6)
-    sigma_z = qt.rx(np.pi, N, pos)
+    sigma_z = qt.rz(np.pi, N, pos)
+    ss = sigma_z * rho * sigma_z.dag()
     lamb = np.exp(-a * n_steps)
-    return (1 + lamb)/2 * rho + (1 - lamb)/2 * sigma_z * rho * sigma_z
+    return (1 + lamb)/2 * rho + (1 - lamb)/2 * sigma_z * rho * sigma_z.dag()
 
 def get_sigmas(N=1, pos=0):
     sigmas = [qt.qeye([2]*N), qt.rx(np.pi, N, pos), qt.ry(np.pi, N, pos),
@@ -73,7 +79,7 @@ def two_qubit_gate(rho, gate, p, N=2, pos1=0, pos2=1):
     return rho
 
 
-def measure_single_Zbasis(rho, p, N=1, pos=0):
+def measure_single_Zbasis_random(rho, p, N=1, pos=0):
     X = qt.rx(np.pi, N, pos)
     rho = (1 - p)*rho + p*(X * rho * X.dag())
     measurement, collapsed_rho = ops.random_measure_single_Zbasis(rho, N,
@@ -88,7 +94,7 @@ def measure_single_Zbasis_forced(rho, p, project, N=1, pos=0):
     return p, collapsed_rho
 
 
-def measure_single_Xbasis(rho, p, N=1, pos=0):
+def measure_single_Xbasis_random(rho, p, N=1, pos=0):
     Z = qt.rz(np.pi, N, pos)
     rho = (1 - p)*rho + p*(Z * rho * Z.dag())
     measurement, collapsed_rho = ops.random_measure_single_Xbasis(rho, N,

@@ -32,6 +32,17 @@ class TestErrorModels(unittest.TestCase):
         print("Error: p = ", p)
         print(rho_coll)
 
+    def test_env_dephasing(self):
+        print("----------Test env dephasing-----------")
+        n_steps = 10
+        rho_noise1 = errs.env_dephasing(rho_test, 20000, True, 2, [0,1])
+        rho_noise2 = errs.env_dephasing(rho_test, 20000, False, 2, [0,1])
+        # print(rho_noise1)
+        # print(rho_noise.tr())
+        print(Fidelity(rho_noise1, psi_test))
+        print(Fidelity(rho_noise2, psi_test))
+
+
 
 if __name__ == '__main__':
     unittest.main()
