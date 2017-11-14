@@ -10,11 +10,16 @@ import error_models as errs
 import operations as ops
 
 
-class ProtocolsDeterministic:
+class ProtocolsMonteCarlo:
     """
-    Class for holding all protocols.
+    Class for holding all protocols. Using a stochastic
+    variable to compute the circuits.
+    Includes environmental error.
 
-    Paramenters
+    NOTE: Environmental error is always applied before
+    the operation.
+
+    Parameters
     -----------
     ps - single qubit gate error
     pm - single qubit measurement error
@@ -50,12 +55,15 @@ class ProtocolsDeterministic:
         plus = (1 - self.pm) * plus + self.pm * minus
         return plus
 
-    def append_bell_pair(self, rho):
-        """Append a raw Bell pair to the state."""
+    def append_2bell_pair_parallel(self, rho):
+        """Append a 2 raw Bell pair to the state, in parallel"""
         bell = self.generate_bell_pair()
+        # Apply environmental error
+        rho = errs.env_dephasing_all(rho, 1, True)
         # Bell state is attached at the end of the complete state
-        full_rho = qt.tensor(rho, bell)
-        return full_rho
+        rho = qt.tensor(rho, bell)
+        rho = qt.tensor(rho, bell)
+        return rho
 
     def get_two_qubit_gates(self, N, controls, targets, sigma):
         """
@@ -76,44 +84,57 @@ class ProtocolsDeterministic:
         """
         Apply a series of two qubit Control type of gates.
         """
+        # Apply environmental error
+        rho = errs.env_dephasing_all(rho, 1, True)
+        # Construct and apply gates
         gates = self.get_two_qubit_gates(N, controls, targets, sigma)
         for i in range(len(gates)):
             rho = errs.two_qubit_gate(rho, gates[i], self.pg, N, controls[i],
                                       targets[i])
         return rho
 
-    def measure_single_forced(self, rho, N, pos, project, basis):
+    def measure_single(self, rho, N, pos, basis):
         """
         Measure a single qubit in the state.
         Dimension is reduced after collapse
         """
         if basis == "X":
-            p, collapsed_state = errs.measure_single_Xbasis_forced(rho,
+            m, collapsed_state = errs.measure_single_Xbasis_random(rho,
                                                                    self.pm,
-                                                                   project,
                                                                    N,
                                                                    pos)
         elif basis == "Z":
-            p, collapsed_state = errs.measure_single_Zbasis_forced(rho,
+            m, collapsed_state = errs.measure_single_Zbasis_random(rho,
                                                                    self.pm,
-                                                                   project,
                                                                    N,
                                                                    pos)
-        return p, collapsed_state
+        return m, collapsed_state
 
-    def collapse_ancillas_forced(self, rho, N, N_ancillas, projections):
+    def collapse_ancillas(self, rho, N, N_ancillas):
         """
         Measure the ancillas in the X basis.
         Ancillas position need to be the last part of the state.
         """
-        # The secuencial probabilities of finding the forced state
-        probabilities = []
+        # NOTE: We assume measurement are taken in parallel
+        # Apply environmental error
+        rho = errs.env_dephasing_all(rho, 1, True)
+        measurements = []
         for i in range(N_ancillas):
-            p, rho = self.measure_single_forced(rho, N - i, N - i - 1,
-                                                projections[i], "X")
-            probabilities += [p]
+            m, rho = self.measure_single(rho, N - i, N - i - 1, "X")
+            measurements += [m]
 
-        return probabilities, rho
+        return measurements, rho
+
+    def collapse_check_success(self, rho, N, N_ancillas):
+        """
+        Measure the ancillas in the X basis.
+        Ancillas position need to be the last part of the state.
+        """
+        measurements, rho = self.collapse_ancillas(rho, N, N_ancillas)
+        if len(set(measurements)) > 1:
+            return False, None
+
+        return True, rho
 
     def single_selection(self, rho, operation_qubits, sigma):
         """
@@ -132,10 +153,10 @@ class ProtocolsDeterministic:
 
         # Measure ancillas in X basis
         projections = [0]*N_ancillas
-        probs, collapsed_rho = self.collapse_ancillas_forced(rho, N,
+        success, collapsed_rho = self.collapse_check_success(rho, N,
                                                              N_ancillas,
                                                              projections)
-        return probs, collapsed_rho
+        return success, collapsed_rho
 
     def double_selection(self, rho, operation_qubits, sigma):
         """
@@ -160,10 +181,10 @@ class ProtocolsDeterministic:
 
         # Measure ancillas in X basis
         projections = [0] * N_ancillas
-        probs, collapsed_rho = self.collapse_ancillas_forced(rho, N,
+        success, collapsed_rho = self.collapse_check_success(rho, N,
                                                              N_ancillas,
                                                              projections)
-        return probs, collapsed_rho
+        return success, collapsed_rho
 
     def one_dot(self, rho_initial, operation_qubits, sigma):
         """
@@ -173,12 +194,17 @@ class ProtocolsDeterministic:
         N = len(rho_initial.dims[0]) + 2
         N_ancillas = 2
 
-        # Generate a raw Bell pair
-        rho = self.append_bell_pair(rho_initial)
+        success = False
+        steps = 0
+        while not success:
+            # Generate a raw Bell pair
+            rho = self.append_bell_pair(rho_initial)
 
-        # Rounds of single selection
-        _, rho = self.single_selection(rho, [N-1, N-2], "X")
-        _, rho = self.single_selection(rho, [N-1, N-2], "Z")
+            # Rounds of single selection
+            success, rho = self.single_selection(rho, [N-1, N-2], "X")
+            if not success:
+                continue
+            success, rho = self.single_selection(rho, [N-1, N-2], "Z")
 
         # Apply CNOT gates
         controls = [N-1, N-2]
