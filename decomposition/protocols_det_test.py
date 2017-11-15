@@ -1,6 +1,7 @@
 import qutip as qt
 import protocols_det
 import error_models as errs
+import operations as ops
 import numpy as np
 
 rho = errs.bell_pair(.4)
@@ -41,7 +42,7 @@ for i in range(3):
     rho_initial = qt.tensor(rho_initial, qt.snot() * qt.basis(2, 1))
 rho_initial = rho_initial * rho_initial.dag()
 m, rho = prot_perf.local_stabilizer(rho_initial, [0, 1, 2, 3], "X")
-print(rho)
+# print(rho)
 print(m)
 
 print("--------------STRINGENT/EXPEDIENT")
@@ -53,7 +54,23 @@ a = prot.stringent(rho_initial, [0, 1, 2], "X")
 b = prot.expedient(rho_initial, [0, 1, 2], "X")
 
 
-print("----GHZ Fidelity--------------")
+print("----GHZ FIDELITY--------------")
 ghz = prot.make_ghz_expedient(4)
 ghz_ideal = prot_perf.make_ghz_expedient(4)
 print((ghz_ideal * ghz * ghz_ideal).tr())
+
+print("-----------P SUCCESS SINGLE SELECTION----------")
+rho = prot.generate_bell_pair()
+print(qt.fidelity(rho, qt.bell_state('00')))
+# Generate raw bell pair
+rho = qt.tensor(rho, prot.generate_bell_pair())
+N = len(rho.dims[0])
+
+# Apply two qubit gates
+CNOT = qt.cnot(N, 0, 2) * qt.cnot(N, 1, 3)
+rho = CNOT * rho * CNOT.dag()
+
+p = ops.p_success_single_sel(rho, N, [0, 1])
+def p_ref(f) : return (f**2 +2*f*(1-f)/3 + 5*((1-f)/3)**2)
+print(p)
+print(p_ref(.9))

@@ -38,7 +38,6 @@ class ProtocolsDeterministic:
     def generate_bell_pair(self):
         """Generate a raw Bell pair."""
         bell = errs.bell_pair(self.pn)
-        bell = bell * bell.dag()
         return bell
 
     def generate_noisy_plus(self):

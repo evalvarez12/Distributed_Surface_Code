@@ -66,7 +66,7 @@ class TestOperations(unittest.TestCase):
         if measurement == 1:
             rho_ref = qt.basis(2, 0) * qt.basis(2, 0).dag()
         if measurement == -1:
-            rho_ref = qt.basis(2, 0) * qt.basis(2, 0).dag()
+            rho_ref = qt.basis(2, 1) * qt.basis(2, 1).dag()
         self.assertEqual(rho, rho_ref)
 
     def test_measurement_Xbasis(self):
