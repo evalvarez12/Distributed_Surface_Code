@@ -43,7 +43,6 @@ class ProtocolsMonteCarlo:
     def generate_bell_pair(self):
         """Generate a raw Bell pair."""
         bell = errs.bell_pair(self.pn)
-        bell = bell * bell.dag()
         return bell
 
     def generate_noisy_plus(self):
@@ -64,6 +63,16 @@ class ProtocolsMonteCarlo:
         rho = qt.tensor(rho, bell)
         rho = qt.tensor(rho, bell)
         return rho
+
+    def append_bell_pair(self, rho):
+        """Append a raw Bell pair to the state."""
+        bell = self.generate_bell_pair()
+        # Apply environmental error
+        rho = errs.env_dephasing_all(rho, 1, True)
+
+        # Bell state is attached at the end of the complete state
+        full_rho = qt.tensor(rho, bell)
+        return full_rho
 
     def get_two_qubit_gates(self, N, controls, targets, sigma):
         """

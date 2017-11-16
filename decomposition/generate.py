@@ -3,12 +3,12 @@ import os
 # from . import noise_modeling
 # from . import protocols
 import noise_modeling
-import protocols
+import protocols_det
 
 class Generator:
     def __init__(self):
         # Initialize obeject protocols
-        self.prot = protocols.Protocols(0, 0, 0, 0)
+        self.prot = protocols_det.ProtocolsDeterministic(0, 0, 0, 0)
 
         # Initialize protocol names strings dictionary
         self.funcs = {"STRINGENT": self.prot.stringent,

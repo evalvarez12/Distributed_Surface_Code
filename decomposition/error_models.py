@@ -125,3 +125,13 @@ def bell_pair(p):
     # H = qt.snot(2, 1)
     # return H*W*H.dag()
     return W
+
+
+def generate_noisy_ghz(F, N):
+    # p = 1 - F
+    # nu = 4**N*p/(4**N - 1)
+    nu = (4**N) * (1 - F**2) / (4**N - 1)
+    ghz = qt.ghz_state(N)
+    ghz = ghz * ghz.dag()
+    rho = (1 - nu) * ghz + nu/(4**N) * qt.qeye([2]*N)
+    return rho
