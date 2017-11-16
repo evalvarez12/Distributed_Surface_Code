@@ -149,7 +149,7 @@ def p_measurement_single_Zbasis(rho, measure, N=1, pos=0):
     Calculate the probability of measuring the value "measure".
     """
     P = projector_single_qubit_Zbasis(measure, N, pos)
-    p = (P * rho * P.dag()).tr()
+    p = (P * rho).tr().real
     return p
 
 def p_measurement_single_Xbasis(rho, measure, N=1, pos=0):
@@ -157,7 +157,7 @@ def p_measurement_single_Xbasis(rho, measure, N=1, pos=0):
     Calculate the probability of measuring the value "measure".
     """
     P = projector_single_qubit_Xbasis(measure, N, pos)
-    p = (P * rho * P.dag()).tr()
+    p = (P * rho).tr().real
     return p
 
 
@@ -168,27 +168,23 @@ def p_success_single_sel(rho, N, ancillas_pos):
           projector_single_qubit_Xbasis(1, N, ancillas_pos[1]))
 
     P = P0 + P1
-    p = (P * rho).tr()
+    p = (P * rho).tr().real
     return p
 
 def p_success_double_sel(rho, N, ancillas_pos1, ancillas_pos2):
     P0a = (projector_single_qubit_Xbasis(0, N, ancillas_pos1[0]) *
-          projector_single_qubit_Xbasis(0, N, ancillas_pos1[1]))
+           projector_single_qubit_Xbasis(0, N, ancillas_pos1[1]))
     P1a = (projector_single_qubit_Xbasis(1, N, ancillas_pos2[0]) *
-          projector_single_qubit_Xbasis(1, N, ancillas_pos2[1]))
+           projector_single_qubit_Xbasis(1, N, ancillas_pos2[1]))
 
     P0b = (projector_single_qubit_Xbasis(0, N, ancillas_pos2[0]) *
-          projector_single_qubit_Xbasis(0, N, ancillas_pos2[1]))
+           projector_single_qubit_Xbasis(0, N, ancillas_pos2[1]))
     P1b = (projector_single_qubit_Xbasis(1, N, ancillas_pos2[0]) *
-          projector_single_qubit_Xbasis(1, N, ancillas_pos2[1]))
+           projector_single_qubit_Xbasis(1, N, ancillas_pos2[1]))
 
     # All the possible succes cases in the projectors
-    Pa = P0a * P0b
-    Pb = P0a * P1b
-    Pc = P1a * P0b
-    Pd = P1a * P1b
-    p =  ((Pa * rho * Pa.dag()).tr() +  (Pb * rho * Pb.dag()).tr()
-          + (Pc * rho * Pc.dag()).tr() + (Pd * rho * Pd.dag()).tr())
+    P = P0a * P0b + P0a * P1b + P1a * P0b + P1a * P1b
+    p =  (P * rho).tr()
     return p
 
 def projector_single_qubit_Zbasis_dimRed(project, N=1, pos=0):

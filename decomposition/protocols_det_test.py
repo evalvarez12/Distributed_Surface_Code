@@ -67,10 +67,27 @@ rho = qt.tensor(rho, prot.generate_bell_pair())
 N = len(rho.dims[0])
 
 # Apply two qubit gates
-CNOT = qt.cnot(N, 0, 2) * qt.cnot(N, 1, 3)
+CNOT = qt.cnot(N, 2, 0) * qt.cnot(N, 3, 1)
 rho = CNOT * rho * CNOT.dag()
 
-p = ops.p_success_single_sel(rho, N, [0, 1])
+p = ops.p_success_single_sel(rho, N, [2, 3])
 def p_ref(f) : return (f**2 +2*f*(1-f)/3 + 5*((1-f)/3)**2)
 print(p)
 print(p_ref(.9))
+
+print("-----------P SUCCESS DOUBLE SELECTION----------")
+rho = prot.generate_bell_pair()
+# Generate raw bell pair
+rho = qt.tensor(rho, prot.generate_bell_pair())
+rho = qt.tensor(rho, prot.generate_bell_pair())
+N = len(rho.dims[0])
+
+# Apply first set of two qubit gates
+CNOT = qt.cnot(N, 2, 0) * qt.cnot(N, 3, 1)
+rho = CNOT * rho * CNOT.dag()
+# Second set
+CNOT = qt.cnot(N, 4, 2) * qt.cnot(N, 5, 3)
+rho = CNOT * rho * CNOT.dag()
+
+p = ops.p_success_double_sel(rho, N, [2, 3], [4,5])
+print(p)

@@ -136,6 +136,13 @@ class ProtocolsMonteCarlo:
 
         return True, rho
 
+    def distribution(self, p):
+        def dist: return p*(1-p)**n
+        # Up to 20 tries for success
+        i = np.arange(20)
+        d = dist(i)
+        return np.random.choice(i, 1, p=d)
+
     def single_selection(self, rho, operation_qubits, sigma):
         """
         Single selection round.
