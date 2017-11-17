@@ -6,7 +6,6 @@ created-on: 30/06/17
 """
 import numpy as np
 import qutip as qt
-import pickle
 import itertools
 # from . import pauli_basis
 # from . import operations as ops
@@ -18,12 +17,14 @@ class NoiseModel:
     Class to hold all the thigs used.
     """
 
-    def __init__(self, system_size, superoperator_function, parity):
+    def __init__(self, system_size, parity):
         """Init function to prepare all required assets."""
         # Create the initial state
         self.psi_basis = [self._choi_state_ket(system_size)]
         self.faulty_measurement = False
         self.basis_parity = parity
+        self.rhos = self.psi_basis[0] * self.psi_basis[0].dag()
+
         # The state comes organized in an ordered manner
         self.targets = list(range(system_size))
         self.pauli_basis = pauli_basis.get_basis(self.targets, 2 * system_size)
@@ -31,17 +32,18 @@ class NoiseModel:
         # Save initial variables
         self.system_size = system_size
 
-        # Apply the superoperator to the choi state
-        self.rhos = self.psi_basis[0] * self.psi_basis[0].dag()
-        self.ps, self.rhos = superoperator_function(self.rhos, self.targets, self.basis_parity)
-
         # Empty dictionary to store the chi matrix
         self.chi = {}
 
-    def save_chi(self, file_name):
-        pickle_out = open("data/" + file_name, "wb")
-        pickle.dump(self.chi, pickle_out)
-        pickle_out.close()
+    def apply_superoperator(self, superoperator_function):
+        # Apply the superoperator to the Choi state
+        self.ps, self.rhos = superoperator_function(self.rhos, self.targets,
+                                                    self.basis_parity)
+
+    def set_rho(self, rhos, ps):
+        # NOTE: rhos and ps must come from a Choi state
+        self.rhos = rhos
+        self.ps = ps
 
     def _remove_sym_pauli_basis(self):
         sym = self.basis_parity * self.system_size
@@ -62,7 +64,7 @@ class NoiseModel:
             else:
                 del self.pauli_basis[k]
 
-    def _fidelity(self, rhoA, stateB):
+    def _inner_prod(self, rhoA, stateB):
         """
         Fidelity for the special case when one of the states is a pure state.
         """
@@ -120,19 +122,19 @@ class NoiseModel:
             if self.faulty_measurement:
                 # Decomposition when no faulty measurement
                 sym_ok = k + "_OK"
-                f_even_ok = self._fidelity(self.rhos[0], v * self.psi_basis[0])
-                f_odd_ok = self._fidelity(self.rhos[1], v * self.psi_basis[1])
+                f_even_ok = self._inner_prod(self.rhos[0], v * self.psi_basis[0])
+                f_odd_ok = self._inner_prod(self.rhos[1], v * self.psi_basis[1])
                 self.chi[sym_ok] = (self.ps[0] * f_even_ok
-                                   + self.ps[1] * f_odd_ok)
+                                    + self.ps[1] * f_odd_ok)
                 # Decomposition when there is a faulty measurement
                 sym_NOK = k + "_NOK"
-                f_even_NOK = self._fidelity(self.rhos[0], v * self.psi_basis[1])
-                f_odd_NOK = self._fidelity(self.rhos[1], v * self.psi_basis[0])
+                f_even_NOK = self._inner_prod(self.rhos[0], v * self.psi_basis[1])
+                f_odd_NOK = self._inner_prod(self.rhos[1], v * self.psi_basis[0])
                 self.chi[sym_NOK] = (self.ps[0] * f_even_NOK
-                                    + self.ps[1] * f_odd_NOK)
+                                     + self.ps[1] * f_odd_NOK)
             else:
                 # Decompose through all the Pauli basis
-                self.chi[k] = self._fidelity(self.rho, v * self.psi_basis[0])
+                self.chi[k] = self._inner_prod(self.rho, v * self.psi_basis[0])
         # Call function to reduce permuations
         self._chi_reduce_permutations()
 

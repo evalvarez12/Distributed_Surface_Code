@@ -1,4 +1,10 @@
-import generate
+"""
+File to generate a analysis of how the error types depend on the
+Fidelity of the GHZ state used into making the stabilizer measurements
+in the distributed surface code.
+"""
+import protocols_det
+import noise_modeling
 
 
 generator = generate.Generator()

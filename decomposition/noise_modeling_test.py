@@ -3,18 +3,31 @@ import qutip as qt
 import numpy as np
 import numpy.testing as nptest
 import noise_modeling as nm
+import protocols_det as pt
 
-system_size = 2
-superoperator_function = lambda x: x
-model = nm.NoiseModel(system_size, superoperator_function)
+# Initial parameters
+ps = 0.0
+pm = 0.009
+pg = 0.009
+pn = 0.0
+system_size = 4
+parity = "X"
 
-choi = model.choi_state_ket(2)
-print(choi)
+# Initialize objects
+protocol = pt.ProtocolsDeterministic(ps, pm, pg, pn)
+model = nm.NoiseModel(system_size, parity)
 
-symmetry = "Z"
-print(model.pauli_basis.keys())
-model.remove_sym_pauli_basis("X")
-print(model.pauli_basis.keys())
+# Define function and apply superoperator
+superoperator_function = protocol.local_stabilizer
+model.apply_superoperator(superoperator_function)
+
+# Separate basis using the parity symmetry
+model.separate_basis_parity()
+
+# Calculate chi matrix
+model.make_chi_matrix()
+
+
 
 # class TestNoiseModeling(unittest.TestCase):
 #

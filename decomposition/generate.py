@@ -22,11 +22,10 @@ class Generator:
         self.prot.change_parameters(ps, pm, pg, pn)
 
         # Model takes the superoperator as a parameter
-        noise_model = noise_modeling.NoiseModel(stab_size,
-                                                self.funcs[protocol],
-                                                parity)
+        noise_model = noise_modeling.NoiseModel(stab_size, parity)
 
         # Calculate chi matrix
+        noise_model.apply_superoperator(self.funcs[protocol])
         noise_model.separate_basis_parity()
         noise_model.make_chi_matrix()
 

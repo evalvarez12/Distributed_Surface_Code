@@ -184,7 +184,7 @@ def p_success_double_sel(rho, N, ancillas_pos1, ancillas_pos2):
 
     # All the possible succes cases in the projectors
     P = P0a * P0b + P0a * P1b + P1a * P0b + P1a * P1b
-    p =  (P * rho).tr()
+    p =  (P * rho).tr().real
     return p
 
 def projector_single_qubit_Zbasis_dimRed(project, N=1, pos=0):
