@@ -91,6 +91,19 @@ class Blocks:
         rho = qt.tensor(rho, bell)
         return rho
 
+    def add_bell_pair(self, rho):
+        """Append a raw Bell pair to the state."""
+        steps, bell = self.generate_bell_pair()
+
+        # This circuit number of steps
+        self.n_steps += steps
+        # Apply environmental error
+        rho = errs.env_dephasing_all(rho, steps, True)
+
+        # Bell state is attached at the end of the complete state
+        rho = qt.tensor(rho, bell)
+        return rho
+
     def _get_two_qubit_gates(self, N, controls, targets, sigma):
         """
         Construct two qubit Control type of gates.
