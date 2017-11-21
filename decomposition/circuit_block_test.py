@@ -1,5 +1,5 @@
 import qutip as qt
-import circuits_blocks
+import circuit_block
 import error_models as errs
 import operations as ops
 import numpy as np

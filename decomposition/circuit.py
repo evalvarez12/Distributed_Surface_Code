@@ -10,8 +10,8 @@ import numpy as np
 class Circuit:
     """
     Class to hold a block in the overall purification protocol.
-
     Subcircuit object for the circuit that goes inside this block.
+    Circuits are assembled using recursive objects and circuit blocks.
     """
     def  __init__(self, circuit_block, **kwargs):
         # Save circuit block of this level, a function to execute of circuit block.
@@ -20,7 +20,7 @@ class Circuit:
 
         # Subcircuit for this level
         self.subcircuit = None
-        self.subcircuit_dependant = False
+        self.subcircuit_link = False
 
 
     def run(self, rho, p_parent=0, steps_parent=0):
@@ -34,7 +34,7 @@ class Circuit:
 
         # If this is the end of the dependency calculate success event
         # starts from 0, where 0 means success on the first try
-        if not self.subcircuit_dependant:
+        if not self.subcircuit_link:
             n_extra_attempts = self.success_number_of_tries(p_success)
             # print("p_success: ", p_success)
             # print("extra_attempts: ", n_extra_attempts)
@@ -42,7 +42,7 @@ class Circuit:
                 # Dont pass success probability to next level
                 p_success = 0
                 steps += n_extra_attempts * (steps + steps_parent)
-                if "operation_qubits" in self.circuit_kwargs:
+                if "operation_qubits" in self.circuit_kwargs and p_parent:
                     except_q = self.circuit_kwargs["operation_qubits"]
                     N = len(rho.dims[0])
                     qs = np.arange(N)
@@ -61,12 +61,12 @@ class Circuit:
 
 
 
-    def add_circuit(self, dependant, circuit_block, **kwargs):
+    def add_circuit(self, link, circuit_block, **kwargs):
         if not self.subcircuit:
             self.subcircuit = Circuit(circuit_block, **kwargs)
-            self.subcircuit_dependant = dependant
+            self.subcircuit_link = link
         else:
-            self.subcircuit.add_circuit(dependant, circuit_block, **kwargs)
+            self.subcircuit.add_circuit(link, circuit_block, **kwargs)
 
     def success_number_of_tries(self, p_success):
         # Up to 20 tries for success

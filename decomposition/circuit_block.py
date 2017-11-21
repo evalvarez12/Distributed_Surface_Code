@@ -17,7 +17,7 @@ class Blocks:
     Each circuit block returns the resulting state, number of steps used
     and the probability of success if applicable.
 
-    Paramenters
+    Parameters
     -----------
     ps - single qubit gate error
     pm - single qubit measurement error
@@ -26,23 +26,27 @@ class Blocks:
     """
 
     def __init__(self, ps, pm, pg, pn):
+        # Set the parameters to all faulty opearations
         self.ps = ps
         self.pm = pm
         self.pg = pg
         self.pn = pn
+        # Set number of steps of a block to 0
         self.n_steps = 0
 
     def change_parameters(self, ps, pm, pg, pn):
         """Function to change the parameters of all the operations."""
+        # Reset all the parameters for the faulty operations
         self.ps = ps
         self.pm = pm
         self.pg = pg
         self.pn = pn
+        # Reset the number of steps
         self.n_steps = 0
 
     def generate_bell_pair(self):
         """Generate a raw Bell pair."""
-        # THis circuit number of steps
+        # This circuit number of steps
         steps = 1
 
         # Generate noisy bell pair
@@ -51,7 +55,7 @@ class Blocks:
 
     def generate_noisy_plus(self):
         """Generate single noisy qubit in the |+> state using measurement error pm."""
-        # THis circuit number of steps
+        # This circuit number of steps
         steps = 1
 
         # Generate noisy plus
@@ -66,7 +70,7 @@ class Blocks:
     def _append_noisy_plus(self, rho):
         plus = steps, self.generate_noisy_plus()
 
-        # THis circuit number of steps
+        # This circuit number of steps
         self.n_steps += steps
         # Apply environmental error
         rho = errs.env_dephasing_all(rho, steps, True)
@@ -107,7 +111,7 @@ class Blocks:
         Apply one local two qubit Control type of gates in parallel
         on each node.
         """
-        # This circuit number of steps is 1 because gates are applied in parallel
+        # NOTE: This circuit number of steps is 1 because gates are applied in parallel
         steps = 1
         self.n_steps += steps
         # Apply environmental error
