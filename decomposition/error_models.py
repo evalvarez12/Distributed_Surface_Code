@@ -33,7 +33,7 @@ def env_dephasing_single(rho, n_steps, e_spin, N=1, pos=0):
     # a1 = 1/3
     a = (5e-4) * e_spin + 1/3 * (2e-6)
     sigma_z = qt.rz(np.pi, N, pos)
-    ss = sigma_z * rho * sigma_z.dag()
+    # ss = sigma_z * rho * sigma_z.dag()
     lamb = np.exp(-a * n_steps)
     return (1 + lamb)/2 * rho + (1 - lamb)/2 * sigma_z * rho * sigma_z.dag()
 
@@ -113,7 +113,7 @@ def measure_single_Xbasis_forced(rho, p, project, N=1, pos=0):
     rho = (1 - p)*rho + p*(Z * rho * Z.dag())
     p, collapsed_rho = ops.forced_measure_single_Xbasis(rho, N, pos,
                                                         project, True)
-    return p, collapsed_rho
+    return collapsed_rho
 
 
 def bell_pair(p):

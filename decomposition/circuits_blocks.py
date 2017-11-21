@@ -4,14 +4,14 @@ Individual circuits involved in the different steps of purification protocols.
 author: Eduardo Villasenor
 created-on: 20/11/17
 """
-import qutis as qt
+import qutip as qt
 import numpy as np
 import itertools
 import operations as ops
 import error_models as errs
 
 
-class CircuitBlock:
+class Blocks:
     """
     Class for holding all protocols.
     Each circuit block returns the resulting state, number of steps used
@@ -71,7 +71,8 @@ class CircuitBlock:
         # Apply environmental error
         rho = errs.env_dephasing_all(rho, steps, True)
         # Noisy plus tate is attached at the end of the complete state
-        full_rho = qt.tensor(rho, bell)
+        rho = qt.tensor(rho, plus)
+        return rho
 
     def _append_bell_pair(self, rho):
         """Append a raw Bell pair to the state."""
@@ -83,9 +84,8 @@ class CircuitBlock:
         rho = errs.env_dephasing_all(rho, steps, True)
 
         # Bell state is attached at the end of the complete state
-        full_rho = qt.tensor(rho, bell)
-
-        return n_steps, full_rho
+        rho = qt.tensor(rho, bell)
+        return rho
 
     def _get_two_qubit_gates(self, N, controls, targets, sigma):
         """
@@ -216,4 +216,3 @@ class CircuitBlock:
                                                       N_ancillas,
                                                       projections)
         return p_success, self.n_steps, collapsed_rho
- 
