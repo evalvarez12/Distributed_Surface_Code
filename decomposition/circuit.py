@@ -20,7 +20,6 @@ class Circuit:
 
         # Subcircuit for this level
         self.subcircuit = None
-        self.subcircuit_link = False
 
 
     def run(self, rho, p_parent=0, steps_parent=0):
@@ -29,18 +28,21 @@ class Circuit:
 
         # If this circuit dependends on the parent, take their probability of
         # success
+        # First check if this circuit is linked to its parent
         if p_parent:
             p_success *= p_parent
+            steps += steps_parent
 
-        # If this is the end of the dependency calculate success event
-        # starts from 0, where 0 means success on the first try
-        if not self.subcircuit_link:
+        # Now check if it has a subcircuit
+        if self.subcircuit:
+                _, steps, rho = self.subcircuit.run(rho, p_success, steps)
+                return 1, steps, rho
+        else:
+            # If this is the end of the dependency calculate success event
+            # starts from 0, where 0 means success on the first try
             n_extra_attempts = self.success_number_of_tries(p_success)
-            # print("p_success: ", p_success)
-            # print("extra_attempts: ", n_extra_attempts)
+
             if n_extra_attempts != 0:
-                # Dont pass success probability to next level
-                p_success = 0
                 steps += n_extra_attempts * (steps + steps_parent)
                 if "operation_qubits" in self.circuit_kwargs and p_parent:
                     except_q = self.circuit_kwargs["operation_qubits"]
@@ -51,22 +53,15 @@ class Circuit:
                 else:
                     rho = errs.env_dephasing_all(rho, steps, True)
 
-        # If there is another circuit run it else return
-        if self.subcircuit:
-            steps_sub, rho = self.subcircuit.run(rho, p_success, steps)
-            # Count the steps so far
-            steps = steps_sub + steps
-
-        return steps, rho
+        return 1, steps, rho
 
 
 
-    def add_circuit(self, link, circuit_block, **kwargs):
+    def add_circuit(self, circuit_block, **kwargs):
         if not self.subcircuit:
             self.subcircuit = Circuit(circuit_block, **kwargs)
-            self.subcircuit_link = link
         else:
-            self.subcircuit.add_circuit(link, circuit_block, **kwargs)
+            self.subcircuit.add_circuit(circuit_block, **kwargs)
 
     def success_number_of_tries(self, p_success):
         # Up to 20 tries for success

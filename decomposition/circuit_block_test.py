@@ -11,7 +11,7 @@ pg = 0.009
 pn = 0.1
 
 # Initialize  objects
-cb = circuits_blocks.Blocks(ps, pm, pg, pn)
+cb = circuit_block.Blocks(ps, pm, pg, pn)
 rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
 
 
@@ -32,3 +32,10 @@ p, n, rho = cb.double_selection(rho, [0, 1], "X")
 print("p_success: ", p)
 print("n steps: ", n)
 print("F: ", qt.fidelity(rho, rho_ref))
+
+# print("------------------TWO DOTS-------------------")
+# n, rho = cb.generate_bell_pair()
+# p, n, rho = cb.two_dots(rho, [0, 1], "X")
+# print("p_success: ", p)
+# print("n steps: ", n)
+# print("F: ", qt.fidelity(rho, rho_ref))

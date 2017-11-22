@@ -30,14 +30,14 @@ n, rho = cb.generate_bell_pair()
 cs = circuit.Circuit(circuit_block=cb.double_selection,
                       operation_qubits=[0, 1],
                       sigma="X")
-cs.add_circuit(link=True, circuit_block=cb.double_selection,
+cs.add_circuit(circuit_block=cb.double_selection,
                                operation_qubits=[0, 1],
                                sigma="Z")
 # Get average number of steps
-avg = 100
+avg = 1
 n_avg = 0
 for i in range(avg):
-    n, rho = cs.run(rho)
+    p, n, rho = cs.run(rho)
     n_avg += n
 n_avg = n_avg/avg
 print("n steps: ", n_avg)
@@ -48,21 +48,45 @@ print("F: ", qt.fidelity(rho, rho_ref))
 Test Nickerson stringent protocol.
 """
 print("------------------PROTOCOL 2-------------------")
+# First assemeble the small independent circuit
+c_small = circuit.Circuit(circuit_block=cb.add_bell_pair)
+c_small.add_circuit(circuit_block=cb.single_selection,
+                    operation_qubits=[2, 3],
+                    sigma="X")
+c_small.add_circuit(circuit_block=cb.single_selection,
+                    operation_qubits=[2, 3],
+                    sigma="Z")
+
+
+
 n, rho = cb.generate_bell_pair()
 # First two pumps of double selection
 cs = circuit.Circuit(circuit_block=cb.double_selection,
-                      operation_qubits=[0, 1],
-                      sigma="X")
-cs.add_circuit(link=True, circuit_block=cb.double_selection,
-                               operation_qubits=[0, 1],
-                               sigma="Z")
-# Add bell pair
-cs.add_circuit(link=False, circuit_block=cd.single_selection)
-# Get average number of steps
-avg = 100
+                     operation_qubits=[0, 1],
+                     sigma="X")
+cs.add_circuit(circuit_block=cb.double_selection,
+               operation_qubits=[0, 1],
+               sigma="Z")
+
+# Append small circuit
+cs.add_circuit(circuit_block=c_small.run)
+# Two qubit gate
+cs.add_circuit(circuit_block=cb.two_qubit_gates,
+               controls=[2, 3], targets=[0, 1], sigma="Z")
+cs.add_circuit(circuit_block=cb.collapse_ancillas,
+               ancillas_pos=[2, 3], projections=[0, 0])
+# Append small circuit
+cs.add_circuit(circuit_block=c_small.run)
+# Two qubit gate
+cs.add_circuit(circuit_block=cb.two_qubit_gates,
+               controls=[2, 3], targets=[0, 1], sigma="X")# Get average number of steps
+cs.add_circuit(circuit_block=cb.collapse_ancillas,
+               ancillas_pos=[2, 3], projections=[0, 0])
+
+avg = 1
 n_avg = 0
 for i in range(avg):
-    n, rho = cs.run(rho)
+    p, n, rho = cs.run(rho)
     n_avg += n
 n_avg = n_avg/avg
 print("n steps: ", n_avg)
