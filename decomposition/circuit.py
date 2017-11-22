@@ -13,7 +13,7 @@ class Circuit:
     Subcircuit object for the circuit that goes inside this block.
     Circuits are assembled using recursive objects and circuit blocks.
     """
-    def  __init__(self, circuit_block, **kwargs):
+    def  __init__(self, p_env, circuit_block, **kwargs):
         # Save circuit block of this level, a function to execute of circuit block.
         self.circuit = circuit_block
         self.circuit_kwargs = kwargs
@@ -21,6 +21,7 @@ class Circuit:
         # Subcircuit for this level
         self.subcircuit = None
 
+        self.p_env = p_env
 
     def run(self, rho, p_parent=0, steps_parent=0):
         # First run self circuit
@@ -49,9 +50,9 @@ class Circuit:
                     N = len(rho.dims[0])
                     qs = np.arange(N)
                     qs = np.delete(qs, except_q)
-                    rho = errs.env_dephasing(rho, steps, True, N, qs)
+                    rho = errs.env_dephasing(rho, self.p_env, steps, True, N, qs)
                 else:
-                    rho = errs.env_dephasing_all(rho, steps, True)
+                    rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
 
         return 1, steps, rho
 
@@ -59,7 +60,7 @@ class Circuit:
 
     def add_circuit(self, circuit_block, **kwargs):
         if not self.subcircuit:
-            self.subcircuit = Circuit(circuit_block, **kwargs)
+            self.subcircuit = Circuit(self.p_env, circuit_block, **kwargs)
         else:
             self.subcircuit.add_circuit(circuit_block, **kwargs)
 

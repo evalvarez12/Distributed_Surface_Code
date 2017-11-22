@@ -14,24 +14,25 @@ import operations as ops
 
 # TODO ask david if the order of the application noise gate is important
 
-def env_dephasing_all(rho, n_steps, e_spin):
+def env_dephasing_all(rho, p, n_steps, e_spin):
     N = len(rho.dims[0])
     qs = list(range(N))
-    return env_dephasing(rho, n_steps,e_spin, N, qs)
+    return env_dephasing(rho, p, n_steps,e_spin, N, qs)
 
-def env_dephasing(rho, n_steps, e_spin, N, qubits):
+def env_dephasing(rho, p, n_steps, e_spin, N, qubits):
     for i in qubits:
-        rho = env_dephasing_single(rho, n_steps, e_spin, N, i)
+        rho = env_dephasing_single(rho, p, n_steps, e_spin, N, i)
     return rho
 
 
-def env_dephasing_single(rho, n_steps, e_spin, N=1, pos=0):
+def env_dephasing_single(rho, p, n_steps, e_spin, N=1, pos=0):
     # e_spin = TRUE or FALSE if electron spin is being used or no
     # NOTE: Time it takes to make every operation 2 micro seg
     # t_step = 2e-6
     # a0 = 1/2000
     # a1 = 1/3
-    a = (5e-4) * e_spin + 1/3 * (2e-6)
+    # a = (5e-4) * e_spin + 1/3 * (2e-6)
+    a = (5e-4) * e_spin + 1/3 * p
     sigma_z = qt.rz(np.pi, N, pos)
     # ss = sigma_z * rho * sigma_z.dag()
     lamb = np.exp(-a * n_steps)

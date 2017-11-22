@@ -15,9 +15,9 @@ ps = 0.0
 pm = 0.009
 pg = 0.009
 pn = 0.1
-
+p_env = 2e-2
 # Initialize  objects
-cb = circuit_block.Blocks(ps, pm, pg, pn)
+cb = circuit_block.Blocks(ps, pm, pg, pn, p_env)
 rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
 
 
@@ -27,7 +27,7 @@ Test Nickerson expedient protocol.
 """
 print("------------------PROTOCOL 1-------------------")
 n, rho = cb.generate_bell_pair()
-cs = circuit.Circuit(circuit_block=cb.double_selection,
+cs = circuit.Circuit(p_env=p_env, circuit_block=cb.double_selection,
                       operation_qubits=[0, 1],
                       sigma="X")
 cs.add_circuit(circuit_block=cb.double_selection,
@@ -49,7 +49,7 @@ Test Nickerson stringent protocol.
 """
 print("------------------PROTOCOL 2-------------------")
 # First assemeble the small independent circuit
-c_small = circuit.Circuit(circuit_block=cb.add_bell_pair)
+c_small = circuit.Circuit(p_env=p_env, circuit_block=cb.add_bell_pair)
 c_small.add_circuit(circuit_block=cb.single_selection,
                     operation_qubits=[2, 3],
                     sigma="X")
@@ -61,7 +61,7 @@ c_small.add_circuit(circuit_block=cb.single_selection,
 
 n, rho = cb.generate_bell_pair()
 # First two pumps of double selection
-cs = circuit.Circuit(circuit_block=cb.double_selection,
+cs = circuit.Circuit(p_env=p_env, circuit_block=cb.double_selection,
                      operation_qubits=[0, 1],
                      sigma="X")
 cs.add_circuit(circuit_block=cb.double_selection,

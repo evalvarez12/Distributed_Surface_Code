@@ -25,22 +25,24 @@ class Blocks:
     pn - network error
     """
 
-    def __init__(self, ps, pm, pg, pn):
+    def __init__(self, ps, pm, pg, pn, p_env):
         # Set the parameters to all faulty opearations
         self.ps = ps
         self.pm = pm
         self.pg = pg
         self.pn = pn
+        self.p_env = p_env
         # Set number of steps of a block to 0
         self.n_steps = 0
 
-    def change_parameters(self, ps, pm, pg, pn):
+    def change_parameters(self, ps, pm, pg, pn, p_env):
         """Function to change the parameters of all the operations."""
         # Reset all the parameters for the faulty operations
         self.ps = ps
         self.pm = pm
         self.pg = pg
         self.pn = pn
+        self.p_env = p_env
         # Reset the number of steps
         self.n_steps = 0
 
@@ -71,7 +73,7 @@ class Blocks:
         # This circuit number of steps
         self.n_steps += steps
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
         # Noisy plus tate is attached at the end of the complete state
         rho = qt.tensor(rho, plus)
         return rho
@@ -83,7 +85,7 @@ class Blocks:
         # This circuit number of steps
         self.n_steps += steps
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
 
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
@@ -131,7 +133,7 @@ class Blocks:
         steps = int(N_ancillas/2)
         self.n_steps += steps
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
 
         # Collapse the qubits in parrallel
         # Sort list to be able to reduce dimension and keep track of positions
@@ -151,7 +153,7 @@ class Blocks:
         steps = 1
         self.n_steps += steps
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
 
         gates = self._get_two_qubit_gates(N, controls, targets, sigma)
         for i in range(len(gates)):
@@ -163,7 +165,7 @@ class Blocks:
         """Append a raw Bell pair to the state."""
         steps, bell = self.generate_bell_pair()
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
 
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
@@ -179,7 +181,7 @@ class Blocks:
         steps = 1
 
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
 
         gates = self._get_two_qubit_gates(N, controls, targets, sigma)
         for i in range(len(gates)):
@@ -198,7 +200,7 @@ class Blocks:
         steps = int(N_ancillas/2)
         N = len(rho.dims[0])
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
 
         # Calculate probability of success using the same considerations as
         # in single selection
