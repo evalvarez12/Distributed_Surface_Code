@@ -6,6 +6,7 @@ created-on: 20/11/17
 """
 import error_models as errs
 import numpy as np
+import qutip as qt
 
 class Circuit:
     """
@@ -56,7 +57,27 @@ class Circuit:
 
         return 1, steps, rho
 
+    def run_parallel(self, rho=None):
+        _, steps1, rho1 = self.run(rho)
+        _, steps2, rho2 = self.run(rho)
 
+        diff_steps = np.abs(steps1 - steps2)
+        steps = np.max([steps1, steps2])
+        if steps1 > steps2:
+            rho2 = errs.env_dephasing_all(rho2, self.p_env, diff_steps, True)
+        else:
+            rho1 = errs.env_dephasing_all(rho1, self.p_env, diff_steps, True)
+        rho = qt.tensor(rho1, rho2)
+        return 1, steps, rho
+
+    def append_circuit(self, rho):
+        """
+        Appended circuit must be self contained event
+        """
+        _, steps, rho_app = self.run(None)
+        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
+        rho = qt.tensor(rho, rho_app)
+        return 1, steps, rho
 
     def add_circuit(self, circuit_block, **kwargs):
         if not self.subcircuit:

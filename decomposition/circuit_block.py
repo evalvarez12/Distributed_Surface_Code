@@ -232,15 +232,22 @@ class Blocks:
         """
         # Number of steps is  because it is made in parrallel
         # This circuit number of steps
-        N_ancillas = len(ancillas_pos)
-        steps = int(N_ancillas/2)
+        steps = 1
         N = len(rho.dims[0])
         # Apply environmental error
         rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
 
         # Calculate probability of success using the same considerations as
         # in single selection
-        p_success = ops.p_success_single_sel(rho, N, ancillas_pos)
+        N_ancillas = len(ancillas_pos)
+        if N_ancillas == 2:
+            p_success = ops.p_success_single_sel(rho, N, ancillas_pos)
+        elif N_ancillas == 4:
+            ancillas_pos1 = ancillas_pos[:2]
+            ancillas_pos2 = ancillas_pos[2:]
+            p_success = ops.p_success_double_sel(rho, N, ancillas_pos1, ancillas_pos2)
+        else:
+            p_success = 1
 
         # Collapse the qubits in parrallel
         # Sort list to be able to reduce dimension and keep track of positions
