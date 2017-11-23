@@ -34,6 +34,8 @@ class Blocks:
         self.p_env = p_env
         # Set number of steps of a block to 0
         self.n_steps = 0
+        # Detector efficiency in entanglement generation
+        self.eta = 0.8
 
     def change_parameters(self, ps, pm, pg, pn, p_env):
         """Function to change the parameters of all the operations."""
@@ -47,11 +49,26 @@ class Blocks:
         self.n_steps = 0
 
     def generate_bell_pair(self):
-        # This circuit number of steps
-        steps = 1
+        # Probaility of success
+        p_success = self.eta*(4 - self.eta)/4
 
+        # This circuit number of steps
+        steps = self._success_number_of_attempts(p_success) + 1
+        print("steps: ", steps)
         # Generate noisy bell pair
         bell = errs.bell_pair(self.pn)
+        return steps, bell
+
+    def generate_bell_pair_BK(self):
+        # Probaility of success
+        p_success = self.eta**2/2
+
+        # This circuit number of steps
+        # Factor of 2 because uses twice the number of operations
+        steps = (self._success_number_of_attempts(p_success) + 1) * 2
+
+        # Generate noisy bell pair
+        bell = errs.bell_pair(0.2*self.pn)
         return steps, bell
 
     def generate_noisy_plus(self):
@@ -66,6 +83,17 @@ class Blocks:
         plus = (1 - self.pm) * plus + self.pm * minus
 
         return steps, plus
+
+    def _success_number_of_attempts(self, p_success):
+        # Up to 20 tries for success
+        i = np.arange(100)
+        d = self._distribution(p_success, i)
+        return np.random.choice(i, 1, p=d)[0]
+
+    def _distribution(self, p, n):
+        # Distribution for the probability in the number of tries of
+        # each event
+        return p*(1-p)**n
 
     def _append_noisy_plus(self, rho):
         plus = steps, self.generate_noisy_plus()
@@ -160,6 +188,14 @@ class Blocks:
             rho = errs.two_qubit_gate(rho, gates[i], self.pg, N, controls[i],
                                       targets[i])
         return rho
+
+    def start_bell_pair(self, rho=None):
+        """
+        Start with a raw Bell pair to the state.
+        Does not require input state.
+        """
+        steps, bell = self.generate_bell_pair()
+        return 1, 1, bell
 
     def add_bell_pair(self, rho):
         """Append a raw Bell pair to the state."""
