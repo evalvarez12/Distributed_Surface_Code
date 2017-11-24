@@ -24,21 +24,18 @@ class Circuit:
 
         self.p_env = p_env
 
-    def run(self, rho, p_parent=0, steps_parent=0):
+    def run(self, rho, p_parent=1, steps_parent=0):
         # First run self circuit
         p_success, steps, rho = self.circuit(rho, **self.circuit_kwargs)
 
         # If this circuit dependends on the parent, take their probability of
         # success
-        # First check if this circuit is linked to its parent
-        if p_parent:
-            p_success *= p_parent
-            steps += steps_parent
+        p_success *= p_parent
+        steps += steps_parent
 
         # Now check if it has a subcircuit
         if self.subcircuit:
                 _, steps, rho = self.subcircuit.run(rho, p_success, steps)
-                return 1, steps, rho
         else:
             # If this is the end of the dependency calculate success event
             # starts from 0, where 0 means success on the first try
@@ -46,18 +43,28 @@ class Circuit:
 
             if n_extra_attempts != 0:
                 steps += n_extra_attempts * (steps + steps_parent)
-                if "operation_qubits" in self.circuit_kwargs and p_parent:
-                    except_q = self.circuit_kwargs["operation_qubits"]
-                    N = len(rho.dims[0])
-                    qs = np.arange(N)
-                    qs = np.delete(qs, except_q)
-                    rho = errs.env_dephasing(rho, self.p_env, steps, True, N, qs)
-                else:
-                    rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
+                # TODO remove dephasing here. it circuit append and run parallel should be used instead
+                # if "operation_qubits" in self.circuit_kwargs:
+                #     except_q = self.circuit_kwargs["operation_qubits"]
+                #     N = len(rho.dims[0])
+                #     qs = np.arange(N)
+                #     qs = np.delete(qs, except_q)
+                #
+                #     rho = errs.env_dephasing(rho, self.p_env, steps, True, N, qs)
+                # else:
+                #     rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
+            # print("End of chain")
+            # print("p_success:", p_success)
+            # print("steps: ", steps)
 
         return 1, steps, rho
 
     def run_parallel(self, rho=None):
+        """
+        Run circuit two times in parallel, tensoring the resulting states,
+        and dephasing the one that was generated first accordingly.
+        Cicuits must be self contained events to be able to run in parallel.
+        """
         _, steps1, rho1 = self.run(rho)
         _, steps2, rho2 = self.run(rho)
 
@@ -72,7 +79,8 @@ class Circuit:
 
     def append_circuit(self, rho):
         """
-        Appended circuit must be self contained event
+        Appended circuit, and dephase accordingly.
+        Must be self contained event
         """
         _, steps, rho_app = self.run(None)
         rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
@@ -80,18 +88,24 @@ class Circuit:
         return 1, steps, rho
 
     def add_circuit(self, circuit_block, **kwargs):
+        """
+        Add a circuit to the current chain.
+        """
         if not self.subcircuit:
             self.subcircuit = Circuit(self.p_env, circuit_block, **kwargs)
         else:
             self.subcircuit.add_circuit(circuit_block, **kwargs)
 
     def success_number_of_tries(self, p_success):
+        """
+        Draw a number of attempts according to the Distribution
+        """
         # Up to 20 tries for success
         i = np.arange(100)
-        d = self.distribution(p_success, i)
+        d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
 
-    def distribution(self, p, n):
+    def _distribution(self, p, n):
         # Distribution for the probability in the number of tries of
         # each event
         return p*(1-p)**n

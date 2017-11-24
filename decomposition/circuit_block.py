@@ -54,7 +54,6 @@ class Blocks:
 
         # This circuit number of steps
         steps = self._success_number_of_attempts(p_success) + 1
-        print("steps: ", steps)
         # Generate noisy bell pair
         bell = errs.bell_pair(self.pn)
         return steps, bell
