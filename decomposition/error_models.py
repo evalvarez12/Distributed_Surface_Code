@@ -31,8 +31,8 @@ def env_dephasing_single(rho, p, n_steps, e_spin, N=1, pos=0):
     # t_step = 2e-6
     # a0 = 1/2000
     # a1 = 1/3
-    # a = (5e-4) * e_spin + 1/3 * (2e-6)
-    a = (5e-4) * e_spin + 1/3 * p
+    # a = p * e_spin + 1/3 * (2e-6)
+    a = p * e_spin + 1/3 * (2e-6)
     sigma_z = qt.rz(np.pi, N, pos)
     # ss = sigma_z * rho * sigma_z.dag()
     lamb = np.exp(-a * n_steps)
