@@ -24,55 +24,55 @@ rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
 ghz_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 
 # Lists to save results
-SIMPLE_fidelity = []
-SIMPLE_steps = []
+# SIMPLE_fidelity = []
+# SIMPLE_steps = []
 MEDIUM_fidelity = []
 MEDIUM_steps = []
-COMPLEX_fidelity = []
-COMPLEX_steps = []
+# COMPLEX_fidelity = []
+# COMPLEX_steps = []
 
 p_env_var = np.geomspace(5e-3, 5e-6, 20)
 
 for p_env in p_env_var:
     cb.change_parameters(ps, pm, pg, pn, p_env)
 
-    # print("-------------------PROTOCOL SIMPLE------------------")
-    # First assemeble the small single selection circuit
-    c_single_sel1 = circuit.Circuit(p_env=p_env, circuit_block=cb.start_bell_pair)
-    c_single_sel1.add_circuit(circuit_block=cb.single_selection,
-                              operation_qubits=[0, 1],
-                              sigma="X")
-    c_wrap_single_sel1 = circuit.Circuit(p_env=p_env,
-                                         circuit_block=c_single_sel1.run_parallel)
-
-    c_ghz = circuit.Circuit(p_env=p_env,
-                            circuit_block=c_single_sel1.run_parallel)
-    c_ghz.add_circuit(circuit_block=c_wrap_single_sel1.append_circuit)
-
-    # Phase 2 - Create GHZ
-    c_ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
-                      targets=[1, 3, 0, 2], sigma="Z")
-    c_ghz.add_circuit(circuit_block=cb.collapse_ancillas,
-                      ancillas_pos=[4, 5, 6, 7],
-                      projections=[0, 0, 0, 0])
-
-    # Get average number of steps
-    avg = 1000
-    fidelity = []
-    steps = []
-    for i in range(avg):
-        p, n, rho = c_ghz.run(None)
-        steps += [n]
-        fidelity += [qt.fidelity(rho, ghz_ref)]
-
-    # print(rho)
-    SIMPLE_fidelity += [(np.average(fidelity), np.std(fidelity))]
-    SIMPLE_steps += [(np.average(steps), np.std(steps))]
-    # print("End protocol")
-    # print("n steps: ", np.average(steps), np.std(steps))
-    # print("F: ", np.average(fidelity), np.std(fidelity))
-
-
+    # # print("-------------------PROTOCOL SIMPLE------------------")
+    # # First assemeble the small single selection circuit
+    # c_single_sel1 = circuit.Circuit(p_env=p_env, circuit_block=cb.start_bell_pair)
+    # c_single_sel1.add_circuit(circuit_block=cb.single_selection,
+    #                           operation_qubits=[0, 1],
+    #                           sigma="X")
+    # c_wrap_single_sel1 = circuit.Circuit(p_env=p_env,
+    #                                      circuit_block=c_single_sel1.run_parallel)
+    #
+    # c_ghz = circuit.Circuit(p_env=p_env,
+    #                         circuit_block=c_single_sel1.run_parallel)
+    # c_ghz.add_circuit(circuit_block=c_wrap_single_sel1.append_circuit)
+    #
+    # # Phase 2 - Create GHZ
+    # c_ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
+    #                   targets=[1, 3, 0, 2], sigma="Z")
+    # c_ghz.add_circuit(circuit_block=cb.collapse_ancillas,
+    #                   ancillas_pos=[4, 5, 6, 7],
+    #                   projections=[0, 0, 0, 0])
+    #
+    # # Get average number of steps
+    # avg = 1000
+    # fidelity = []
+    # steps = []
+    # for i in range(avg):
+    #     p, n, rho = c_ghz.run(None)
+    #     steps += [n]
+    #     fidelity += [qt.fidelity(rho, ghz_ref)]
+    #
+    # # print(rho)
+    # SIMPLE_fidelity += [(np.average(fidelity), np.std(fidelity))]
+    # SIMPLE_steps += [(np.average(steps), np.std(steps))]
+    # # print("End protocol")
+    # # print("n steps: ", np.average(steps), np.std(steps))
+    # # print("F: ", np.average(fidelity), np.std(fidelity))
+    #
+    #
 
     """
     Nickerson expedient protocol.
@@ -92,10 +92,10 @@ for p_env in p_env_var:
 
     c_double_sel = circuit.Circuit(p_env=p_env,
                                    circuit_block=cb.start_bell_pair)
-    c_double_sel.add_circuit(circuit_block=cb.double_selection,
+    c_double_sel.add_circuit(circuit_block=cb.single_selection,
                              operation_qubits=[0, 1],
                              sigma="X")
-    c_double_sel.add_circuit(circuit_block=cb.double_selection,
+    c_double_sel.add_circuit(circuit_block=cb.single_selection,
                              operation_qubits=[0, 1],
                              sigma="Z")
 
@@ -122,62 +122,62 @@ for p_env in p_env_var:
     # print(rho)
     MEDIUM_fidelity += [(np.average(fidelity), np.std(fidelity))]
     MEDIUM_steps += [(np.average(steps), np.std(steps))]
-    # print("End protocol")
-    # print("n steps: ", np.average(steps), np.std(steps))
-    # print("F: ", np.average(fidelity), np.std(fidelity))
+    print("End protocol")
+    print("n steps: ", np.average(steps), np.std(steps))
+    print("F: ", np.average(fidelity), np.std(fidelity))
 
 
-    """
-    Nickerson stringent protocol.
-    """
-    # print("------------------PROTOCOL COMPLEX-------------------")
-    # Reuse pair purification circuit from previous protocol
-    # and single selection parallel
-    c_ghz = circuit.Circuit(p_env=p_env,
-                            circuit_block=c_double_sel.run_parallel)
-    c_ghz.add_circuit(circuit_block=c_wrap_single_sel2.append_circuit)
-    c_ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
-                      targets=[0, 1, 2, 3], sigma="Z")
-    c_ghz.add_circuit(circuit_block=cb.single_selection, operation_qubits=[4, 5],
-                      sigma="Z")
-    c_ghz.add_circuit(circuit_block=cb.single_selection, operation_qubits=[6, 7],
-                      sigma="Z")
-    c_ghz.add_circuit(circuit_block=cb.collapse_ancillas,
-                      ancillas_pos=[4, 5, 6, 7],
-                      projections=[0, 0, 0, 0])
+    # """
+    # Nickerson stringent protocol.
+    # """
+    # # print("------------------PROTOCOL COMPLEX-------------------")
+    # # Reuse pair purification circuit from previous protocol
+    # # and single selection parallel
+    # c_ghz = circuit.Circuit(p_env=p_env,
+    #                         circuit_block=c_double_sel.run_parallel)
+    # c_ghz.add_circuit(circuit_block=c_wrap_single_sel2.append_circuit)
+    # c_ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
+    #                   targets=[0, 1, 2, 3], sigma="Z")
+    # c_ghz.add_circuit(circuit_block=cb.single_selection, operation_qubits=[4, 5],
+    #                   sigma="Z")
+    # c_ghz.add_circuit(circuit_block=cb.single_selection, operation_qubits=[6, 7],
+    #                   sigma="Z")
+    # c_ghz.add_circuit(circuit_block=cb.collapse_ancillas,
+    #                   ancillas_pos=[4, 5, 6, 7],
+    #                   projections=[0, 0, 0, 0])
+    #
+    # # Phase 2 - Create GHZ
+    # c_ghz.add_circuit(circuit_block=c_wrap_single_sel2.append_circuit)
+    # c_ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
+    #                   targets=[1, 3, 0, 2], sigma="Z")
+    # c_ghz.add_circuit(circuit_block=cb.single_selection, operation_qubits=[4, 5],
+    #                   sigma="Z")
+    # c_ghz.add_circuit(circuit_block=cb.single_selection, operation_qubits=[6, 7],
+    #                   sigma="Z")
+    # c_ghz.add_circuit(circuit_block=cb.collapse_ancillas,
+    #                   ancillas_pos=[4, 5, 6, 7],
+    #                   projections=[0, 0, 0, 0])
+    #
+    # # Get average number of steps
+    # avg = 1000
+    # fidelity = []
+    # steps = []
+    # for i in range(avg):
+    #     p, n, rho = c_ghz.run(None)
+    #     steps += [n]
+    #     fidelity += [qt.fidelity(rho, ghz_ref)]
+    #
+    # COMPLEX_fidelity += [(np.average(fidelity), np.std(fidelity))]
+    # COMPLEX_steps += [(np.average(steps), np.std(steps))]
+    # # print(rho)
+    # # print("End protocol")
+    # # print("n steps: ", np.average(steps), np.std(steps))
+    # # print("F: ", np.average(fidelity), np.std(fidelity))
 
-    # Phase 2 - Create GHZ
-    c_ghz.add_circuit(circuit_block=c_wrap_single_sel2.append_circuit)
-    c_ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
-                      targets=[1, 3, 0, 2], sigma="Z")
-    c_ghz.add_circuit(circuit_block=cb.single_selection, operation_qubits=[4, 5],
-                      sigma="Z")
-    c_ghz.add_circuit(circuit_block=cb.single_selection, operation_qubits=[6, 7],
-                      sigma="Z")
-    c_ghz.add_circuit(circuit_block=cb.collapse_ancillas,
-                      ancillas_pos=[4, 5, 6, 7],
-                      projections=[0, 0, 0, 0])
-
-    # Get average number of steps
-    avg = 1000
-    fidelity = []
-    steps = []
-    for i in range(avg):
-        p, n, rho = c_ghz.run(None)
-        steps += [n]
-        fidelity += [qt.fidelity(rho, ghz_ref)]
-
-    COMPLEX_fidelity += [(np.average(fidelity), np.std(fidelity))]
-    COMPLEX_steps += [(np.average(steps), np.std(steps))]
-    # print(rho)
-    # print("End protocol")
-    # print("n steps: ", np.average(steps), np.std(steps))
-    # print("F: ", np.average(fidelity), np.std(fidelity))
-
-np.save("data/SIMPLE_fidelity", SIMPLE_fidelity)
-np.save("data/SIMPLE_steps", SIMPLE_steps)
-np.save("data/MEDIUM_fidelity", MEDIUM_fidelity)
-np.save("data/MEDIUM_steps", MEDIUM_steps)
-np.save("data/COMPLEX_fidelity", COMPLEX_fidelity)
-np.save("data/COMPLEX_steps", COMPLEX_steps)
-np.save("data/p_env", p_env_var)
+# np.save("data/SIMPLE_fidelity", SIMPLE_fidelity)
+# np.save("data/SIMPLE_steps", SIMPLE_steps)
+np.save("data/MEDIUM2_fidelity", MEDIUM_fidelity)
+np.save("data/MEDIUM2_steps", MEDIUM_steps)
+# np.save("data/COMPLEX_fidelity", COMPLEX_fidelity)
+# np.save("data/COMPLEX_steps", COMPLEX_steps)
+# np.save("data/p_env", p_env_var)
