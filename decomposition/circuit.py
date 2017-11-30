@@ -7,6 +7,7 @@ created-on: 20/11/17
 import error_models as errs
 import numpy as np
 import qutip as qt
+import collections
 
 class Circuit:
     """
@@ -24,25 +25,29 @@ class Circuit:
 
         self.p_env = p_env
 
-    def run(self, rho, p_parent=1, steps_parent=0):
+    def run(self, rho, p_parent=1, check_parent=collections.Counter({})):
         # First run self circuit
-        p_success, steps, rho = self.circuit(rho, **self.circuit_kwargs)
+        p_success, check, rho = self.circuit(rho, **self.circuit_kwargs)
 
         # If this circuit dependends on the parent, take their probability of
         # success
         p_success *= p_parent
-        steps += steps_parent
+        check += check_parent
 
         # Now check if it has a subcircuit
         if self.subcircuit:
-                _, steps, rho = self.subcircuit.run(rho, p_success, steps)
+                _, check, rho = self.subcircuit.run(rho, p_success, check)
         else:
             # If this is the end of the dependency calculate success event
             # starts from 0, where 0 means success on the first try
             n_extra_attempts = self.success_number_of_tries(p_success)
 
             if n_extra_attempts != 0:
-                steps += n_extra_attempts * (steps + steps_parent)
+                for k in check:
+                    check[k] *= n_extra_attempts
+
+                # steps += n_extra_attempts * (steps + steps_parent)
+
                 # TODO remove dephasing here. it circuit append and run parallel should be used instead
                 # if "operation_qubits" in self.circuit_kwargs:
                 #     except_q = self.circuit_kwargs["operation_qubits"]
@@ -57,7 +62,7 @@ class Circuit:
             # print("p_success:", p_success)
             # print("steps: ", steps)
 
-        return 1, steps, rho
+        return 1, check, rho
 
     def run_parallel(self, rho=None):
         """
@@ -65,27 +70,29 @@ class Circuit:
         and dephasing the one that was generated first accordingly.
         Cicuits must be self contained events to be able to run in parallel.
         """
-        _, steps1, rho1 = self.run(rho)
-        _, steps2, rho2 = self.run(rho)
+        _, check1, rho1 = self.run(rho)
+        _, check2, rho2 = self.run(rho)
 
-        diff_steps = np.abs(steps1 - steps2)
-        steps = np.max([steps1, steps2])
-        if steps1 > steps2:
-            rho2 = errs.env_dephasing_all(rho2, self.p_env, diff_steps, True)
+        # Only take the check with the longest time
+        diff_time = np.abs(check1["time"] - check2["time"])
+        if check1["time"] > check2["time"]:
+            rho2 = errs.env_dephasing_all(rho2, self.p_env, diff_time, True)
+            check = check1
         else:
-            rho1 = errs.env_dephasing_all(rho1, self.p_env, diff_steps, True)
+            rho1 = errs.env_dephasing_all(rho1, self.p_env, diff_time, True)
+            check = check2
         rho = qt.tensor(rho1, rho2)
-        return 1, steps, rho
+        return 1, check, rho
 
     def append_circuit(self, rho):
         """
         Appended circuit, and dephase accordingly.
         Must be self contained event
         """
-        _, steps, rho_app = self.run(None)
+        _, check, rho_app = self.run(None)
         rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
         rho = qt.tensor(rho, rho_app)
-        return 1, steps, rho
+        return 1, check, rho
 
     def add_circuit(self, circuit_block, **kwargs):
         """

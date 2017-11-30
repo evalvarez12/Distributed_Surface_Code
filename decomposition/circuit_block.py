@@ -6,6 +6,7 @@ created-on: 20/11/17
 """
 import qutip as qt
 import numpy as np
+import collections
 import itertools
 import operations as ops
 import error_models as errs
@@ -37,16 +38,16 @@ class Blocks:
         self.eta = 0.8
 
         # Dictionary to carry the check of all the operations made so far
-        self.check = {"bell_pair": 0,
-                      "2_qubit_gate": 0,
-                      "1_qubit_gate": 0,
-                      "measurement": 0,
-                      "time": 0}
+        self.check = collections.Counter({"bell_pair": 0,
+                                          "two_qubit_gate": 0,
+                                          "single_qubit_gate": 0,
+                                          "measurement": 0,
+                                          "time": 0})
 
         # Lookup tables for the time it takes to make each operaation
         self.time_lookup = {"bell_pair": 1,
-                            "2_qubit_gate": 1,
-                            "1_qubit_gate": 1,
+                            "two_qubit_gate": 1,
+                            "single_qubit_gate": 1,
                             "measurement": 1}
 
     def change_parameters(self, ps, pm, pg, pn, p_env):
@@ -62,7 +63,7 @@ class Blocks:
 
     def _reset_check(self):
         # Reset check dictionary
-        self.check = dict.fromkeys(self.check, 0)
+        self.check = collections.Counter(dict.fromkeys(self.check, 0))
 
     def _generate_bell_pair(self):
         # Probaility of success
@@ -122,7 +123,7 @@ class Blocks:
         return p*(1-p)**n
 
     def _append_noisy_plus(self, rho):
-        plus = time, self.generate_noisy_plus()
+        time, plus = self.generate_noisy_plus()
 
         # # This circuit number of steps
         # self.n_steps += steps
@@ -177,19 +178,27 @@ class Blocks:
 
     def _collapse_ancillas_X(self, rho, ancillas_pos, projections):
         # Measure the ancillas in the X basis in parallel in each node.
-        # NOTE: Ancillas position need to be the last part of the state.
+        # NOTE: All ancillas are collapsed in parallel
+        self.check["measurement"] += 1
+        self.check["single_qubit_gate"] += 1
 
-        # Number of steps is divided over two because two measurements are made
-        # in parallel over each node
-        N_ancillas = len(ancillas_pos)
-        n_measurements = int(N_ancillas/2)
-        self.check["measurement"] += N_ancillas
-        self.check["single_qubit_gate"] += N_ancillas
-
-        time = n_measurements * self.time_lookup["measurements"]
+        time = self.time_lookup["measurement"]
         self.check["time"] += time
         # Apply environmental error
         rho = errs.env_dephasing_all(rho, self.p_env, time, True)
+
+        # Calculate probability of success using the same considerations as
+        # in single selection
+        N_ancillas = len(ancillas_pos)
+        N = len(rho.dims[0])
+        if N_ancillas == 2:
+            p_success = ops.p_success_single_sel(rho, N, ancillas_pos)
+        elif N_ancillas == 4:
+            ancillas_pos1 = ancillas_pos[:2]
+            ancillas_pos2 = ancillas_pos[2:]
+            p_success = ops.p_success_double_sel(rho, N, ancillas_pos1, ancillas_pos2)
+        else:
+            p_success = 1
 
         # Collapse the qubits in parrallel
         # Sort list to be able to reduce dimension and keep track of positions
@@ -199,7 +208,7 @@ class Blocks:
             rho = self._collapse_single(rho, pos,
                                         projections[i], "X")
 
-        return rho
+        return p_success, rho
 
     def _apply_two_qubit_gates(self, rho, N, controls, targets, sigma):
         # Apply one local two qubit Control type of gates in parallel
@@ -231,65 +240,33 @@ class Blocks:
 
     def add_bell_pair(self, rho):
         """Append a raw Bell pair to the state."""
+        self._reset_check()
         time, bell = self._generate_bell_pair()
         # Apply environmental error
         rho = errs.env_dephasing_all(rho, self.p_env, time, True)
-
+        self.check["time"] += time
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
-        return 1, time, rho
+        return 1, self.check, rho
 
     def two_qubit_gates(self, rho, controls, targets, sigma):
         """
         Apply one local two qubit Control type of gates in parallel
         on each node.
         """
-        N = len(rho.dims[0])
-        # NOTE: This circuit number of steps is 1 because gates are applied in parallel
-        steps = 1
+        self._reset_check()
+        rho = self._apply_two_qubit_gates(rho, N, controls, targets, sigma)
 
-        # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
-
-        gates = self._get_two_qubit_gates(N, controls, targets, sigma)
-        for i in range(len(gates)):
-            rho = errs.two_qubit_gate(rho, gates[i], self.pg, N, controls[i],
-                                      targets[i])
-        return 1, steps, rho
+        return 1, self.check, rho
 
     def collapse_ancillas(self, rho, ancillas_pos, projections):
         """
         Measure the ancillas in the X basis in parallel in each node.
         Ancillas position need to be the last part of the state.
         """
-        # Number of steps is  because it is made in parrallel
-        # This circuit number of steps
-        steps = 1
-        N = len(rho.dims[0])
-        # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
-
-        # Calculate probability of success using the same considerations as
-        # in single selection
-        N_ancillas = len(ancillas_pos)
-        if N_ancillas == 2:
-            p_success = ops.p_success_single_sel(rho, N, ancillas_pos)
-        elif N_ancillas == 4:
-            ancillas_pos1 = ancillas_pos[:2]
-            ancillas_pos2 = ancillas_pos[2:]
-            p_success = ops.p_success_double_sel(rho, N, ancillas_pos1, ancillas_pos2)
-        else:
-            p_success = 1
-
-        # Collapse the qubits in parrallel
-        # Sort list to be able to reduce dimension and keep track of positions
-        ancillas_pos = sorted(ancillas_pos)
-        for i in range(N_ancillas):
-            pos = ancillas_pos[i] - i
-            rho = self._collapse_single(rho, pos,
-                                        projections[i], "X")
-
-        return p_success, steps, rho
+        self._reset_check()
+        p_success, rho = self._collapse_ancillas_X(rho, ancillas_pos, projections)
+        return p_success, self.check, rho
 
     def single_selection(self, rho, operation_qubits, sigma):
         """
@@ -297,7 +274,7 @@ class Blocks:
         Uses 2 ancilla qubits.
         """
         # Reset number of steps counter
-        self.n_steps = 0
+        self._reset_check()
         # Generate raw bell pair
         rho = self._append_bell_pair(rho)
         N = len(rho.dims[0])
@@ -306,15 +283,12 @@ class Blocks:
         # Apply two qubit gates
         controls = [N-1, N-2]
         rho = self._apply_two_qubit_gates(rho, N, controls,
-                                         operation_qubits, sigma)
-
-        # Calculate probability of success
-        p_success = ops.p_success_single_sel(rho, N, controls)
+                                          operation_qubits, sigma)
 
         # Measure ancillas in X basis
         projections = [0]*N_ancillas
-        collapsed_rho = self._collapse_ancillas_X(rho, controls, projections)
-        return p_success, self.n_steps, collapsed_rho
+        p_success, rho = self._collapse_ancillas_X(rho, controls, projections)
+        return p_success, self.check, rho
 
     def double_selection(self, rho, operation_qubits, sigma):
         """
@@ -322,68 +296,28 @@ class Blocks:
         Uses 4 ancilla qubits.
         """
         # Reset number of steps counter
-        self.n_steps = 0
+        self._reset_check()
+
         # Generate two bell pairs
         rho = self._append_bell_pair(rho)
         rho = self._append_bell_pair(rho)
         N = len(rho.dims[0])
-        # Number of ancillas is 4, we asume all ancillas can be measured in parrallel
+        # Number of ancillas is 4, ancillas can be measured in parrallel
         N_ancillas = 4
 
         # Apply first two qubit gates
         controls1 = [N-3, N-4]
         rho = self._apply_two_qubit_gates(rho, N, controls1,
-                                         operation_qubits, sigma)
+                                          operation_qubits, sigma)
 
         # Apply second set of gates
         controls2 = [N-1, N-2]
         rho = self._apply_two_qubit_gates(rho, N, controls2, controls1, "Z")
 
-        # Calculate probability of success
-        p_success = ops.p_success_double_sel(rho, N, controls1, controls2)
-
         # Measure ancillas in X basis
-        ancillas_pos = list(range(N-1))
-        projections = [0] * N_ancillas
-        ancillas_pos = controls1 + controls2
-        rho = self._collapse_ancillas_X(rho, ancillas_pos, projections)
-        return p_success, self.n_steps, rho
-
-    # def two_dots(self, rho, operation_qubits, sigma):
-    #     """
-    #     Hybrid purification round using single selection.
-    #     Uses 4 ancilla qubits.
-    #     """
-    #     # Generate a bell pair and count the step
-    #     rho = self._append_bell_pair(rho)
-    #     steps = 1
-    #     N = len(rho.dims[0])
-    #     controls = [N-2, N-1]
-    #
-    #     # Rounds of single selection
-    #     # Count steps manually because single sel resets self.steps
-    #     p1, n1, rho = self.single_selection(rho, controls, "X")
-    #     p2, n2, rho = self.single_selection(rho, controls, "X")
-    #     steps += n1 + n2
-    #     p_success = p1 * p2
-    #
-    #
-    #     # Apply two qubit gates
-    #     rho = self.apply_two_qubit_gates(rho, N, controls,
-    #                                      operation_qubits, sigma)
-    #     steps += 1
-    #
-    #     # Another round of single selection
-    #     p, n, rho = self.single_selection(rho, controls, "Z")
-    #     steps += n
-    #     p_success *= p
-    #
-    #     # Calculate probability of success
-    #     p = ops.p_success_single_sel(rho, N, controls)
-    #     p_success *= p
-    #
-    #     # Measure ancillas in X basis
-    #     projections = [0] * N_ancillas
-    #     steps += 1
-    #     rho = self.collapse_ancillas_forced(rho, N, N_ancillas, projections)
-    #     return p_success, steps, rho
+        projections = [0] * 2
+        p_success2, rho = self._collapse_ancillas_X(rho, controls2, projections)
+        p_success1, rho = self._collapse_ancillas_X(rho, controls1, projections)
+        p_success = p_success1 * p_success2
+        print(p_success1, p_success2)
+        return p_success, self.check, rho
