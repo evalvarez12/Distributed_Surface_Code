@@ -43,50 +43,50 @@ targets = list(range(system_size))
 
 I_OK_full = []
 I_NOK_full = []
-E_OK_full = []
-E_NOK_full = []
+E_full = []
 
 pgs = [0.006, 0.0075, 0.009, 0.0105]
+fs = np.linspace(.5, 1, 50)
 for pg in pgs:
     prot.change_parameters(ps, pm, pg, pn)
     I_OK = []
     I_NOK = []
-    E_OK = []
-    E_NOK = []
+    E = []
 
-    for f in np.arange(.5, 1, .05):
+
+    for f in fs:
         ghz = errs.generate_noisy_ghz(f, system_size)
         ps, rhos = prot.measure_ghz_stabilizer(choi, ghz, targets, parity)
         model.set_rho(rhos, ps)
         model.make_chi_matrix()
 
+        print("Total sum check: ", model.check_total_sum())
         I_OK += [model.chi["IIII_OK"]]
         I_NOK += [model.chi["IIII_NOK"]]
-        E_OK += [get_errors_dict(model.chi, "OK")]
-        E_NOK += [get_errors_dict(model.chi, "NOK")]
+        # The sum of all physical errors
+        E += [1 - model.chi["IIII_OK"] - model.chi["IIII_NOK"]]
+
 
         model.reset_chi()
 
     I_OK_full += [I_OK]
     I_NOK_full += [I_NOK]
-    E_OK_full += [E_OK]
-    E_NOK_full += [E_NOK]
+    E_full += [E]
 
-f = np.arange(.5, 1, 0.05)
 fig, ax = plt.subplots(nrows=3, ncols=1)
 titles = iter([r"NO ERROR", r"MEASUREMENT ERROR", r"PHYSICAL ERROR"])
 it = iter(pgs)
 subplot_i = iter([1, 2, 3])
 
 flag = True
-for i in [I_OK_full, I_NOK_full, E_OK_full]:
+for i in [I_OK_full, I_NOK_full, E_full]:
     plt.subplot(3, 1, next(subplot_i))
     for j in i:
         if flag:
-            plt.plot(f, j, label=r"$p_g=$" +str(next(it)))
+            plt.plot(fs, j, label=r"$p_g=$" +str(next(it)))
             plt.legend()
         else:
-            plt.plot(f, j)
+            plt.plot(fs, j)
     plt.title(next(titles))
     flag = False
 # for i in range(4):

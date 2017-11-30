@@ -36,7 +36,7 @@ p_env_var = np.geomspace(5e-3, 5e-6, 20)
 for p_env in p_env_var:
     cb.change_parameters(ps, pm, pg, pn, p_env)
 
-    # print("-------------------PROTOCOL SIMPLE------------------")
+    print("-------------------PROTOCOL SIMPLE------------------")
     # First assemeble the small single selection circuit
     c_single_sel1 = circuit.Circuit(p_env=p_env, circuit_block=cb.start_bell_pair)
     c_single_sel1.add_circuit(circuit_block=cb.single_selection,
@@ -57,7 +57,7 @@ for p_env in p_env_var:
                       projections=[0, 0, 0, 0])
 
     # Get average number of steps
-    avg = 1000
+    avg = 1
     fidelity = []
     steps = []
     for i in range(avg):
@@ -68,16 +68,16 @@ for p_env in p_env_var:
     # print(rho)
     SIMPLE_fidelity += [(np.average(fidelity), np.std(fidelity))]
     SIMPLE_steps += [(np.average(steps), np.std(steps))]
-    # print("End protocol")
-    # print("n steps: ", np.average(steps), np.std(steps))
-    # print("F: ", np.average(fidelity), np.std(fidelity))
+    print("End protocol")
+    print("n steps: ", np.average(steps), np.std(steps))
+    print("F: ", np.average(fidelity), np.std(fidelity))
 
 
 
     """
     Nickerson expedient protocol.
     """
-    # print("------------------PROTOCOL MEDIUM-------------------")
+    print("------------------PROTOCOL MEDIUM-------------------")
     # First assemeble the small independent circuit
     c_single_sel2 = circuit.Circuit(p_env=p_env, circuit_block=cb.start_bell_pair)
     c_single_sel2.add_circuit(circuit_block=cb.single_selection,
@@ -111,7 +111,7 @@ for p_env in p_env_var:
                       projections=[0, 0, 0, 0])
 
     # Get average number of steps
-    avg = 1000
+    avg = 1
     fidelity = []
     steps = []
     for i in range(avg):
@@ -122,15 +122,15 @@ for p_env in p_env_var:
     # print(rho)
     MEDIUM_fidelity += [(np.average(fidelity), np.std(fidelity))]
     MEDIUM_steps += [(np.average(steps), np.std(steps))]
-    # print("End protocol")
-    # print("n steps: ", np.average(steps), np.std(steps))
-    # print("F: ", np.average(fidelity), np.std(fidelity))
+    print("End protocol")
+    print("n steps: ", np.average(steps), np.std(steps))
+    print("F: ", np.average(fidelity), np.std(fidelity))
 
 
     """
     Nickerson stringent protocol.
     """
-    # print("------------------PROTOCOL COMPLEX-------------------")
+    print("------------------PROTOCOL COMPLEX-------------------")
     # Reuse pair purification circuit from previous protocol
     # and single selection parallel
     c_ghz = circuit.Circuit(p_env=p_env,
@@ -159,7 +159,7 @@ for p_env in p_env_var:
                       projections=[0, 0, 0, 0])
 
     # Get average number of steps
-    avg = 1000
+    avg = 1
     fidelity = []
     steps = []
     for i in range(avg):
@@ -170,14 +170,14 @@ for p_env in p_env_var:
     COMPLEX_fidelity += [(np.average(fidelity), np.std(fidelity))]
     COMPLEX_steps += [(np.average(steps), np.std(steps))]
     # print(rho)
-    # print("End protocol")
-    # print("n steps: ", np.average(steps), np.std(steps))
-    # print("F: ", np.average(fidelity), np.std(fidelity))
+    print("End protocol")
+    print("n steps: ", np.average(steps), np.std(steps))
+    print("F: ", np.average(fidelity), np.std(fidelity))
 
-np.save("data/SIMPLE_fidelity_BK", SIMPLE_fidelity)
-np.save("data/SIMPLE_steps_BK", SIMPLE_steps)
-np.save("data/MEDIUM_fidelity_BK", MEDIUM_fidelity)
-np.save("data/MEDIUM_steps_BK", MEDIUM_steps)
-np.save("data/COMPLEX_fidelity_BK", COMPLEX_fidelity)
-np.save("data/COMPLEX_steps_BK", COMPLEX_steps)
-np.save("data/p_env", p_env_var)
+# np.save("data/SIMPLE_fidelity_BK", SIMPLE_fidelity)
+# np.save("data/SIMPLE_steps_BK", SIMPLE_steps)
+# np.save("data/MEDIUM_fidelity_BK", MEDIUM_fidelity)
+# np.save("data/MEDIUM_steps_BK", MEDIUM_steps)
+# np.save("data/COMPLEX_fidelity_BK", COMPLEX_fidelity)
+# np.save("data/COMPLEX_steps_BK", COMPLEX_steps)
+# np.save("data/p_env", p_env_var)

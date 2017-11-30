@@ -32,10 +32,22 @@ class Blocks:
         self.pg = pg
         self.pn = pn
         self.p_env = p_env
-        # Set number of steps of a block to 0
-        self.n_steps = 0
+
         # Detector efficiency in entanglement generation
         self.eta = 0.8
+
+        # Dictionary to carry the check of all the operations made so far
+        self.check = {"bell_pair": 0,
+                      "2_qubit_gate": 0,
+                      "1_qubit_gate": 0,
+                      "measurement": 0,
+                      "time": 0}
+
+        # Lookup tables for the time it takes to make each operaation
+        self.time_lookup = {"bell_pair": 1,
+                            "2_qubit_gate": 1,
+                            "1_qubit_gate": 1,
+                            "measurement": 1}
 
     def change_parameters(self, ps, pm, pg, pn, p_env):
         """Function to change the parameters of all the operations."""
@@ -45,34 +57,49 @@ class Blocks:
         self.pg = pg
         self.pn = pn
         self.p_env = p_env
-        # Reset the number of steps
-        self.n_steps = 0
 
-    def generate_bell_pair_BK(self):
+        self._reset_check()
+
+    def _reset_check(self):
+        # Reset check dictionary
+        self.check = dict.fromkeys(self.check, 0)
+
+    def _generate_bell_pair(self):
         # Probaility of success
         p_success = self.eta*(4 - self.eta)/4
 
-        # This circuit number of steps
-        steps = self._success_number_of_attempts(p_success) + 1
+        # This circuit number of steps and time it took
+        attempts = self._success_number_of_attempts(p_success) + 1
+        time = self.time_lookup["bell_pair"] * attempts
+
+        # Update check
+        self.check["bell_pair"] += 1
+        # self.check["time"] += time
+
         # Generate noisy bell pair
         bell = errs.bell_pair(self.pn)
-        return steps, bell
+        return time, bell
 
-    def generate_bell_pair(self):
+    def _generate_bell_pair_BK(self):
         # Probaility of success
         p_success = self.eta**2/2
 
         # This circuit number of steps
         # Factor of 2 because uses twice the number of operations
-        steps = (self._success_number_of_attempts(p_success) + 1) * 2
+        attempts = (self._success_number_of_attempts(p_success) + 1) * 2
+        time = self.time_lookup["bell_pair"] * attempts
+
+        # Update check
+        self.check["bell_pair"] += 1
 
         # Generate noisy bell pair
         bell = errs.bell_pair(0.3*self.pn)
-        return steps, bell
+        return time, bell
 
-    def generate_noisy_plus(self):
-        # This circuit number of steps
-        steps = 1
+    def _generate_noisy_plus(self):
+        # This circuit time
+        # NOTE:
+        time = 1
 
         # Generate noisy plus
         plus = qt.snot() * qt.basis(2, 0)
@@ -81,7 +108,7 @@ class Blocks:
         minus = minus * minus.dag()
         plus = (1 - self.pm) * plus + self.pm * minus
 
-        return steps, plus
+        return time, plus
 
     def _success_number_of_attempts(self, p_success):
         # Up to 20 tries for success
@@ -95,24 +122,22 @@ class Blocks:
         return p*(1-p)**n
 
     def _append_noisy_plus(self, rho):
-        plus = steps, self.generate_noisy_plus()
+        plus = time, self.generate_noisy_plus()
 
-        # This circuit number of steps
-        self.n_steps += steps
+        # # This circuit number of steps
+        # self.n_steps += steps
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
         # Noisy plus tate is attached at the end of the complete state
         rho = qt.tensor(rho, plus)
         return rho
 
     def _append_bell_pair(self, rho):
         # Append a raw Bell pair to the state.
-        steps, bell = self.generate_bell_pair()
+        time, bell = self._generate_bell_pair()
 
-        # This circuit number of steps
-        self.n_steps += steps
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
 
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
@@ -157,10 +182,14 @@ class Blocks:
         # Number of steps is divided over two because two measurements are made
         # in parallel over each node
         N_ancillas = len(ancillas_pos)
-        steps = int(N_ancillas/2)
-        self.n_steps += steps
+        n_measurements = int(N_ancillas/2)
+        self.check["measurement"] += N_ancillas
+        self.check["single_qubit_gate"] += N_ancillas
+
+        time = n_measurements * self.time_lookup["measurements"]
+        self.check["time"] += time
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
 
         # Collapse the qubits in parrallel
         # Sort list to be able to reduce dimension and keep track of positions
@@ -176,11 +205,13 @@ class Blocks:
         # Apply one local two qubit Control type of gates in parallel
         # on each node.
 
-        # NOTE: This circuit number of steps is 1 because gates are applied in parallel
-        steps = 1
-        self.n_steps += steps
+        # NOTE: Number of gates is 1 because gates are applied in parallel
+        self.check["two_qubit_gate"] += 1
+        time = self.time_lookup["two_qubit_gate"]
+        self.check["time"] += time
+
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
 
         gates = self._get_two_qubit_gates(N, controls, targets, sigma)
         for i in range(len(gates)):
@@ -193,18 +224,20 @@ class Blocks:
         Start with a raw Bell pair to the state.
         Does not require input state.
         """
-        steps, bell = self.generate_bell_pair()
-        return 1, 1, bell
+        self._reset_check()
+        time, bell = self._generate_bell_pair()
+        self.check["time"] += time
+        return 1, self.check, bell
 
     def add_bell_pair(self, rho):
         """Append a raw Bell pair to the state."""
-        steps, bell = self.generate_bell_pair()
+        time, bell = self._generate_bell_pair()
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
+        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
 
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
-        return 1, steps, rho
+        return 1, time, rho
 
     def two_qubit_gates(self, rho, controls, targets, sigma):
         """
