@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-SIMPLE_fidelity = np.load("../decomposition/data/SIMPLE_fidelity_BK.npy")
-SIMPLE_steps = np.load("../decomposition/data/SIMPLE_steps_BK.npy")
-MEDIUM_fidelity = np.load("../decomposition/data/MEDIUM_fidelity_BK.npy")
-MEDIUM_steps = np.load("../decomposition/data/MEDIUM_steps_BK.npy")
-COMPLEX_fidelity = np.load("../decomposition/data/COMPLEX_fidelity_BK.npy")
-COMPLEX_steps = np.load("../decomposition/data/COMPLEX_steps_BK.npy")
+SIMPLE_fidelity = np.load("../decomposition/data/SIMPLE_fidelity.npy")
+SIMPLE_steps = np.load("../decomposition/data/SIMPLE_steps.npy")
+MEDIUM_fidelity = np.load("../decomposition/data/MEDIUM2_fidelity.npy")
+MEDIUM_steps = np.load("../decomposition/data/MEDIUM2_steps.npy")
+COMPLEX_fidelity = np.load("../decomposition/data/COMPLEX_fidelity.npy")
+COMPLEX_steps = np.load("../decomposition/data/COMPLEX_steps.npy")
 p_env = np.load("../decomposition/data/p_env.npy")
 
 
