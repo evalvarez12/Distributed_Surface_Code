@@ -210,10 +210,10 @@ class Blocks:
 
         return p_success, rho
 
-    def _apply_two_qubit_gates(self, rho, N, controls, targets, sigma):
+    def _apply_two_qubit_gates(self, rho, controls, targets, sigma):
         # Apply one local two qubit Control type of gates in parallel
         # on each node.
-
+        N = len(rho.dims[0])
         # NOTE: Number of gates is 1 because gates are applied in parallel
         self.check["two_qubit_gate"] += 1
         time = self.time_lookup["two_qubit_gate"]
@@ -255,7 +255,7 @@ class Blocks:
         on each node.
         """
         self._reset_check()
-        rho = self._apply_two_qubit_gates(rho, N, controls, targets, sigma)
+        rho = self._apply_two_qubit_gates(rho, controls, targets, sigma)
 
         return 1, self.check, rho
 
@@ -282,7 +282,7 @@ class Blocks:
 
         # Apply two qubit gates
         controls = [N-1, N-2]
-        rho = self._apply_two_qubit_gates(rho, N, controls,
+        rho = self._apply_two_qubit_gates(rho, controls,
                                           operation_qubits, sigma)
 
         # Measure ancillas in X basis
@@ -307,12 +307,12 @@ class Blocks:
 
         # Apply first two qubit gates
         controls1 = [N-3, N-4]
-        rho = self._apply_two_qubit_gates(rho, N, controls1,
+        rho = self._apply_two_qubit_gates(rho, controls1,
                                           operation_qubits, sigma)
 
         # Apply second set of gates
         controls2 = [N-1, N-2]
-        rho = self._apply_two_qubit_gates(rho, N, controls2, controls1, "Z")
+        rho = self._apply_two_qubit_gates(rho, controls2, controls1, "Z")
 
         # Measure ancillas in X basis
         projections = [0] * 2

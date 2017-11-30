@@ -90,7 +90,8 @@ class Circuit:
         Must be self contained event
         """
         _, check, rho_app = self.run(None)
-        rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
+        time = check["time"]
+        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
         rho = qt.tensor(rho, rho_app)
         return 1, check, rho
 
@@ -110,7 +111,8 @@ class Circuit:
         # Up to 20 tries for success
         i = np.arange(100)
         d = self._distribution(p_success, i)
-        return np.random.choice(i, 1, p=d)[0]
+        # return np.random.choice(i, 1, p=d)[0]
+        return 0
 
     def _distribution(self, p, n):
         # Distribution for the probability in the number of tries of

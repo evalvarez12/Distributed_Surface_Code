@@ -7,6 +7,7 @@ created-on: 21/11/17
 
 import numpy as np
 import qutip as qt
+import collections
 import circuit_block
 import circuit
 import error_models
@@ -32,7 +33,7 @@ COMPLEX_fidelity = []
 COMPLEX_steps = []
 
 p_env_var = np.geomspace(5e-3, 5e-6, 20)
-
+p_env_var = [5e-5]
 for p_env in p_env_var:
     cb.change_parameters(ps, pm, pg, pn, p_env)
 
@@ -59,17 +60,17 @@ for p_env in p_env_var:
     # Get average number of steps
     avg = 1
     fidelity = []
-    steps = []
+    check = collections.Counter({})
     for i in range(avg):
-        p, n, rho = c_ghz.run(None)
-        steps += [n]
+        p, c, rho = c_ghz.run(None)
+        check += c
         fidelity += [qt.fidelity(rho, ghz_ref)]
 
     # print(rho)
     SIMPLE_fidelity += [(np.average(fidelity), np.std(fidelity))]
-    SIMPLE_steps += [(np.average(steps), np.std(steps))]
+    # SIMPLE_steps += [(np.average(steps), np.std(steps))]
     print("End protocol")
-    print("n steps: ", np.average(steps), np.std(steps))
+    print("check: ", check)
     print("F: ", np.average(fidelity), np.std(fidelity))
 
 
@@ -113,17 +114,17 @@ for p_env in p_env_var:
     # Get average number of steps
     avg = 1
     fidelity = []
-    steps = []
+    check = collections.Counter({})
     for i in range(avg):
-        p, n, rho = c_ghz.run(None)
-        steps += [n]
+        p, c, rho = c_ghz.run(None)
+        check += c
         fidelity += [qt.fidelity(rho, ghz_ref)]
 
     # print(rho)
     MEDIUM_fidelity += [(np.average(fidelity), np.std(fidelity))]
-    MEDIUM_steps += [(np.average(steps), np.std(steps))]
+    # MEDIUM_steps += [(np.average(steps), np.std(steps))]
     print("End protocol")
-    print("n steps: ", np.average(steps), np.std(steps))
+    print("check: ", check)
     print("F: ", np.average(fidelity), np.std(fidelity))
 
 
@@ -161,17 +162,17 @@ for p_env in p_env_var:
     # Get average number of steps
     avg = 1
     fidelity = []
-    steps = []
+    check = collections.Counter({})
     for i in range(avg):
-        p, n, rho = c_ghz.run(None)
-        steps += [n]
+        p, c, rho = c_ghz.run(None)
+        check += c
         fidelity += [qt.fidelity(rho, ghz_ref)]
 
     COMPLEX_fidelity += [(np.average(fidelity), np.std(fidelity))]
-    COMPLEX_steps += [(np.average(steps), np.std(steps))]
+    # COMPLEX_steps += [(np.average(steps), np.std(steps))]
     # print(rho)
     print("End protocol")
-    print("n steps: ", np.average(steps), np.std(steps))
+    print("check: ", check)
     print("F: ", np.average(fidelity), np.std(fidelity))
 
 # np.save("data/SIMPLE_fidelity_BK", SIMPLE_fidelity)
