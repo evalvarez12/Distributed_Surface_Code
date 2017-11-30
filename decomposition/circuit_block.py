@@ -48,7 +48,7 @@ class Blocks:
         # Reset the number of steps
         self.n_steps = 0
 
-    def generate_bell_pair(self):
+    def generate_bell_pair_BK(self):
         # Probaility of success
         p_success = self.eta*(4 - self.eta)/4
 
@@ -58,7 +58,7 @@ class Blocks:
         bell = errs.bell_pair(self.pn)
         return steps, bell
 
-    def generate_bell_pair_BK(self):
+    def generate_bell_pair(self):
         # Probaility of success
         p_success = self.eta**2/2
 
@@ -67,7 +67,7 @@ class Blocks:
         steps = (self._success_number_of_attempts(p_success) + 1) * 2
 
         # Generate noisy bell pair
-        bell = errs.bell_pair(0.2*self.pn)
+        bell = errs.bell_pair(0.3*self.pn)
         return steps, bell
 
     def generate_noisy_plus(self):
