@@ -9,14 +9,17 @@ import numpy as np
 import qutip as qt
 import collections
 
+
 class Circuit:
     """
     Class to hold a block in the overall purification protocol.
     Subcircuit object for the circuit that goes inside this block.
     Circuits are assembled using recursive objects and circuit blocks.
     """
-    def  __init__(self, p_env, circuit_block, **kwargs):
-        # Save circuit block of this level, a function to execute of circuit block.
+
+    def __init__(self, p_env, circuit_block, **kwargs):
+        """Init function."""
+        # Save circuit block function of this level
         self.circuit = circuit_block
         self.circuit_kwargs = kwargs
 
@@ -111,8 +114,8 @@ class Circuit:
         # Up to 20 tries for success
         i = np.arange(100)
         d = self._distribution(p_success, i)
-        # return np.random.choice(i, 1, p=d)[0]
-        return 0
+        return np.random.choice(i, 1, p=d)[0]
+        # return 0
 
     def _distribution(self, p, n):
         # Distribution for the probability in the number of tries of

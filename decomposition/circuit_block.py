@@ -27,6 +27,7 @@ class Blocks:
     """
 
     def __init__(self, ps, pm, pg, pn, p_env):
+        """Init function."""
         # Set the parameters to all faulty opearations
         self.ps = ps
         self.pm = pm
@@ -116,6 +117,7 @@ class Blocks:
         i = np.arange(100)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
+        # return 0
 
     def _distribution(self, p, n):
         # Distribution for the probability in the number of tries of
@@ -123,10 +125,9 @@ class Blocks:
         return p*(1-p)**n
 
     def _append_noisy_plus(self, rho):
+        # Generate noisy plus
         time, plus = self.generate_noisy_plus()
 
-        # # This circuit number of steps
-        # self.n_steps += steps
         # Apply environmental error
         rho = errs.env_dephasing_all(rho, self.p_env, time, True)
         # Noisy plus tate is attached at the end of the complete state
@@ -134,7 +135,7 @@ class Blocks:
         return rho
 
     def _append_bell_pair(self, rho):
-        # Append a raw Bell pair to the state.
+        # Generate raw Bell pair to the state.
         time, bell = self._generate_bell_pair()
 
         # Apply environmental error
@@ -163,26 +164,40 @@ class Blocks:
         N = len(rho.dims[0])
 
         if basis == "X":
-            collapsed_state = errs.measure_single_Xbasis_forced(rho,
-                                                                self.pm,
-                                                                project,
-                                                                N,
-                                                                pos)
+            rho = errs.single_qubit_gate_noise(rho, self.ps, N, pos)
+            rho = errs.measure_single_Xbasis_forced(rho, self.pm, project, N, pos)
         elif basis == "Z":
-            collapsed_state = errs.measure_single_Zbasis_forced(rho,
-                                                                self.pm,
-                                                                project,
-                                                                N,
-                                                                pos)
-        return collapsed_state
+            rho = errs.measure_single_Zbasis_forced(rho, self.pm, project, N, pos)
+        return rho
+
+    def _swap_noise(self, rho, pos):
+        N = len(rho.dims[0])
+        # NOTE: use only two CNOTs to perform a SWAP
+        # Swap noise is only single qubit gate because one of the states
+        # because a one way Swap gate is used
+
+        # Apply noise
+        for i in range(2):
+            rho = errs.single_qubit_gate_noise(rho, self.pg, N, pos)
+        return rho
+
+    def _swap_pair(self, rho, pair):
+        # NOTE: use only two CNOTs to perform a SWAP
+        self.check["two_qubit_gate"] += 2
+        self.check["time"] += self.time_lookup["two_qubit_gate"]*2
+        rho = self._swap_noise(rho, pair[0])
+        rho = self._swap_noise(rho, pair[1])
+        return rho
 
     def _collapse_ancillas_X(self, rho, ancillas_pos, projections):
         # Measure the ancillas in the X basis in parallel in each node.
-        # NOTE: All ancillas are collapsed in parallel
+        # NOTE: All ancillas are collapsed in parallel, Hadamard operations
+        # are used to measure on X basis
         self.check["measurement"] += 1
         self.check["single_qubit_gate"] += 1
 
-        time = self.time_lookup["measurement"]
+        time = (self.time_lookup["measurement"]
+                + self.time_lookup["single_qubit_gate"])
         self.check["time"] += time
         # Apply environmental error
         rho = errs.env_dephasing_all(rho, self.p_env, time, True)
@@ -196,7 +211,9 @@ class Blocks:
         elif N_ancillas == 4:
             ancillas_pos1 = ancillas_pos[:2]
             ancillas_pos2 = ancillas_pos[2:]
-            p_success = ops.p_success_double_sel(rho, N, ancillas_pos1, ancillas_pos2)
+            p_success = ops.p_success_double_sel(rho, N,
+                                                 ancillas_pos1,
+                                                 ancillas_pos2)
         else:
             p_success = 1
 
@@ -229,10 +246,7 @@ class Blocks:
         return rho
 
     def start_bell_pair(self, rho=None):
-        """
-        Start with a raw Bell pair to the state.
-        Does not require input state.
-        """
+        """Start with a raw Bell pair to the state."""
         self._reset_check()
         time, bell = self._generate_bell_pair()
         self.check["time"] += time
@@ -249,12 +263,23 @@ class Blocks:
         rho = qt.tensor(rho, bell)
         return 1, self.check, rho
 
+    def swap_pair(self, rho, pair):
+        """Does not really make a SWAP, only applies the noise."""
+        self._reset_check()
+        # Apply the noise
+        self._swap_pair(rho, pair)
+        return 1, self.check, rho
+
     def two_qubit_gates(self, rho, controls, targets, sigma):
         """
         Apply one local two qubit Control type of gates in parallel
         on each node.
         """
         self._reset_check()
+
+        # Swap noise
+        self._swap_pair(rho, controls)
+
         rho = self._apply_two_qubit_gates(rho, controls, targets, sigma)
 
         return 1, self.check, rho
@@ -264,8 +289,10 @@ class Blocks:
         Measure the ancillas in the X basis in parallel in each node.
         Ancillas position need to be the last part of the state.
         """
+        # Reset check
         self._reset_check()
-        p_success, rho = self._collapse_ancillas_X(rho, ancillas_pos, projections)
+        p_success, rho = self._collapse_ancillas_X(rho, ancillas_pos,
+                                                   projections)
         return p_success, self.check, rho
 
     def single_selection(self, rho, operation_qubits, sigma):
@@ -275,10 +302,13 @@ class Blocks:
         """
         # Reset number of steps counter
         self._reset_check()
+
+        # Swap noise
+        self._swap_pair(rho, operation_qubits)
+
         # Generate raw bell pair
         rho = self._append_bell_pair(rho)
         N = len(rho.dims[0])
-        N_ancillas = 2
 
         # Apply two qubit gates
         controls = [N-1, N-2]
@@ -286,7 +316,7 @@ class Blocks:
                                           operation_qubits, sigma)
 
         # Measure ancillas in X basis
-        projections = [0]*N_ancillas
+        projections = [0] * 2
         p_success, rho = self._collapse_ancillas_X(rho, controls, projections)
         return p_success, self.check, rho
 
@@ -298,12 +328,13 @@ class Blocks:
         # Reset number of steps counter
         self._reset_check()
 
+        # Swap noise
+        self._swap_pair(rho, operation_qubits)
+
         # Generate two bell pairs
         rho = self._append_bell_pair(rho)
         rho = self._append_bell_pair(rho)
         N = len(rho.dims[0])
-        # Number of ancillas is 4, ancillas can be measured in parrallel
-        N_ancillas = 4
 
         # Apply first two qubit gates
         controls1 = [N-3, N-4]
@@ -312,12 +343,18 @@ class Blocks:
 
         # Apply second set of gates
         controls2 = [N-1, N-2]
+        # Swap noise
+        self._swap_pair(rho, controls1)
         rho = self._apply_two_qubit_gates(rho, controls2, controls1, "Z")
 
         # Measure ancillas in X basis
         projections = [0] * 2
-        p_success2, rho = self._collapse_ancillas_X(rho, controls2, projections)
-        p_success1, rho = self._collapse_ancillas_X(rho, controls1, projections)
+        p_success2, rho = self._collapse_ancillas_X(rho, controls2,
+                                                    projections)
+        # Swap noise
+        self._swap_pair(rho, controls1)
+        p_success1, rho = self._collapse_ancillas_X(rho, controls1,
+                                                    projections)
         p_success = p_success1 * p_success2
         print(p_success1, p_success2)
         return p_success, self.check, rho

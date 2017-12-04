@@ -13,9 +13,9 @@ import circuit
 import error_models
 
 # Determine parameters
-ps = 0.0
-pm = 0.009
-pg = 0.009
+ps = 0.0075
+pm = 0.0075
+pg = 0.0075
 pn = 0.1
 p_env = 5e-4
 
@@ -58,7 +58,7 @@ for p_env in p_env_var:
                       projections=[0, 0, 0, 0])
 
     # Get average number of steps
-    avg = 1
+    avg = 100
     fidelity = []
     check = collections.Counter({})
     for i in range(avg):
@@ -70,6 +70,10 @@ for p_env in p_env_var:
     SIMPLE_fidelity += [(np.average(fidelity), np.std(fidelity))]
     # SIMPLE_steps += [(np.average(steps), np.std(steps))]
     print("End protocol")
+
+    # Average over check values
+    for k in check:
+        check[k] = check[k]/avg
     print("check: ", check)
     print("F: ", np.average(fidelity), np.std(fidelity))
 
@@ -112,7 +116,7 @@ for p_env in p_env_var:
                       projections=[0, 0, 0, 0])
 
     # Get average number of steps
-    avg = 1
+    avg = 100
     fidelity = []
     check = collections.Counter({})
     for i in range(avg):
@@ -120,10 +124,15 @@ for p_env in p_env_var:
         check += c
         fidelity += [qt.fidelity(rho, ghz_ref)]
 
+    for k in check:
+        check[k] = check[k]/avg
+
     # print(rho)
     MEDIUM_fidelity += [(np.average(fidelity), np.std(fidelity))]
     # MEDIUM_steps += [(np.average(steps), np.std(steps))]
     print("End protocol")
+
+
     print("check: ", check)
     print("F: ", np.average(fidelity), np.std(fidelity))
 
@@ -160,7 +169,7 @@ for p_env in p_env_var:
                       projections=[0, 0, 0, 0])
 
     # Get average number of steps
-    avg = 1
+    avg = 100
     fidelity = []
     check = collections.Counter({})
     for i in range(avg):
@@ -169,6 +178,10 @@ for p_env in p_env_var:
         fidelity += [qt.fidelity(rho, ghz_ref)]
 
     COMPLEX_fidelity += [(np.average(fidelity), np.std(fidelity))]
+
+    for k in check:
+        check[k] = check[k]/avg
+
     # COMPLEX_steps += [(np.average(steps), np.std(steps))]
     # print(rho)
     print("End protocol")
