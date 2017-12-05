@@ -40,9 +40,13 @@ for p_env in p_env_var:
     print("-------------------PROTOCOL SIMPLE------------------")
     # First assemeble the small single selection circuit
     c_single_sel1 = circuit.Circuit(p_env=p_env, circuit_block=cb.start_bell_pair)
+    c_single_sel1.add_circuit(circuit_block=cb.swap_pair,
+                              pair=[0, 1])
     c_single_sel1.add_circuit(circuit_block=cb.single_selection,
                               operation_qubits=[0, 1],
                               sigma="X")
+    # c_single_sel1.add_circuit(circuit_block=cb.swap_pair,
+    #                           pair=[0, 1])
     c_wrap_single_sel1 = circuit.Circuit(p_env=p_env,
                                          circuit_block=c_single_sel1.run_parallel)
 
@@ -58,7 +62,7 @@ for p_env in p_env_var:
                       projections=[0, 0, 0, 0])
 
     # Get average number of steps
-    avg = 100
+    avg = 10
     fidelity = []
     check = collections.Counter({})
     for i in range(avg):
@@ -116,7 +120,7 @@ for p_env in p_env_var:
                       projections=[0, 0, 0, 0])
 
     # Get average number of steps
-    avg = 100
+    avg = 10
     fidelity = []
     check = collections.Counter({})
     for i in range(avg):
@@ -169,7 +173,7 @@ for p_env in p_env_var:
                       projections=[0, 0, 0, 0])
 
     # Get average number of steps
-    avg = 100
+    avg = 10
     fidelity = []
     check = collections.Counter({})
     for i in range(avg):

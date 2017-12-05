@@ -116,8 +116,8 @@ class Blocks:
         # Up to 20 tries for success
         i = np.arange(100)
         d = self._distribution(p_success, i)
-        return np.random.choice(i, 1, p=d)[0]
-        # return 0
+        # return np.random.choice(i, 1, p=d)[0]
+        return 0
 
     def _distribution(self, p, n):
         # Distribution for the probability in the number of tries of
@@ -303,8 +303,8 @@ class Blocks:
         # Reset number of steps counter
         self._reset_check()
 
-        # Swap noise
-        self._swap_pair(rho, operation_qubits)
+        # # Swap noise
+        # self._swap_pair(rho, operation_qubits)
 
         # Generate raw bell pair
         rho = self._append_bell_pair(rho)
