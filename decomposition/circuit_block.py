@@ -137,7 +137,7 @@ class Blocks:
     def _append_bell_pair(self, rho):
         # Generate raw Bell pair to the state.
         time, bell = self._generate_bell_pair()
-
+        self.check["time"] += time
         # Apply environmental error
         rho = errs.env_dephasing_all(rho, self.p_env, time, True)
 
@@ -277,9 +277,6 @@ class Blocks:
         """
         self._reset_check()
 
-        # Swap noise
-        self._swap_pair(rho, controls)
-
         rho = self._apply_two_qubit_gates(rho, controls, targets, sigma)
 
         return 1, self.check, rho
@@ -303,9 +300,6 @@ class Blocks:
         # Reset number of steps counter
         self._reset_check()
 
-        # # Swap noise
-        # self._swap_pair(rho, operation_qubits)
-
         # Generate raw bell pair
         rho = self._append_bell_pair(rho)
         N = len(rho.dims[0])
@@ -327,9 +321,6 @@ class Blocks:
         """
         # Reset number of steps counter
         self._reset_check()
-
-        # Swap noise
-        self._swap_pair(rho, operation_qubits)
 
         # Generate two bell pairs
         rho = self._append_bell_pair(rho)
@@ -356,5 +347,4 @@ class Blocks:
         p_success1, rho = self._collapse_ancillas_X(rho, controls1,
                                                     projections)
         p_success = p_success1 * p_success2
-        print(p_success1, p_success2)
         return p_success, self.check, rho
