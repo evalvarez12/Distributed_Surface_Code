@@ -33,7 +33,7 @@ COMPLEX_fidelity = []
 COMPLEX_steps = []
 
 p_env_var = np.geomspace(5e-3, 5e-6, 20)
-p_env_var = [0]
+p_env_var = [5e-4]
 for p_env in p_env_var:
     cb.change_parameters(ps, pm, pg, pn, p_env)
 
