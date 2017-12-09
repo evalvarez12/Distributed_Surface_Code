@@ -12,8 +12,8 @@ import matching
 
 # Define the parameters
 distance = 10
-topology = "planar"
-time_steps = 20
+topology = "toric"
+time_steps = 100
 weights = [1, 1]
 
 # Parameters for noisy measurement
@@ -31,24 +31,25 @@ sc.init_error_obj(ps, pm, pg, pn, protocol)
 
 # Perform measurements
 for i in range(time_steps):
-    sc.apply_qubit_error(.03, .0)
+    sc.apply_qubit_error(.02, .0)
     sc.measure_all_stablizers()
-    # sc._stabilizer_lie("S", .00)
+    sc._stabilizer_lie("S", .02)
     # sc.noisy_measurement("star")
     lc.add()
 
 
-    time = lc.get_time()
-    anyons_star, anyons_plaq = lc.find_anyons_all()
+time = lc.get_time()
+anyons_star, anyons_plaq = lc.find_anyons_all()
+lc.reset()
 # print("Anyons________>")
 # print(anyons_star)
 # print(anyon_plaq)
 # print("-----------------<")
 
-    sc.plot("star")
+sc.plot("star")
 
-    match_star = matching.match(distance, anyons_star, topology,
-                            "star", time=0, weights=weights)
+match_star = matching.match(distance, anyons_star, topology,
+                            "star", time=time, weights=weights)
     # match_plaq = matching.match(distance, anyons_plaq, topology,
     #                         "plaq", time=0, weights=weights)
 
@@ -56,7 +57,7 @@ for i in range(time_steps):
 # print(match_star)
 
 # print("Decoding now----->")
-    sc.correct_error("star", match_star, time)
+sc.correct_error("star", match_star, time)
 # sc.correct_error("plaq", match_plaq, time)
 
 
@@ -67,14 +68,14 @@ for i in range(time_steps):
 #     print("FAILURE CORRECTING")
 # else:
 #     print("SUCCESS CORRECTION")
-    logical = sc.measure_logical()
-    print(logical)
-
-    sc.plot("star")
-
-    plt.show()
+logical = sc.measure_logical()
+print(logical)
 
 if -1 in logical[0]:
     print("LOGICAL QUBIT ERR")
+sc.plot("star")
+
+plt.show()
+
 
     # plt.close()

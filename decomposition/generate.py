@@ -1,5 +1,5 @@
 import pickle
-import os
+from os.path import dirname, realpath
 # from . import noise_modeling
 # from . import protocols
 import noise_modeling
@@ -33,7 +33,7 @@ class Generator:
                                        stab_size, parity, protocol)
 
         pickle_out = open(file_name, "wb")
-        pickle.dump(noise_model.chi, pickle_out)
+        pickle.dump(noise_model.chi, pickle_out, protocol=2)
         pickle_out.close()
 
     def generate_name(self, ps, pm, pg, pn, stab_size, parity, protocol):
@@ -42,7 +42,8 @@ class Generator:
         param_names = "_".join(param_names)
         file_name = [protocol, parity, str(stab_size)]
         file_name = "_".join(file_name)
-        script_path = os.path.dirname(os.path.realpath(__file__))
+        # The address of the parent directory
+        script_path = dirname(dirname(realpath(__file__)))
         file_name = (script_path + "/data/" + file_name
                      + "_" + param_names + ".dict")
         return file_name

@@ -14,7 +14,9 @@ def match(size, anyons, surface, stabilizer, time, weights=[1, 1]):
               [[x0,y0,t0],[x1,y1,t1],...]
     weights -- The multiplicative weighting that should be assigned to graph
                edges in the [space,time] dimensions. Default: [1,1]
-
+    time -- Number of syndrome extractions made under imperfect measurements
+            time = 0 assumes perfect syndrome extractrion and the decoding is
+            in 2D.
     Returns:
     --------
     A list containing all the input anyon positions grouped into pairs.

@@ -3,7 +3,7 @@ Complete list of processed errors for the noisy operators.
 """
 import numpy as np
 import pickle
-import os
+from os.path import dirname, realpath
 # import decomposition.generate as gen
 
 I, X, Y, Z = [1, 1], [-1, 1], [-1, -1], [1, -1]
@@ -47,7 +47,7 @@ class Generator:
         param_names = "_".join(param_names)
         file_name = [protocol, parity, str(stab_size)]
         file_name = "_".join(file_name)
-        script_path = os.path.dirname(os.path.realpath(__file__))
+        script_path = dirname(realpath(__file__))
         file_name = (script_path + "/data/" + file_name
                      + "_" + param_names + ".dict")
         return file_name
@@ -55,11 +55,11 @@ class Generator:
     def _load_model(self, ps, pm, pg, pn, stab_size, parity, protocol):
         file_name = self._generate_name(ps, pm, pg, pn,
                                         stab_size, parity, protocol)
-        try:
-            pickle_in = open(file_name, "rb")
-            return pickle.load(pickle_in)
-        except:
-            raise NameError("Model file not found")
+        # try:
+        pickle_in = open(file_name, "rb")
+        return pickle.load(pickle_in)
+        # except:
+            # raise NameError("Model file not found: " + file_name)
 
     def get_errors(self, num_errors, stabilizer, border=False):
         if stabilizer == "star":

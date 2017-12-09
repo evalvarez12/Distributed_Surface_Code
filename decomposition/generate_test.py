@@ -9,7 +9,7 @@ pm = 0.009
 pg = 0.009
 pn = 0.0
 system_size = 4
-parity = "X"
+parity = "Z"
 function = "LOCAL"
 
 # Calculate chi matrix
