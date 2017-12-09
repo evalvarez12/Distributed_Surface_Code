@@ -1,43 +1,65 @@
 """
-Complete list of errors for the noisy operators.
+Complete list of processed errors for the noisy operators.
 """
 import numpy as np
-import decomposition.generate as gen
+import pickle
+import os
+# import decomposition.generate as gen
 
 I, X, Y, Z = [1, 1], [-1, 1], [-1, -1], [1, -1]
 
 class Generator:
     def __init__(self, surface, ps, pm, pg, pn, protocol):
-        self.generator = gen.Generator()
+        # self.generator = gen.Generator()
 
-        chi_star = self.generator.ask_model(ps, pm, pg, pn, 4,
-                                            "X", protocol)
-        chi_plaq = self.generator.ask_model(ps, pm, pg, pn, 4,
-                                            "Z", protocol)
-        # self.chi = [chi_star, chi_plaq]
+        chi_star = self._load_model(ps, pm, pg, pn, 4,
+                                    "X", protocol)
+        chi_plaq = self._load_model(ps, pm, pg, pn, 4,
+                                    "Z", protocol)
+        self.chi = [chi_star, chi_plaq]
 
         self.chi_keys = [np.array(list(chi_star.keys())),
                          np.array(list(chi_plaq.keys()))]
         self.chi_vals = [np.array(list(chi_star.values())),
                          np.array(list(chi_plaq.values()))]
-        self.errors = [self.symbol_to_error_list(self.chi_keys[0]),
-                       self.symbol_to_error_list(self.chi_keys[1])]
+        self.errors = [self._symbol_to_error_list(self.chi_keys[0]),
+                       self._symbol_to_error_list(self.chi_keys[1])]
         self.indexes = range(len(self.chi_keys[0]))
 
         if surface == "planar":
-            chi_star_border = self.generator.ask_model(ps, pm, pg, pn, 3,
-                                                       "X", protocol)
-            chi_plaq_border = self.generator.ask_model(ps, pm, pg, pn, 3,
-                                                       "Z", protocol)
-            # self.chi_border = [chi_star_border, chi_plaq_border]
+            chi_star_border = self._load_model(ps, pm, pg, pn, 3,
+                                               "X", protocol)
+            chi_plaq_border = self._load_model(ps, pm, pg, pn, 3,
+                                               "Z", protocol)
+            self.chi_border = [chi_star_border, chi_plaq_border]
 
             self.chi_keys_border = [np.array(list(chi_star_border.keys())),
                                     np.array(list(chi_plaq_border.keys()))]
             self.chi_vals_border = [np.array(list(chi_star_border.values())),
                                     np.array(list(chi_plaq_border.values()))]
-            self.errors_border = [self.symbol_to_error_list(self.chi_keys_border[0], True),
-                                  self.symbol_to_error_list(self.chi_keys_border[1], True)]
+            self.errors_border = [self._symbol_to_error_list(self.chi_keys_border[0], True),
+                                  self._symbol_to_error_list(self.chi_keys_border[1], True)]
             self.indexes_border = range(len(self.chi_keys_border[0]))
+
+    def _generate_name(self, ps, pm, pg, pn, stab_size, parity, protocol):
+        param_names = ["ps=" + str(ps), "pm=" + str(pm),
+                       "pg=" + str(pg), "pn=" + str(pn)]
+        param_names = "_".join(param_names)
+        file_name = [protocol, parity, str(stab_size)]
+        file_name = "_".join(file_name)
+        script_path = os.path.dirname(os.path.realpath(__file__))
+        file_name = (script_path + "/data/" + file_name
+                     + "_" + param_names + ".dict")
+        return file_name
+
+    def _load_model(self, ps, pm, pg, pn, stab_size, parity, protocol):
+        file_name = self._generate_name(ps, pm, pg, pn,
+                                        stab_size, parity, protocol)
+        try:
+            pickle_in = open(file_name, "rb")
+            return pickle.load(pickle_in)
+        except:
+            raise NameError("Model file not found")
 
     def get_errors(self, num_errors, stabilizer, border=False):
         if stabilizer == "star":
@@ -74,7 +96,7 @@ class Generator:
         q_errors = np.swapaxes(q_errors, 0, 1)
         return m_errors, q_errors
 
-    def symbol_to_error_list(self, symbol_list, border=False):
+    def _symbol_to_error_list(self, symbol_list, border=False):
         N = len(symbol_list)
         if border:
             d_qubits = 3
@@ -84,7 +106,7 @@ class Generator:
         qubit_errs = np.ones((d_qubits, 2, N))
         measurement_errs = np.ones(N)
         for i in range(N):
-            m, q = self.symbol_to_error(symbol_list[i])
+            m, q = self._symbol_to_error(symbol_list[i])
 
             # NOTE: Shuffle to take a random permutation of the error
             np.random.shuffle(q)
@@ -94,7 +116,7 @@ class Generator:
 
         return [measurement_errs, qubit_errs]
 
-    def symbol_to_error(self, symbol):
+    def _symbol_to_error(self, symbol):
         if "N" in symbol:
             measurement = -1
             symbol = symbol.replace("_NOK", "")
@@ -103,10 +125,10 @@ class Generator:
             symbol = symbol.replace("_OK", "")
 
         l_symbol = list(symbol)
-        errors = [self.pauli_error(s) for s in l_symbol]
+        errors = [self._pauli_error(s) for s in l_symbol]
         return measurement, errors
 
-    def pauli_error(self, s):
+    def _pauli_error(self, s):
         if s == "I":
             return I
         elif s == "X":
@@ -115,63 +137,3 @@ class Generator:
             return Y
         elif s == "Z":
             return Z
-
-
-
-
-
-
-#
-#
-# errorPlaquete1 = [[1, [I, I]], [1, [I, Z]], [1, [I, X]], [1, [I, Y]],
-#                   [1, [X, X]], [1, [X, Y]], [1, [Y, Y]], [1, [X, Z]],
-#                   [1, [Y, Z]], [1, [Z, Z]], [-1, [I, I]], [-1, [I, Z]],
-#                   [-1, [I, X]], [-1, [I, Y]], [-1, [X, X]], [-1, [X, Y]],
-#                   [-1, [Y, Y]], [-1, [X, Z]], [-1, [Y, Z]], [-1, [Z, Z]]]
-#
-# errorPlaquete2 = [[1, [I, I]], [1, [I, Z]], [-1, [I, X]], [-1, [I, Y]],
-#                   [1, [X, X]], [1, [X, Y]], [1, [Y, Y]], [-1, [X, Z]],
-#                   [-1, [Y, Z]], [1, [Z, Z]], [-1, [I, I]], [-1, [I, Z]],
-#                   [1, [I, X]], [1, [I, Y]], [-1, [X, X]], [-1, [X, Y]],
-#                   [-1, [Y, Y]], [1, [X, Z]], [1, [Y, Z]], [-1, [Z, Z]]]
-#
-# errorStar1 = [[1, [I, I]], [1, [I, X]], [1, [I, Z]], [1, [I, Y]],
-#               [1, [Z, Z]], [1, [Z, Y]], [1, [Y, Y]], [1, [Z, X]],
-#               [1, [Y, X]], [1, [X, X]], [-1, [I, I]], [-1, [I, X]],
-#               [-1, [I, Z]], [-1, [I, Y]], [-1, [Z, Z]], [-1, [Z, Y]],
-#               [-1, [Y, Y]], [-1, [Z, X]], [-1, [Y, X]], [-1, [X, X]]]
-#
-# errorStar2 = [[1, [I, I]], [1, [I, X]], [-1, [I, Z]], [-1, [I, Y]],
-#               [1, [Z, Z]], [1, [Z, Y]], [1, [Y, Y]], [-1, [Z, X]],
-#               [-1, [Y, X]], [1, [X, X]], [-1, [I, I]], [-1, [I, X]],
-#               [1, [I, Z]], [1, [I, Y]], [-1, [Z, Z]], [-1, [Z, Y]],
-#               [-1, [Y, Y]], [1, [Z, X]], [1, [Y, X]], [-1, [X, X]]]
-#
-#
-# err_test_vec = [0.926639, 0.006904, 0.003904, 0.003904, 0.000012, 0.000024, 0.000012,
-#               0.000048, 0.000048, 0.001062, 0.042477, 0.006868, 0.003904, 0.003904,
-#               0.000012, 0.000024, 0.000012, 0.000048, 0.000048, 0.000147]
-#
-# def process_errors(errorProbabilities, errorList):
-#             # TODO whats the point of this?
-#             sort_list = sorted(zip(error_probabilities, error_list), reverse=True)
-#             # Separate errors and probabilities
-#             probs, errors = zip(*sort_list)
-#             # Cumulative probalities of the errors
-#             cumulative_probs = np.cumsum(np.array(probs))
-#
-#             number_errors = len(error_list)
-#             measurement_err = np.zeros(number_errors)
-#             err_qubit1 = np.zeros((number_errors,2))
-#             err_qubit2 = np.zeros((number_errors,2))
-#             for i in range(number_errors):
-#                 measurement_err[i] = error_list[i][0]
-#                 err_qubit1[i] = error_list[i][1][0]
-#                 err_qubit2[i] = error_list[i][1][1]
-#
-#             # Errors in shape:
-#             # [[e1X, e2X, e3X, ...], [e1Z, e2Z, e3Z, ...]]
-#             err_qubit1 = err_qubit1.transpose()
-#             err_qubit2 = err_qubit2.transpose()
-#             errors = (measurement_err, err_qubit1, err_qubit2)
-#             return cumulative_probs, errors

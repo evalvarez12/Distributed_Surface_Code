@@ -11,7 +11,7 @@ import layers
 import matching
 
 # Define the parameters
-distance = 20
+distance = 10
 topology = "planar"
 time_steps = 20
 weights = [1, 1]
@@ -31,33 +31,33 @@ sc.init_error_obj(ps, pm, pg, pn, protocol)
 
 # Perform measurements
 for i in range(time_steps):
-    # sc.apply_qubit_error(.1, .0)
-    # sc.measure_all_stablizers()
+    sc.apply_qubit_error(.03, .0)
+    sc.measure_all_stablizers()
     # sc._stabilizer_lie("S", .00)
-    sc.noisy_measurement("star")
+    # sc.noisy_measurement("star")
     lc.add()
 
 
-time = lc.get_time()
-anyons_star, anyons_plaq = lc.find_anyons_all()
+    time = lc.get_time()
+    anyons_star, anyons_plaq = lc.find_anyons_all()
 # print("Anyons________>")
 # print(anyons_star)
 # print(anyon_plaq)
 # print("-----------------<")
 
-sc.plot("star")
+    sc.plot("star")
 
-match_star = matching.match(distance, anyons_star, topology,
-                            "star", time=time, weights=weights)
-match_plaq = matching.match(distance, anyons_plaq, topology,
-                            "plaq", time=time, weights=weights)
+    match_star = matching.match(distance, anyons_star, topology,
+                            "star", time=0, weights=weights)
+    # match_plaq = matching.match(distance, anyons_plaq, topology,
+    #                         "plaq", time=0, weights=weights)
 
 # print("Matchings------->")
 # print(match_star)
 
 # print("Decoding now----->")
-sc.correct_error("star", match_star, time)
-sc.correct_error("plaq", match_plaq, time)
+    sc.correct_error("star", match_star, time)
+# sc.correct_error("plaq", match_plaq, time)
 
 
 # sc.measure_stabilizer_type("star")
@@ -67,14 +67,14 @@ sc.correct_error("plaq", match_plaq, time)
 #     print("FAILURE CORRECTING")
 # else:
 #     print("SUCCESS CORRECTION")
-logical = sc.measure_logical()
-print(logical)
+    logical = sc.measure_logical()
+    print(logical)
 
-sc.plot("star")
+    sc.plot("star")
 
+    plt.show()
 
 if -1 in logical[0]:
     print("LOGICAL QUBIT ERR")
 
-plt.show()
-plt.close()
+    # plt.close()
