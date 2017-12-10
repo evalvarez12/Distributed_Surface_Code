@@ -12,7 +12,7 @@ import matching
 
 # Define the parameters
 distance = 10
-topology = "toric"
+topology = "planar"
 time_steps = 100
 weights = [1, 1]
 

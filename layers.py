@@ -38,6 +38,7 @@ class Layers:
         self.syndromes_star = []
         self.syndromes_plaq = []
 
+
     def add(self):
         # New layer is obtained by comparing the previous one
         # with the new one, so physical errors are only carried once
