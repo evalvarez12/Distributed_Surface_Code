@@ -106,8 +106,8 @@ for i in range(iterations):
 fail_rate = fail_rate/float(iterations)
 
 # Initializing variables. mpi4py requires that we pass numpy objects.
-f_rate = numpy.zeros(1)
-total = numpy.zeros(1)
+f_rate = np.zeros(1)
+total = np.zeros(1)
 
 f_rate[0] = fail_rate
 
