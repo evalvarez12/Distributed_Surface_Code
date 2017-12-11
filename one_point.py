@@ -65,9 +65,9 @@ for i in range(iterations):
 
     # Decode
     match_star = matching.match(distance, anyons_star, topology,
-                                "star", time=cycles, weights=weights)
+                                "star", time=cycles, weights=[1, 1])
     match_plaq = matching.match(distance, anyons_plaq, topology,
-                                "plaq", time=cycles, weights=weights)
+                                "plaq", time=cycles, weights=[1, 1])
 
     # Apply corrections
     sc.correct_error("star", match_star)
