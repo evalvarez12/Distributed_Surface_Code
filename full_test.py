@@ -70,7 +70,7 @@ Imperfect syndrome extraction.
 """
 
 # Define the parameters
-distance = 5
+distance = 10
 topology = "toric"
 weights = [1, 1]
 iterations = 5
