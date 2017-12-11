@@ -10,3 +10,8 @@
 
 # Decomposition data
 decomposition/data
+
+# Slurm stuff
+*.e
+*.out
+submit.sh

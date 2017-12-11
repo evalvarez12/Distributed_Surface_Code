@@ -48,7 +48,7 @@ class SurfaceCode:
         ----------
         distance : int
             The distance of the surface of the surface code.
-        surface = "toric" : string, optional
+        surface = "toric" / "planar" : string, optional
             Topology of the code.
         """
         if surface != "toric" and surface != "planar":
