@@ -25,13 +25,13 @@ pythonfile = sys.argv[0]
 args = dict(arg.split('=') for arg in sys.argv[1:])
 
 # Set parameters
-distance = args["distance"]
+distance = int(args["distance"])
 topology = args["topology"]
-iterations = args["iterations"]
-p = args["p"]
-q = args["q"]
+iterations = int(args["iterations"])
+p = float(args["p"])
+q = float(args["q"])
 if q != 0:
-    cycles = args["cycles"]
+    cycles = int(args["cycles"])
 else:
     cycles = 0
 
