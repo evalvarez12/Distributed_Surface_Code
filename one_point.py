@@ -86,12 +86,12 @@ for i in range(iterations):
         sc.correct_error("star", match_star, cycles)
         sc.correct_error("plaq", match_plaq, cycles)
 
-    # Check for errors in decoding and correcting
-    sc.measure_stabilizer_type("star")
-    sc.measure_stabilizer_type("plaq")
-    if (sc.qubits[:, sc.tags != "Q"] == -1).any():
-        print("FAILURE CORRECTING")
-        fail_rate = -9999
+    # # Check for errors in decoding and correcting
+    # sc.measure_stabilizer_type("star")
+    # sc.measure_stabilizer_type("plaq")
+    # if (sc.qubits[:, sc.tags != "Q"] == -1).any():
+    #     print("FAILURE CORRECTING")
+    #     fail_rate = -9999
 
     # Measure logical qubit
     logical = sc.measure_logical()
@@ -101,7 +101,6 @@ for i in range(iterations):
 
     lc.reset()
     sc.reset()
-
 
 fail_rate = fail_rate/float(iterations)
 
@@ -117,6 +116,8 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if comm.rank == 0:
         total = total/float(size)
+        print("size: ", size)
+        print("id: ", rank)
         print("TOTAL: ", total)
         args_str = json.dumps(args)
         script_path = dirname(realpath(__file__))

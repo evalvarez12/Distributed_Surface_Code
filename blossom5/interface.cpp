@@ -21,7 +21,8 @@ int* blossom_match(int node_num, int edge_num, int nodes1[], int nodes2[], int w
 	{
 		pm->AddEdge(nodes1[k],nodes2[k],weights[k]);
 	}
-
+	
+	options.verbose = false;
 	pm->options = options;
 	pm->Solve();
 
