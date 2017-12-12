@@ -12,7 +12,7 @@ import matching
 
 # Define the parameters
 distance = 10
-topology = "planar"
+topology = "toric"
 time_steps = 100
 weights = [1, 1]
 
@@ -22,60 +22,100 @@ pm = 0.009
 pg = 0.009
 pn = 0.0
 protocol = "LOCAL"
+p = 0.1
+q = 0
+iterations = 10
+cycles = 0
 
 # Initialize objects
+fail_rate = 0
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
-sc.init_error_obj(ps, pm, pg, pn, protocol)
-
+# sc.init_error_obj(ps, pm, pg, pn, protocol)
 
 # Perform measurements
-for i in range(time_steps):
-    sc.apply_qubit_error(.02, .0)
-    sc.measure_all_stablizers()
-    sc._stabilizer_lie("S", .02)
-    # sc.noisy_measurement("star")
-    lc.add()
+for i in range(iterations):
+
+    # Errors and measurements
+    if q!= 0:
+        for t in range(cycles):
+            sc.apply_qubit_error(p, 0)
+            sc.measure_all_stablizers()
+            sc.apply_measurement_error(q)
+            lc.add()
+    else:
+        sc.apply_qubit_error(p, 0)
+        sc.measure_all_stablizers()
+        lc.add()
+
+    # Get anyons
+    anyons_star, anyons_plaq = lc.find_anyons_all()
+
+    # Decode
+    match_star = matching.match(distance, anyons_star, topology,
+                                "star", time=cycles, weights=[1, 1])
+    match_plaq = matching.match(distance, anyons_plaq, topology,
+                                "plaq", time=cycles, weights=[1, 1])
+
+    pre_correction = sc.qubits.copy()
+
+    # Apply corrections
+    sc.correct_error("star", match_star)
+    sc.correct_error("plaq", match_plaq)
+
+    # Round of perfect detection to eliminate stray errors
+    if q!= 0:
+        lc.reset()
+        sc.measure_all_stablizers()
+        lc.add()
+        anyons_star, anyons_plaq = lc.find_anyons_all()
+        match_star = matching.match(distance, anyons_star, topology,
+                                    "star", time=0, weights=weights)
+        match_plaq = matching.match(distance, anyons_plaq, topology,
+                                    "plaq", time=0, weights=weights)
+        sc.correct_error("star", match_star, cycles)
+        sc.correct_error("plaq", match_plaq, cycles)
+
+    # Check for errors in decoding and correcting
+    sc.measure_stabilizer_type("star")
+    sc.measure_stabilizer_type("plaq")
+    if (sc.qubits[:, sc.tags != "Q"] == -1).any():
+        print("FAILURE CORRECTING")
+        fail_rate = -9999
+
+    # Measure logical qubit
+    logical = sc.measure_logical()
+
+    if -1 in logical[0] or -1 in logical[1]:
+        fail_rate += 1
+        print(logical)
+        sc.plot("star")
+        sc.plot("plaq")
 
 
-time = lc.get_time()
-anyons_star, anyons_plaq = lc.find_anyons_all()
-lc.reset()
-# print("Anyons________>")
-# print(anyons_star)
-# print(anyon_plaq)
-# print("-----------------<")
+        pre_star = pre_correction[0].copy()
+        pre_star[sc.tags == "S"] *= 2
+        pre_star[sc.tags == "P"] = 1
+        pre_plaq = pre_correction[0].copy()
+        pre_plaq[sc.tags == "Q"] = pre_correction[1, sc.tags == "Q"]
+        pre_plaq[sc.tags == "P"] *= 2
+        pre_plaq[sc.tags == "S"] = 1
 
-sc.plot("star")
+        # Return data to plot
+        # return data, self.cmap, self.cmap_norm
+        plt.figure()
+        plt.imshow(pre_star)
+        plt.figure()
+        plt.imshow(pre_plaq)
+        # plt.colorbar()
+        # plt.show()
 
-match_star = matching.match(distance, anyons_star, topology,
-                            "star", time=time, weights=weights)
-    # match_plaq = matching.match(distance, anyons_plaq, topology,
-    #                         "plaq", time=0, weights=weights)
+        plt.show()
 
-# print("Matchings------->")
-# print(match_star)
+    lc.reset()
+    sc.reset()
 
-# print("Decoding now----->")
-sc.correct_error("star", match_star, time)
-# sc.correct_error("plaq", match_plaq, time)
-
-
-# sc.measure_stabilizer_type("star")
-# sc.measure_stabilizer_type("plaq")
-
-# if (sc.qubits[:, sc.tags == "Q"] == -1).any():
-#     print("FAILURE CORRECTING")
-# else:
-#     print("SUCCESS CORRECTION")
-logical = sc.measure_logical()
-print(logical)
-
-if -1 in logical[0]:
-    print("LOGICAL QUBIT ERR")
-sc.plot("star")
+fail_rate = fail_rate/float(iterations)
+print("FAILE RATE: ", fail_rate)
 
 plt.show()
-
-
-    # plt.close()

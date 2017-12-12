@@ -51,12 +51,12 @@ for i in range(iterations):
     # Errors and measurements
     if q!= 0:
         for t in range(cycles):
-            sc.apply_qubit_error(p, p)
+            sc.apply_qubit_error(p, 0)
             sc.measure_all_stablizers()
             sc.apply_measurement_error(q)
             lc.add()
     else:
-        sc.apply_qubit_error(p, p)
+        sc.apply_qubit_error(p, 0)
         sc.measure_all_stablizers()
         lc.add()
 

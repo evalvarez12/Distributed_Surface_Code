@@ -258,7 +258,6 @@ class SurfaceCode:
         # Create the noise elements
         p = np.array([[pX], [pZ]])
         noise = 2*(np.random.rand(2, self.number_data_qubits) > p) - 1
-
         # Apply the noise
         self.qubits[:, self.tags == "Q"] *= noise
 
@@ -423,7 +422,6 @@ class SurfaceCode:
 
         return c
 
-
     # def _select_stabilizer_rounds(self, stabilizer):
     #     """Parameter for stabilizer type when using interspersed rounds."""
     #     if stabilizer == "star":
@@ -439,7 +437,7 @@ class SurfaceCode:
     #
     #     return pos1, pos2, c, t
 
-    def plot(self, stabilizer):
+    def plot(self, stabilizer, backup=False):
         """Plot the surface code."""
         if stabilizer == "star":
             data = self.qubits[0].copy()
