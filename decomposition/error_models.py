@@ -14,28 +14,29 @@ import operations as ops
 
 # TODO ask david if the order of the application noise gate is important
 
-def env_dephasing_all(rho, p, n_steps, e_spin):
+def env_dephasing_all(rho, a0, a1, t):
     N = len(rho.dims[0])
-    qs = list(range(N))
-    return env_dephasing(rho, p, n_steps,e_spin, N, qs)
+    qubits = list(range(N))
+    return env_dephasing(rho, a0, a1, t, N, qubits)
 
-def env_dephasing(rho, p, n_steps, e_spin, N, qubits):
+
+def env_dephasing(rho, a0, a1, t, N, qubits):
     for i in qubits:
-        rho = env_dephasing_single(rho, p, n_steps, e_spin, N, i)
+        rho = env_dephasing_single(rho, a0, a1, t, N, i)
     return rho
 
 
-def env_dephasing_single(rho, p, n_steps, e_spin, N=1, pos=0):
+def env_dephasing_single(rho, a0, a1, t, N=1, pos=0):
     # e_spin = TRUE or FALSE if electron spin is being used or no
     # NOTE: Time it takes to make every operation 2 micro seg
     # t_step = 2e-6
     # a0 = 1/2000
     # a1 = 1/3
     # a = p * e_spin + 1/3 * (2e-6)
-    a = p * e_spin + 1/3 * (2e-6)
+    a = a0 + a1
     sigma_z = qt.rz(np.pi, N, pos)
     # ss = sigma_z * rho * sigma_z.dag()
-    lamb = np.exp(-a * n_steps)
+    lamb = np.exp(-a * t)
     return (1 + lamb)/2 * rho + (1 - lamb)/2 * sigma_z * rho * sigma_z.dag()
 
 
@@ -97,8 +98,9 @@ def measure_single_Zbasis_random(rho, p, N=1, pos=0):
 def measure_single_Zbasis_forced(rho, p, project, N=1, pos=0):
     X = qt.rx(np.pi, N, pos)
     rho = (1 - p)*rho + p*(X * rho * X.dag())
-    p, collapsed_rho = ops.forced_measure_single_Zbasis(rho, N, pos, True)
-    return p, collapsed_rho
+    p, collapsed_rho = ops.forced_measure_single_Zbasis(rho, N, pos,
+                                                        project, True)
+    return collapsed_rho
 
 
 def measure_single_Xbasis_random(rho, p, N=1, pos=0):
@@ -126,6 +128,17 @@ def bell_pair(p):
     # H = qt.snot(2, 1)
     # return H*W*H.dag()
     return W
+
+
+def bell_pair_click(p, theta):
+    s = np.sin(theta)**2
+    r = ((1 - p)*s)/(1 - p*s)
+    print("rrrrr:", r)
+    a = qt.bell_state('01') * qt.bell_state('01').dag()
+    b = qt.tensor(qt.basis(2, 1), qt.basis(2, 1))
+    b = b * b.dag()
+    B = (1-r)*a + r*b
+    return B
 
 
 def generate_noisy_ghz(F, N):

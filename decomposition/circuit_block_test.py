@@ -9,9 +9,13 @@ ps = 0.0
 pm = 0.009
 pg = 0.009
 pn = 0.1
-p_env = 5e-5
+a0 = 20
+a1 = 1/3.
+pd = 1/1000.
+theta = np.pi/4.
 # Initialize  objects
-cb = circuit_block.Blocks(ps, pm, pg, pn, p_env)
+cb = circuit_block.Blocks(ps, pm, pg, pn, pd, a0, a1, theta)
+cb_ideal = circuit_block.Blocks(0, 0, 0, 0, 1, 0, 0, np.pi/4.)
 rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
 
 

@@ -171,6 +171,13 @@ def p_success_single_sel(rho, N, ancillas_pos):
     p = (P * rho).tr().real
     return p
 
+def p_success_epl(rho, N, ancillas_pos):
+    P1 = (projector_single_qubit_Zbasis(1, N, ancillas_pos[0]) *
+          projector_single_qubit_Zbasis(1, N, ancillas_pos[1]))
+
+    p = (P1 * rho).tr().real
+    return p
+
 def p_success_double_sel(rho, N, ancillas_pos1, ancillas_pos2):
     P0a = (projector_single_qubit_Xbasis(0, N, ancillas_pos1[0]) *
            projector_single_qubit_Xbasis(0, N, ancillas_pos1[1]))

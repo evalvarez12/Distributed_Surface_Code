@@ -26,18 +26,18 @@ class Blocks:
     pn - network error
     """
 
-    def __init__(self, ps, pm, pg, pn, p_env):
+    def __init__(self, ps, pm, pg, pn, pd=1/2000., a0=20, a1=1/3.,
+                 theta=np.pi/2.):
         """Init function."""
         # Set the parameters to all faulty opearations
         self.ps = ps
         self.pm = pm
         self.pg = pg
         self.pn = pn
-        self.p_env = p_env
-
-        # Detector efficiency in entanglement generation
-        self.eta = 0.8
-
+        self.pd = pd
+        self.a0 = a0
+        self.a1 = a1
+        self.theta = theta
         # Dictionary to carry the check of all the operations made so far
         self.check = collections.Counter({"bell_pair": 0,
                                           "two_qubit_gate": 0,
@@ -46,20 +46,23 @@ class Blocks:
                                           "time": 0})
 
         # Lookup tables for the time it takes to make each operaation
-        self.time_lookup = {"bell_pair": 1,
-                            "two_qubit_gate": 1,
-                            "single_qubit_gate": 1,
-                            "measurement": 1}
+        self.time_lookup = {"bell_pair": 25e-6,
+                            "two_qubit_gate": 2e-6,
+                            "single_qubit_gate": 2e-6,
+                            "measurement": 2e-6}
 
-    def change_parameters(self, ps, pm, pg, pn, p_env):
+    def change_parameters(self, ps, pm, pg, pn, pd=1/2000., a0=20, a1=1/3.,
+                          theta=np.pi/2.):
         """Function to change the parameters of all the operations."""
         # Reset all the parameters for the faulty operations
         self.ps = ps
         self.pm = pm
         self.pg = pg
         self.pn = pn
-        self.p_env = p_env
-
+        self.pd = pd
+        self.a0 = a0
+        self.a1 = a1
+        self.theta = theta
         self._reset_check()
 
     def _reset_check(self):
@@ -68,7 +71,7 @@ class Blocks:
 
     def _generate_bell_pair(self):
         # Probaility of success
-        p_success = self.eta*(4 - self.eta)/4
+        p_success = 1
 
         # This circuit number of steps and time it took
         attempts = self._success_number_of_attempts(p_success) + 1
@@ -80,6 +83,24 @@ class Blocks:
 
         # Generate noisy bell pair
         bell = errs.bell_pair(self.pn)
+        return time, bell
+
+    def _generate_bell_pair_click(self):
+        # Probaility of success
+        s = np.sin(self.theta)**2
+        c = np.cos(self.theta)**2
+        p_success = 2*s*self.pd*(c + s*(1 - self.pd))
+
+        # This circuit number of steps and time it took
+        attempts = self._success_number_of_attempts(p_success) + 1
+        time = self.time_lookup["bell_pair"] * attempts
+
+        # Update check
+        self.check["bell_pair"] += 1
+        # self.check["time"] += time
+
+        # Generate noisy bell pair
+        bell = errs.bell_pair_click(self.pd, self.theta)
         return time, bell
 
     def _generate_bell_pair_BK(self):
@@ -129,7 +150,7 @@ class Blocks:
         time, plus = self.generate_noisy_plus()
 
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
+        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
         # Noisy plus tate is attached at the end of the complete state
         rho = qt.tensor(rho, plus)
         return rho
@@ -139,7 +160,7 @@ class Blocks:
         time, bell = self._generate_bell_pair()
         self.check["time"] += time
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
+        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
 
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
@@ -200,7 +221,7 @@ class Blocks:
                 + self.time_lookup["single_qubit_gate"])
         self.check["time"] += time
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
+        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
 
         # Calculate probability of success using the same considerations as
         # in single selection
@@ -227,6 +248,30 @@ class Blocks:
 
         return p_success, rho
 
+    def _collapse_ancillas_Z(self, rho, ancillas_pos, projections):
+        # Measure the ancillas in the X basis in parallel in each node.
+        # NOTE: All ancillas are collapsed in parallel, Hadamard operations
+        # are used to measure on X basis
+        self.check["measurement"] += 1
+
+        time = self.time_lookup["measurement"]
+        self.check["time"] += time
+        # Apply environmental error
+        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
+
+        p_success = 1
+
+        # Collapse the qubits in parrallel
+        # Sort list to be able to reduce dimension and keep track of positions
+        ancillas_pos = sorted(ancillas_pos)
+        N_ancillas = len(ancillas_pos)
+        for i in range(N_ancillas):
+            pos = ancillas_pos[i] - i
+            rho = self._collapse_single(rho, pos,
+                                        projections[i], "Z")
+            print(rho)
+        return p_success, rho
+
     def _apply_two_qubit_gates(self, rho, controls, targets, sigma):
         # Apply one local two qubit Control type of gates in parallel
         # on each node.
@@ -237,7 +282,7 @@ class Blocks:
         self.check["time"] += time
 
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
+        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
 
         gates = self._get_two_qubit_gates(N, controls, targets, sigma)
         for i in range(len(gates)):
@@ -252,12 +297,41 @@ class Blocks:
         self.check["time"] += time
         return 1, self.check, bell
 
+    def start_epl(self, rho=None):
+        """Start by doing a round of the EPL protocol."""
+        self._reset_check()
+        # Generate two raw Bell pairs
+        time1, bell1 = self._generate_bell_pair_click()
+        time2, bell2 = self._generate_bell_pair_click()
+        self.check["time"] += time1 + time2
+        # Apply cutoff here
+
+        # Dephase pair 1
+        rho = self._swap_pair(bell1, [0, 1])
+        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time2)
+
+        # Join state
+        rho = qt.tensor(rho, bell2)
+
+        # NOTE: Decide which state collapses.
+        # Apply two qubit gates
+        controls = [0, 1]
+        targets = [2, 3]
+        rho = self._apply_two_qubit_gates(rho, controls,
+                                          targets, "X")
+
+        # Measure ancillas in Z basis
+        projections = [1] * 2
+        p_success = ops.p_success_epl(rho, N=4, ancillas_pos=targets)
+        _, rho = self._collapse_ancillas_Z(rho, targets, projections)
+        return p_success, self.check, rho
+
     def add_bell_pair(self, rho):
         """Append a raw Bell pair to the state."""
         self._reset_check()
         time, bell = self._generate_bell_pair()
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
+        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
         self.check["time"] += time
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
