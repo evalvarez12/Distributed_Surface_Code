@@ -46,10 +46,10 @@ class Blocks:
                                           "time": 0})
 
         # Lookup tables for the time it takes to make each operaation
-        self.time_lookup = {"bell_pair": 10e-6,
-                            "two_qubit_gate": 2e-6,
-                            "single_qubit_gate": 2e-6,
-                            "measurement": 2e-6}
+        self.time_lookup = {"bell_pair": 6e-6,
+                            "two_qubit_gate": .44e-6,
+                            "single_qubit_gate": .44e-6,
+                            "measurement": .44e-6}
 
     def change_parameters(self, ps, pm, pg, pn, pd=1/2000., a0=20, a1=1/3.,
                           theta=np.pi/2.):
@@ -135,7 +135,7 @@ class Blocks:
 
     def _success_number_of_attempts(self, p_success):
         # Up to 20 tries for success
-        i = np.arange(1000000)
+        i = np.arange(10000000)
         # print(p_success)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
