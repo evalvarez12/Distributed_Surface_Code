@@ -5,9 +5,9 @@ import operations as ops
 import numpy as np
 
 # Determine parameters
-ps = 0.0
-pm = 0.009
-pg = 0.009
+ps = 0.006
+pm = 0.006
+pg = 0.006
 pn = 0.1
 a0 = 20
 a1 = 1/3.
@@ -35,6 +35,13 @@ print("F: ", qt.fidelity(rho, rho_ref))
 print("------------------DOUBLE SELECTION-------------------")
 _, _, rho = cb.start_bell_pair()
 p, check, rho = cb.double_selection(rho, [0, 1], "X")
+print("p_success: ", p)
+print("check: ", check)
+print("F: ", qt.fidelity(rho, rho_ref))
+
+print("------------------EPL protocol-------------------")
+p, check, rho = cb.start_epl()
+# p, check, rho = cb.double_selection(rho, [0, 1], "X")
 print("p_success: ", p)
 print("check: ", check)
 print("F: ", qt.fidelity(rho, rho_ref))

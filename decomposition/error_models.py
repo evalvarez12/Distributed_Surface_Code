@@ -133,7 +133,6 @@ def bell_pair(p):
 def bell_pair_click(p, theta):
     s = np.sin(theta)**2
     r = ((1 - p)*s)/(1 - p*s)
-    print("rrrrr:", r)
     a = qt.bell_state('01') * qt.bell_state('01').dag()
     b = qt.tensor(qt.basis(2, 1), qt.basis(2, 1))
     b = b * b.dag()

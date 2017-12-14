@@ -65,9 +65,9 @@ def random_measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
     # Calculate the probability of measurment 1
     p0 = p_measurement_single_Zbasis(rho, 0, N, pos)
     r = np.random.rand()
-    print("P0", p0, r)
+    # print("P0", p0, r)
     p1 = p_measurement_single_Zbasis(rho, 1, N, pos)
-    print("P1", p1, r)
+    # print("P1", p1, r)
     # Draw a measurement
     if r < p0:
         collapsed_rho = collapse_single_Zbasis(rho, 0, N, pos, dimRed)

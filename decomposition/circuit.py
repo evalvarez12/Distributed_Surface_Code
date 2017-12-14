@@ -17,7 +17,7 @@ class Circuit:
     Circuits are assembled using recursive objects and circuit blocks.
     """
 
-    def __init__(self, p_env, circuit_block, **kwargs):
+    def __init__(self, a0, a1, circuit_block, **kwargs):
         """Init function."""
         # Save circuit block function of this level
         self.circuit = circuit_block
@@ -26,7 +26,9 @@ class Circuit:
         # Subcircuit for this level
         self.subcircuit = None
 
-        self.p_env = p_env
+        # Environmental dephasing parameters
+        self.a0 = a0
+        self.a1 = a1
 
     def run(self, rho, p_parent=1, check_parent=collections.Counter({})):
         # First run self circuit
@@ -79,10 +81,12 @@ class Circuit:
         # Only take the check with the longest time
         diff_time = np.abs(check1["time"] - check2["time"])
         if check1["time"] > check2["time"]:
-            rho2 = errs.env_dephasing_all(rho2, self.p_env, diff_time, True)
+            rho2 = errs.env_dephasing_all(rho2, self.a0,
+                                          self.a1, diff_time)
             check = check1
         else:
-            rho1 = errs.env_dephasing_all(rho1, self.p_env, diff_time, True)
+            rho1 = errs.env_dephasing_all(rho1, self.a0,
+                                          self.a1, diff_time)
             check = check2
         rho = qt.tensor(rho1, rho2)
         return 1, check, rho
@@ -94,7 +98,8 @@ class Circuit:
         """
         _, check, rho_app = self.run(None)
         time = check["time"]
-        rho = errs.env_dephasing_all(rho, self.p_env, time, True)
+        rho = errs.env_dephasing_all(rho, self.a0,
+                                     self.a1, time)
         rho = qt.tensor(rho, rho_app)
         return 1, check, rho
 
@@ -103,7 +108,7 @@ class Circuit:
         Add a circuit to the current chain.
         """
         if not self.subcircuit:
-            self.subcircuit = Circuit(self.p_env, circuit_block, **kwargs)
+            self.subcircuit = Circuit(self.a0, self.a1, circuit_block, **kwargs)
         else:
             self.subcircuit.add_circuit(circuit_block, **kwargs)
 
@@ -112,10 +117,10 @@ class Circuit:
         Draw a number of attempts according to the Distribution
         """
         # Up to 20 tries for success
-        i = np.arange(100)
+        i = np.arange(1000000)
         d = self._distribution(p_success, i)
-        # return np.random.choice(i, 1, p=d)[0]
-        return 0
+        return np.random.choice(i, 1, p=d)[0]
+        # return 0
 
     def _distribution(self, p, n):
         # Distribution for the probability in the number of tries of

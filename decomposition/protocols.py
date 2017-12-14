@@ -18,6 +18,8 @@ pm = 0.006
 pg = 0.006
 pn = 0.1
 p_env = 5e-6
+a0 = 10
+a1 = 1/3.
 
 # Initialize  objects
 cb = circuit_block.Blocks(ps, pm, pg, pn, p_env)
@@ -39,7 +41,7 @@ for p_env in p_env_var:
 
     print("-------------------PROTOCOL SIMPLE------------------")
     # First assemeble the small single selection circuit
-    single_sel_simple2 = circuit.Circuit(p_env=p_env, circuit_block=cb.start_bell_pair)
+    single_sel_simple2 = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_bell_pair)
     single_sel_simple2.add_circuit(circuit_block=cb.swap_pair,
                               pair=[0, 1])
     single_sel_simple2.add_circuit(circuit_block=cb.single_selection,
@@ -47,11 +49,10 @@ for p_env in p_env_var:
                               sigma="X")
     single_sel_simple2.add_circuit(circuit_block=cb.swap_pair,
                             pair=[0, 1])
-    wrap_single_sel_simple2 = circuit.Circuit(p_env=p_env,
-                                       circuit_block=single_sel_simple2.run_parallel)
+    wrap_single_sel_simple2 = circuit.Circuit(a0=a0, a1=a1, circuit_block=single_sel_simple2.run_parallel)
 
 
-    single_sel_simple1 = circuit.Circuit(p_env=p_env, circuit_block=cb.start_bell_pair)
+    single_sel_simple1 = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_bell_pair)
     single_sel_simple1.add_circuit(circuit_block=cb.swap_pair,
                               pair=[0, 1])
     single_sel_simple1.add_circuit(circuit_block=cb.single_selection,
@@ -60,8 +61,7 @@ for p_env in p_env_var:
 
 
     # Phase 1 - Purify Bell pair
-    ghz = circuit.Circuit(p_env=p_env,
-                          circuit_block=single_sel_simple1.run_parallel)
+    ghz = circuit.Circuit(a0=a0, a1=a1, circuit_block=single_sel_simple1.run_parallel)
 
     # Phase 2 - Create GHZ
     ghz.add_circuit(circuit_block=wrap_single_sel_simple2.append_circuit)
@@ -98,7 +98,7 @@ for p_env in p_env_var:
     """
     print("------------------PROTOCOL MEDIUM-------------------")
     # First assemeble the small independent circuit
-    single_sel_medium2 = circuit.Circuit(p_env=p_env, circuit_block=cb.start_bell_pair)
+    single_sel_medium2 = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_bell_pair)
     single_sel_medium2.add_circuit(circuit_block=cb.swap_pair,
                             pair=[0, 1])
     single_sel_medium2.add_circuit(circuit_block=cb.single_selection,
@@ -110,12 +110,10 @@ for p_env in p_env_var:
     single_sel_medium2.add_circuit(circuit_block=cb.swap_pair,
                             pair=[0, 1])
 
-    wrap_single_sel_medium2 = circuit.Circuit(p_env=p_env,
-                                       circuit_block=single_sel_medium2.run_parallel)
+    wrap_single_sel_medium2 = circuit.Circuit(a0=a0, a1=a1, circuit_block=single_sel_medium2.run_parallel)
 
 
-    single_sel_medium1 = circuit.Circuit(p_env=p_env,
-                                 circuit_block=cb.start_bell_pair)
+    single_sel_medium1 = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_bell_pair)
     single_sel_medium1.add_circuit(circuit_block=cb.swap_pair,
                            pair=[0, 1])
     single_sel_medium1.add_circuit(circuit_block=cb.single_selection,
@@ -126,8 +124,7 @@ for p_env in p_env_var:
                            sigma="X")
 
     # Phase 1 - Purify Bell pair
-    ghz = circuit.Circuit(p_env=p_env,
-                          circuit_block=single_sel_medium1.run_parallel)
+    ghz = circuit.Circuit(a0=a0, a1=a1, circuit_block=single_sel_medium1.run_parallel)
 
     # Phase 2 - Create GHZ
     ghz.add_circuit(circuit_block=wrap_single_sel_medium2.append_circuit)
@@ -164,7 +161,7 @@ for p_env in p_env_var:
     """
     print("------------------PROTOCOL COMPLEX-------------------")
     # First assemeble the small independent circuit
-    double_sel1 = circuit.Circuit(p_env=p_env, circuit_block=cb.start_bell_pair)
+    double_sel1 = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_bell_pair)
     double_sel1.add_circuit(circuit_block=cb.swap_pair,
                             pair=[0, 1])
     double_sel1.add_circuit(circuit_block=cb.double_selection,
@@ -187,8 +184,7 @@ for p_env in p_env_var:
     #                         projections=[0, 0])
 
     # Phase 1 - Purify Bell pair
-    ghz = circuit.Circuit(p_env=p_env,
-                          circuit_block=double_sel1.run_parallel)
+    ghz = circuit.Circuit(a0=a0, a1=a1, circuit_block=double_sel1.run_parallel)
 
 
     # Phase 2 - Create GHZ

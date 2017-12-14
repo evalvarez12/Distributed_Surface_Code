@@ -46,7 +46,7 @@ class Blocks:
                                           "time": 0})
 
         # Lookup tables for the time it takes to make each operaation
-        self.time_lookup = {"bell_pair": 25e-6,
+        self.time_lookup = {"bell_pair": 10e-6,
                             "two_qubit_gate": 2e-6,
                             "single_qubit_gate": 2e-6,
                             "measurement": 2e-6}
@@ -135,10 +135,11 @@ class Blocks:
 
     def _success_number_of_attempts(self, p_success):
         # Up to 20 tries for success
-        i = np.arange(100)
+        i = np.arange(1000000)
+        # print(p_success)
         d = self._distribution(p_success, i)
-        # return np.random.choice(i, 1, p=d)[0]
-        return 0
+        return np.random.choice(i, 1, p=d)[0]
+        # return 0
 
     def _distribution(self, p, n):
         # Distribution for the probability in the number of tries of
@@ -269,7 +270,6 @@ class Blocks:
             pos = ancillas_pos[i] - i
             rho = self._collapse_single(rho, pos,
                                         projections[i], "Z")
-            print(rho)
         return p_success, rho
 
     def _apply_two_qubit_gates(self, rho, controls, targets, sigma):
