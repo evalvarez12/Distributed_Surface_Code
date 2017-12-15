@@ -10,6 +10,7 @@
 
 # Decomposition data
 decomposition/data
+data/
 
 # Slurm stuff
 *.e
