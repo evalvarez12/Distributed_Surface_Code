@@ -73,9 +73,9 @@ def f_one_click(t):
 def p_bk(t):
     return (f_one_click(t)**2)*pd**2
 
-F = np.load("F.npy")
-T = np.load("T.npy")
-P = np.load("P.npy")
+F = np.load("F2.npy")
+T = np.load("T2.npy")
+P = np.load("P2.npy")
 
 plt.figure()
 plt.ylabel(r"$F$", fontsize=17)
