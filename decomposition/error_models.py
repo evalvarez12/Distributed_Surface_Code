@@ -14,30 +14,32 @@ import operations as ops
 
 # TODO ask david if the order of the application noise gate is important
 
-def env_dephasing_all(rho, a0, a1, t):
+def env_error_all(rho, a0, a1, t):
     N = len(rho.dims[0])
     qubits = list(range(N))
-    return env_dephasing(rho, a0, a1, t, N, qubits)
+    return env_error(rho, a0, a1, t, N, qubits)
 
 
-def env_dephasing(rho, a0, a1, t, N, qubits):
+def env_error(rho, a0, a1, t, N, qubits):
     for i in qubits:
-        rho = env_dephasing_single(rho, a0, a1, t, N, i)
+        rho = env_error_single(rho, a0, a1, t, N, i)
     return rho
 
 
-def env_dephasing_single(rho, a0, a1, t, N=1, pos=0):
-    # e_spin = TRUE or FALSE if electron spin is being used or no
-    # NOTE: Time it takes to make every operation 2 micro seg
+def env_error_single(rho, a0, a1, t, N=1, pos=0):
+    # NOTE: approx values
     # t_step = 2e-6
     # a0 = 1/2000
     # a1 = 1/3
-    # a = p * e_spin + 1/3 * (2e-6)
-    a = a0 + a1
-    sigma_z = qt.rz(np.pi, N, pos)
+    a = (a0 + a1)*t
+    X = qt.rx(np.pi, N, pos)
+    Y = qt.ry(np.pi, N, pos)
+    Z = qt.rz(np.pi, N, pos)
     # ss = sigma_z * rho * sigma_z.dag()
-    lamb = np.exp(-a * t)
-    return (1 + lamb)/2 * rho + (1 - lamb)/2 * sigma_z * rho * sigma_z.dag()
+    lamb = (1 + np.exp(-a * t))/2.
+    rho = (lamb * rho + (1 - lamb)/3.* ( Z * rho * Z.dag() + X * rho * X.dag()
+            + Y * rho * Y.dag()))
+    return rho
 
 
 def get_sigmas(N=1, pos=0):

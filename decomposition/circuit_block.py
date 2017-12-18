@@ -26,15 +26,13 @@ class Blocks:
     pn - network error
     """
 
-    def __init__(self, ps, pm, pg, pn, pd=1/2000., a0=20, a1=1/3.,
-                 theta=np.pi/2.):
+    def __init__(self, ps, pm, pg, eta, a0, a1, theta):
         """Init function."""
         # Set the parameters to all faulty opearations
         self.ps = ps
         self.pm = pm
         self.pg = pg
-        self.pn = pn
-        self.pd = pd
+        self.eta = eta
         self.a0 = a0
         self.a1 = a1
         self.theta = theta
@@ -47,19 +45,17 @@ class Blocks:
 
         # Lookup tables for the time it takes to make each operaation
         self.time_lookup = {"bell_pair": 6e-6,
-                            "two_qubit_gate": .44e-6,
-                            "single_qubit_gate": .44e-6,
-                            "measurement": .44e-6}
+                            "two_qubit_gate": 200e-6,
+                            "single_qubit_gate": 200e-6,
+                            "measurement": 200e-6}
 
-    def change_parameters(self, ps, pm, pg, pn, pd=1/2000., a0=20, a1=1/3.,
-                          theta=np.pi/2.):
+    def change_parameters(self, ps, pm, pg, eta, a0, a1, theta):
         """Function to change the parameters of all the operations."""
         # Reset all the parameters for the faulty operations
         self.ps = ps
         self.pm = pm
         self.pg = pg
-        self.pn = pn
-        self.pd = pd
+        self.eta = eta
         self.a0 = a0
         self.a1 = a1
         self.theta = theta
@@ -69,27 +65,27 @@ class Blocks:
         # Reset check dictionary
         self.check = collections.Counter(dict.fromkeys(self.check, 0))
 
-    def _generate_bell_pair(self):
-        # Probaility of success
-        p_success = 1
+    # def _generate_bell_pair(self):
+    #     # Probaility of success
+    #     p_success = 1
+    #
+    #     # This circuit number of steps and time it took
+    #     attempts = self._success_number_of_attempts(p_success) + 1
+    #     time = self.time_lookup["bell_pair"] * attempts
+    #
+    #     # Update check
+    #     self.check["bell_pair"] += 1
+    #     # self.check["time"] += time
+    #
+    #     # Generate noisy bell pair
+    #     bell = errs.bell_pair(self.pn)
+    #     return time, bell
 
-        # This circuit number of steps and time it took
-        attempts = self._success_number_of_attempts(p_success) + 1
-        time = self.time_lookup["bell_pair"] * attempts
-
-        # Update check
-        self.check["bell_pair"] += 1
-        # self.check["time"] += time
-
-        # Generate noisy bell pair
-        bell = errs.bell_pair(self.pn)
-        return time, bell
-
-    def _generate_bell_pair_click(self):
+    def _generate_bell_single_click(self):
         # Probaility of success
         s = np.sin(self.theta)**2
         c = np.cos(self.theta)**2
-        p_success = 2*s*self.pd*(c + s*(1 - self.pd))
+        p_success = 2*s*self.eta*(c + s*(1 - self.eta))
 
         # This circuit number of steps and time it took
         attempts = self._success_number_of_attempts(p_success) + 1
@@ -100,29 +96,30 @@ class Blocks:
         # self.check["time"] += time
 
         # Generate noisy bell pair
-        bell = errs.bell_pair_click(self.pd, self.theta)
+        bell = errs.bell_pair_click(self.eta, self.theta)
         return time, bell
 
     def _generate_bell_pair_BK(self):
         # Probaility of success
-        p_success = self.eta**2/2
+        s = np.sin(self.theta)**2
+        r = (1 - self.eta)*s/(1 - self.eta*s)
+        p_success = (1 - r)*self.eta**2
 
         # This circuit number of steps
-        # Factor of 2 because uses twice the number of operations
-        attempts = (self._success_number_of_attempts(p_success) + 1) * 2
+        attempts = self._success_number_of_attempts(p_success) + 1
         time = self.time_lookup["bell_pair"] * attempts
 
         # Update check
         self.check["bell_pair"] += 1
 
         # Generate noisy bell pair
-        bell = errs.bell_pair(0.3*self.pn)
+        bell = qt.bell_state('00') + qt.bell_state('00').dag()
         return time, bell
 
     def _generate_noisy_plus(self):
         # This circuit time
-        # NOTE:
-        time = 1
+        # NOTE: Used time of a single qubit gate
+        time = self.time_lookup["single_qubit_gate"]
 
         # Generate noisy plus
         plus = qt.snot() * qt.basis(2, 0)
@@ -151,17 +148,17 @@ class Blocks:
         time, plus = self.generate_noisy_plus()
 
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
+        rho = errs.env_error_all(rho, 0, self.a1, time)
         # Noisy plus tate is attached at the end of the complete state
         rho = qt.tensor(rho, plus)
         return rho
 
     def _append_bell_pair(self, rho):
         # Generate raw Bell pair to the state.
-        time, bell = self._generate_bell_pair()
+        time, bell = self._generate_bell_single_click()
         self.check["time"] += time
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
+        rho = errs.env_error_all(rho, self.a0, self.a1, time)
 
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
@@ -222,7 +219,7 @@ class Blocks:
                 + self.time_lookup["single_qubit_gate"])
         self.check["time"] += time
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
+        rho = errs.env_error_all(rho, 0, self.a1, time)
 
         # Calculate probability of success using the same considerations as
         # in single selection
@@ -258,7 +255,7 @@ class Blocks:
         time = self.time_lookup["measurement"]
         self.check["time"] += time
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
+        rho = errs.env_error_all(rho, 0, self.a1, time)
 
         p_success = 1
 
@@ -282,7 +279,7 @@ class Blocks:
         self.check["time"] += time
 
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
+        rho = errs.env_error_all(rho, 0, self.a1, time)
 
         gates = self._get_two_qubit_gates(N, controls, targets, sigma)
         for i in range(len(gates)):
@@ -293,7 +290,7 @@ class Blocks:
     def start_bell_pair(self, rho=None):
         """Start with a raw Bell pair to the state."""
         self._reset_check()
-        time, bell = self._generate_bell_pair()
+        time, bell = self._generate_bell_single_click()
         self.check["time"] += time
         return 1, self.check, bell
 
@@ -301,14 +298,16 @@ class Blocks:
         """Start by doing a round of the EPL protocol."""
         self._reset_check()
         # Generate two raw Bell pairs
-        time1, bell1 = self._generate_bell_pair_click()
-        time2, bell2 = self._generate_bell_pair_click()
+        time1, bell1 = self._generate_bell_single_click()
+        time2, bell2 = self._generate_bell_single_click()
+        print("TIME1: ", time1)
+        print("TIME2: ", time2)
         self.check["time"] += time1 + time2
         # Apply cutoff here
 
         # Dephase pair 1
-        rho = self._swap_pair(bell1, [0, 1])
-        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time2)
+        rho = errs.env_error_all(bell1, self.a0, self.a1, time2)
+        rho = self._swap_pair(rho, [0, 1])
 
         # Join state
         rho = qt.tensor(rho, bell2)
@@ -331,7 +330,7 @@ class Blocks:
         self._reset_check()
         time, bell = self._generate_bell_pair()
         # Apply environmental error
-        rho = errs.env_dephasing_all(rho, self.a0, self.a1, time)
+        rho = errs.env_error_all(rho, self.a0, self.a1, time)
         self.check["time"] += time
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
