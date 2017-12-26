@@ -31,6 +31,7 @@ class Circuit:
         self.a1 = a1
 
     def run(self, rho, p_parent=1, check_parent=collections.Counter({})):
+        """Main function to run circuits."""
         # First run self circuit
         p_success, check, rho = self.circuit(rho, **self.circuit_kwargs)
 
@@ -53,20 +54,8 @@ class Circuit:
 
                 # steps += n_extra_attempts * (steps + steps_parent)
 
-                # TODO remove dephasing here. it circuit append and run parallel should be used instead
-                # if "operation_qubits" in self.circuit_kwargs:
-                #     except_q = self.circuit_kwargs["operation_qubits"]
-                #     N = len(rho.dims[0])
-                #     qs = np.arange(N)
-                #     qs = np.delete(qs, except_q)
-                #
-                #     rho = errs.env_dephasing(rho, self.p_env, steps, True, N, qs)
-                # else:
-                #     rho = errs.env_dephasing_all(rho, self.p_env, steps, True)
-            # print("End of chain")
-            # print("p_success:", p_success)
-            # print("steps: ", steps)
-
+        # NOTE: No dephasing here. it circuit append and run parallel
+        # should be used instead
         return 1, check, rho
 
     def run_parallel(self, rho=None):

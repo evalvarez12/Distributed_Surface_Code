@@ -300,8 +300,6 @@ class Blocks:
         # Generate two raw Bell pairs
         time1, bell1 = self._generate_bell_single_click()
         time2, bell2 = self._generate_bell_single_click()
-        print("TIME1: ", time1)
-        print("TIME2: ", time2)
         self.check["time"] += time1 + time2
         # Apply cutoff here
 
