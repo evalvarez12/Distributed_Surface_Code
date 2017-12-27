@@ -45,7 +45,7 @@ I_OK_full = []
 I_NOK_full = []
 E_full = []
 
-pgs = [0.006, 0.0075, 0.009, 0.0105]
+pgs = [0.003, 0.006, 0.0075, 0.009]
 fs = np.linspace(.5, 1, 50)
 for pg in pgs:
     prot.change_parameters(ps, pm, pg, pn)
@@ -64,7 +64,7 @@ for pg in pgs:
         I_OK += [model.chi["IIII_OK"]]
         I_NOK += [model.chi["IIII_NOK"]]
         # The sum of all physical errors
-        E += [1 - model.chi["IIII_OK"] - model.chi["IIII_NOK"]]
+        E += [(1 - model.chi["IIII_OK"] - model.chi["IIII_NOK"])/4.]
 
 
         model.reset_chi()

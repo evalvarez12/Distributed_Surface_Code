@@ -70,12 +70,12 @@ class Circuit:
         # Only take the check with the longest time
         diff_time = np.abs(check1["time"] - check2["time"])
         if check1["time"] > check2["time"]:
-            rho2 = errs.env_dephasing_all(rho2, self.a0,
-                                          self.a1, diff_time)
+            rho2 = errs.env_error_all(rho2, 0,
+                                      self.a1, diff_time)
             check = check1
         else:
-            rho1 = errs.env_dephasing_all(rho1, self.a0,
-                                          self.a1, diff_time)
+            rho1 = errs.env_error_all(rho1, 0,
+                                      self.a1, diff_time)
             check = check2
         rho = qt.tensor(rho1, rho2)
         return 1, check, rho
@@ -86,9 +86,13 @@ class Circuit:
         Must be self contained event
         """
         _, check, rho_app = self.run(None)
-        time = check["time"]
-        rho = errs.env_dephasing_all(rho, self.a0,
-                                     self.a1, time)
+        time0 = check["time0"]
+        rho = errs.env_error_all(rho, self.a0,
+                                 self.a1, time0)
+        time1 = check["time1"]
+        rho = errs.env_error_all(rho, 0,
+                                 self.a1, time1)
+
         rho = qt.tensor(rho, rho_app)
         return 1, check, rho
 
@@ -106,7 +110,7 @@ class Circuit:
         Draw a number of attempts according to the Distribution
         """
         # Up to 20 tries for success
-        i = np.arange(1000000)
+        i = np.arange(1000)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
         # return 0

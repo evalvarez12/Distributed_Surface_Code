@@ -81,34 +81,35 @@ F = np.load("F_good.npy")
 T = np.load("T_good.npy")
 P = np.load("P_good.npy")
 #
-# plt.figure()
-# plt.ylabel(r"$F$", fontsize=17)
-# plt.xlabel(r"$\theta$", fontsize=17)
-# plt.errorbar(thetas, F[:, 0], yerr=F[:, 1], fmt='go-', label=r"EPL")
-# plt.plot(thetas, f_one_click(thetas), 'r-',label="One click")
+plt.figure()
+plt.ylabel(r"$F$", fontsize=17)
+plt.xlabel(r"$\theta$", fontsize=17)
+plt.errorbar(thetas, F[:, 0], yerr=F[:, 1], fmt='go-', label=r"EPL")
+plt.plot(thetas, f_one_click(thetas), 'r-',label="One click")
+plt.legend(fontsize=17)
+plt.xticks(fontsize=17)
+
+
+plt.figure()
+plt.ylabel(r"$t(s)$", fontsize=17)
+plt.plot(thetas, T[:, 0]/P[:,0], 'go-', label=r"EPL")
+plt.plot(thetas, T[:, 0]/2., 'r-',label="One click")
+plt.xlabel(r"$\theta$", fontsize=17)
 # plt.legend(fontsize=17)
-# plt.xticks(fontsize=17)
+plt.xticks(fontsize=17)
+
 #
-#
-# plt.figure()
-# plt.ylabel(r"$t(s)$", fontsize=17)
-# plt.plot(thetas, T[:, 0]/P[:,0], 'go-', label=r"EPL")
-# plt.plot(thetas, T[:, 0]/2., 'r-',label="One click")
-# plt.xlabel(r"$\theta$", fontsize=17)
-# # plt.legend(fontsize=17)
-# plt.xticks(fontsize=17)
-#
-# #
-# plt.figure()
-# plt.ylabel(r"$p_{success}$", fontsize=17)
-# plt.xlabel(r"$\theta$", fontsize=17)
-# plt.errorbar(thetas, P[:, 0], yerr=P[:, 1], fmt='go-', label=r"EPL")
-# plt.plot(thetas, 100*p_one_click(thetas), 'r-', label="EOne click")
-# plt.plot(thetas, 1000*p_one_click(thetas)*P[:, 0], 'k--' )
-# plt.xticks(fontsize=17)
-#
-# # plt.legend()
-# # plt.plot(thetas, 500000*p_bk(thetas))
-#
-#
-# plt.show()
+plt.figure()
+plt.ylabel(r"$p_{success}$", fontsize=17)
+plt.xlabel(r"$\theta$", fontsize=17)
+plt.errorbar(thetas, P[:, 0], yerr=P[:, 1], fmt='go-', label=r"EPL")
+plt.plot(thetas, 100*p_one_click(thetas), 'r-', label="EOne click")
+plt.plot(thetas, 1000*p_one_click(thetas)*P[:, 0], 'k--' )
+plt.plot(thetas, 10000*p_bk(thetas), 'k--' )
+plt.xticks(fontsize=17)
+
+# plt.legend()
+# plt.plot(thetas, 500000*p_bk(thetas))
+
+
+plt.show()

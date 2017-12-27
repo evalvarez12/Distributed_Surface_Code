@@ -41,6 +41,8 @@ class Blocks:
                                           "two_qubit_gate": 0,
                                           "single_qubit_gate": 0,
                                           "measurement": 0,
+                                          "time0": 0,
+                                          "time1": 0,
                                           "time": 0})
 
         # Lookup tables for the time it takes to make each operaation
@@ -64,22 +66,6 @@ class Blocks:
     def _reset_check(self):
         # Reset check dictionary
         self.check = collections.Counter(dict.fromkeys(self.check, 0))
-
-    # def _generate_bell_pair(self):
-    #     # Probaility of success
-    #     p_success = 1
-    #
-    #     # This circuit number of steps and time it took
-    #     attempts = self._success_number_of_attempts(p_success) + 1
-    #     time = self.time_lookup["bell_pair"] * attempts
-    #
-    #     # Update check
-    #     self.check["bell_pair"] += 1
-    #     # self.check["time"] += time
-    #
-    #     # Generate noisy bell pair
-    #     bell = errs.bell_pair(self.pn)
-    #     return time, bell
 
     def _generate_bell_single_click(self):
         # Probaility of success
@@ -113,7 +99,7 @@ class Blocks:
         self.check["bell_pair"] += 1
 
         # Generate noisy bell pair
-        bell = qt.bell_state('00') + qt.bell_state('00').dag()
+        bell = qt.bell_state('00') * qt.bell_state('00').dag()
         return time, bell
 
     def _generate_noisy_plus(self):
@@ -132,7 +118,7 @@ class Blocks:
 
     def _success_number_of_attempts(self, p_success):
         # Up to 20 tries for success
-        i = np.arange(10000000)
+        i = np.arange(1000000)
         # print(p_success)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
@@ -157,11 +143,28 @@ class Blocks:
         # Generate raw Bell pair to the state.
         time, bell = self._generate_bell_single_click()
         self.check["time"] += time
+        self.check["time0"] += time
         # Apply environmental error
         rho = errs.env_error_all(rho, self.a0, self.a1, time)
 
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
+        return rho
+
+    def _append_epl(self, rho):
+        check_backup = self.check.copy()
+        p_success, _, rho_epl = self.start_epl()
+        attempts = self._success_number_of_attempts(p_success) + 1
+
+        # Multiply check elements
+        for k in self.check:
+            self.check[k] *= (attempts)
+        time = self.check["time0"]
+        self.check += check_backup
+
+        # Dephase the rest of the state and join them
+        rho = errs.env_error_all(rho, self.a0, self.a1, time)
+        rho = qt.tensor(rho, rho_epl)
         return rho
 
     def _get_two_qubit_gates(self, N, controls, targets, sigma):
@@ -204,6 +207,7 @@ class Blocks:
         # NOTE: use only two CNOTs to perform a SWAP
         self.check["two_qubit_gate"] += 2
         self.check["time"] += self.time_lookup["two_qubit_gate"]*2
+        self.check["time1"] += self.time_lookup["two_qubit_gate"]*2
         rho = self._swap_noise(rho, pair[0])
         rho = self._swap_noise(rho, pair[1])
         return rho
@@ -218,6 +222,7 @@ class Blocks:
         time = (self.time_lookup["measurement"]
                 + self.time_lookup["single_qubit_gate"])
         self.check["time"] += time
+        self.check["time1"] += time
         # Apply environmental error
         rho = errs.env_error_all(rho, 0, self.a1, time)
 
@@ -254,6 +259,7 @@ class Blocks:
 
         time = self.time_lookup["measurement"]
         self.check["time"] += time
+        self.check["time1"] += time
         # Apply environmental error
         rho = errs.env_error_all(rho, 0, self.a1, time)
 
@@ -277,7 +283,7 @@ class Blocks:
         self.check["two_qubit_gate"] += 1
         time = self.time_lookup["two_qubit_gate"]
         self.check["time"] += time
-
+        self.check["time1"] += time
         # Apply environmental error
         rho = errs.env_error_all(rho, 0, self.a1, time)
 
@@ -292,6 +298,15 @@ class Blocks:
         self._reset_check()
         time, bell = self._generate_bell_single_click()
         self.check["time"] += time
+        self.check["time0"] += time
+        return 1, self.check, bell
+
+    def start_BK(self, rho=None):
+        """Start with a raw Bell pair to the state."""
+        self._reset_check()
+        time, bell = self._generate_bell_pair_BK()
+        self.check["time"] += time
+        self.check["time0"] += time
         return 1, self.check, bell
 
     def start_epl(self, rho=None):
@@ -301,6 +316,7 @@ class Blocks:
         time1, bell1 = self._generate_bell_single_click()
         time2, bell2 = self._generate_bell_single_click()
         self.check["time"] += time1 + time2
+        self.check["time0"] += time1 + time2
         # Apply cutoff here
 
         # Dephase pair 1
@@ -330,6 +346,7 @@ class Blocks:
         # Apply environmental error
         rho = errs.env_error_all(rho, self.a0, self.a1, time)
         self.check["time"] += time
+        self.check["time1"] += time
         # Bell state is attached at the end of the complete state
         rho = qt.tensor(rho, bell)
         return 1, self.check, rho
@@ -372,11 +389,12 @@ class Blocks:
         self._reset_check()
 
         # Generate raw bell pair
-        rho = self._append_bell_pair(rho)
+        rho = self._append_epl(rho)
         N = len(rho.dims[0])
 
         # Apply two qubit gates
         controls = [N-1, N-2]
+        self._swap_pair(rho, controls)
         rho = self._apply_two_qubit_gates(rho, controls,
                                           operation_qubits, sigma)
 
@@ -394,19 +412,20 @@ class Blocks:
         self._reset_check()
 
         # Generate two bell pairs
-        rho = self._append_bell_pair(rho)
-        rho = self._append_bell_pair(rho)
+        rho = self._append_epl(rho)
+        rho = self._append_epl(rho)
         N = len(rho.dims[0])
 
         # Apply first two qubit gates
         controls1 = [N-3, N-4]
+        self._swap_pair(rho, controls1)
         rho = self._apply_two_qubit_gates(rho, controls1,
                                           operation_qubits, sigma)
 
         # Apply second set of gates
         controls2 = [N-1, N-2]
         # Swap noise
-        self._swap_pair(rho, controls1)
+        self._swap_pair(rho, controls2)
         rho = self._apply_two_qubit_gates(rho, controls2, controls1, "Z")
 
         # Measure ancillas in X basis
