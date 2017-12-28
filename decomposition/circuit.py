@@ -96,6 +96,19 @@ class Circuit:
         rho = qt.tensor(rho, rho_app)
         return 1, check, rho
 
+    def append_circuit_diff_node(self, rho):
+        """
+        Appended circuit, and dephase accordingly.
+        Must be self contained event
+        """
+        _, check, rho_app = self.run(None)
+        time = check["time"]
+        rho = errs.env_error_all(rho, 0,
+                                 self.a1, time)
+
+        rho = qt.tensor(rho, rho_app)
+        return 1, check, rho
+
     def add_circuit(self, circuit_block, **kwargs):
         """
         Add a circuit to the current chain.
