@@ -118,7 +118,7 @@ class Blocks:
 
     def _success_number_of_attempts(self, p_success):
         # Up to 20 tries for success
-        i = np.arange(100000)
+        i = np.arange(1000000)
         # print(p_success)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
