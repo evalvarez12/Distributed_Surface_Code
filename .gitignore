@@ -9,8 +9,8 @@
 *.pyc
 
 # Decomposition data
-decomposition/data
-data/
+#decomposition/data
+#data/
 
 # Slurm stuff
 *.e

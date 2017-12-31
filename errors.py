@@ -41,19 +41,23 @@ class Generator:
                                   self._symbol_to_error_list(self.chi_keys_border[1], True)]
             self.indexes_border = range(len(self.chi_keys_border[0]))
 
-    def _generate_name(self, ps, pm, pg, pn, stab_size, parity, protocol):
+    def _generate_name(self, ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):
         param_names = ["ps=" + str(ps), "pm=" + str(pm),
-                       "pg=" + str(pg), "pn=" + str(pn)]
+                       "pg=" + str(pg), "eta=" + str(eta),
+                       "a0=" + str(a0), "a1=" + str(a1),
+                       "theta=" + str(theta)]
+
         param_names = "_".join(param_names)
         file_name = [protocol, parity, str(stab_size)]
         file_name = "_".join(file_name)
-        script_path = dirname(realpath(__file__))
+        # The address of the parent directory
+        script_path = dirname(dirname(realpath(__file__)))
         file_name = (script_path + "/data/" + file_name
                      + "_" + param_names + ".dict")
         return file_name
 
-    def _load_model(self, ps, pm, pg, pn, stab_size, parity, protocol):
-        file_name = self._generate_name(ps, pm, pg, pn,
+    def _load_model(self, ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):
+        file_name = self._generate_name(ps, pm, pg, eta, a0, a1, theta,
                                         stab_size, parity, protocol)
         # try:
         pickle_in = open(file_name, "rb")
