@@ -263,12 +263,20 @@ class Blocks:
         # Apply environmental error
         rho = errs.env_error_all(rho, 0, self.a1, time)
 
-        p_success = 1
+        N_ancillas = len(ancillas_pos)
+        if N_ancillas == 1:
+            N = len(rho.dims[0])
+            p_success = ops.p_measurement_single_Zbasis(rho, projections[0],
+                                                        N, ancillas_pos[0])
+        # EPL success probability
+        elif N_ancilla == 2 and projections == [1, 1]:
+            p_success = ops.p_success_epl(rho, N=4, ancillas_pos=targets)
+        else:
+            p_success = 1
 
         # Collapse the qubits in parrallel
         # Sort list to be able to reduce dimension and keep track of positions
         ancillas_pos = sorted(ancillas_pos)
-        N_ancillas = len(ancillas_pos)
         for i in range(N_ancillas):
             pos = ancillas_pos[i] - i
             rho = self._collapse_single(rho, pos,
@@ -335,8 +343,7 @@ class Blocks:
 
         # Measure ancillas in Z basis
         projections = [1] * 2
-        p_success = ops.p_success_epl(rho, N=4, ancillas_pos=targets)
-        _, rho = self._collapse_ancillas_Z(rho, targets, projections)
+        p_success, rho = self._collapse_ancillas_Z(rho, targets, projections)
         return p_success, self.check, rho
 
     def add_bell_pair(self, rho):
@@ -369,7 +376,7 @@ class Blocks:
 
         return 1, self.check, rho
 
-    def collapse_ancillas(self, rho, ancillas_pos, projections):
+    def collapse_ancillas_X(self, rho, ancillas_pos, projections):
         """
         Measure the ancillas in the X basis in parallel in each node.
         Ancillas position need to be the last part of the state.
@@ -377,6 +384,17 @@ class Blocks:
         # Reset check
         self._reset_check()
         p_success, rho = self._collapse_ancillas_X(rho, ancillas_pos,
+                                                   projections)
+        return p_success, self.check, rho
+
+    def collapse_ancillas_Z(self, rho, ancillas_pos, projections):
+        """
+        Measure the ancillas in the X basis in parallel in each node.
+        Ancillas position need to be the last part of the state.
+        """
+        # Reset check
+        self._reset_check()
+        p_success, rho = self._collapse_ancillas_Z(rho, ancillas_pos,
                                                    projections)
         return p_success, self.check, rho
 

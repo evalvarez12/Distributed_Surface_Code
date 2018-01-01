@@ -15,6 +15,13 @@ import surface_code
 import layers
 import matching
 
+
+def lambda_env(t, a0, a1):
+    a = (a0 + a1)*t
+    lamb = (1 + np.exp(-a * t))/2.
+    return 1 - lamb
+
+
 # Start the comm for mpi4py
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -23,6 +30,17 @@ size = comm.Get_size()
 # Get the arguments
 pythonfile = sys.argv[0]
 args = dict(arg.split('=') for arg in sys.argv[1:])
+
+# Parameters for noisy measurement
+ps = 0.003
+pm = 0.003
+pg = 0.003
+eta = 0.01
+a0 = 2.0
+a1 = 1/80.
+protocol = "GHZ"
+theta = .24
+NOISY_MEASUREMENT = True
 
 # Set parameters
 distance = int(args["distance"])
@@ -44,21 +62,34 @@ fail_rate = 0
 # Initialize objects
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
+sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
+
+# Set time for each GHZ generation
+t = 0.30347
+lamb = lambda_env(t, a0, a1)
 
 # Perform measurements
 for i in range(iterations):
 
     # Errors and measurements
-    if q!= 0:
-        for t in range(cycles):
-            sc.apply_qubit_error(p, 0)
-            sc.measure_all_stablizers()
-            sc.apply_measurement_error(q)
-            lc.add()
-    else:
-        sc.apply_qubit_error(p, 0)
-        sc.measure_all_stablizers()
+    # if q != 0:
+    #     for t in range(cycles):
+    #         sc.apply_qubit_error(p, 0)
+    #         sc.measure_all_stablizers()
+    #         sc.apply_measurement_error(q)
+    #         lc.add()
+    # else:
+    #     sc.apply_qubit_error(p, 0)
+    #     sc.measure_all_stablizers()
+    #     lc.add()
+
+    # Noisy measurements
+    for t in range(cycles):
+        # sc.noisy_measurement("star")
+        # sc.noisy_measurement("plaq")
+        sc.noisy_measurement_cycle(lamb)
         lc.add()
+
 
     # Get anyons
     anyons_star, anyons_plaq = lc.find_anyons_all()
@@ -74,15 +105,15 @@ for i in range(iterations):
     sc.correct_error("plaq", match_plaq)
 
     # Round of perfect detection to eliminate stray errors
-    if q!= 0:
+    if q!= 0 or NOISY_MEASUREMENT:
         lc.reset()
         sc.measure_all_stablizers()
         lc.add()
         anyons_star, anyons_plaq = lc.find_anyons_all()
         match_star = matching.match(distance, anyons_star, topology,
-                                    "star", time=0, weights=weights)
+                                    "star", time=0, weights=[1, 1])
         match_plaq = matching.match(distance, anyons_plaq, topology,
-                                    "plaq", time=0, weights=weights)
+                                    "plaq", time=0, weights=[1, 1])
         sc.correct_error("star", match_star, cycles)
         sc.correct_error("plaq", match_plaq, cycles)
 
@@ -122,4 +153,4 @@ if comm.rank == 0:
         args_str = json.dumps(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/data/" + args_str)
-        np.save(file_name, total)
+        # np.save(file_name, total)

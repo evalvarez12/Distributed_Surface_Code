@@ -9,13 +9,13 @@ from os.path import dirname, realpath
 I, X, Y, Z = [1, 1], [-1, 1], [-1, -1], [1, -1]
 
 class Generator:
-    def __init__(self, surface, ps, pm, pg, pn, protocol):
+    def __init__(self, surface, ps, pm, pg, eta, a0, a1, theta, protocol):
         # self.generator = gen.Generator()
 
-        chi_star = self._load_model(ps, pm, pg, pn, 4,
-                                    "X", protocol)
-        chi_plaq = self._load_model(ps, pm, pg, pn, 4,
-                                    "Z", protocol)
+        chi_star = self._load_model(ps, pm, pg, eta, a0, a1, theta,
+                                    4, "X", protocol)
+        chi_plaq = self._load_model(ps, pm, pg, eta, a0, a1, theta,
+                                    4, "Z", protocol)
         self.chi = [chi_star, chi_plaq]
 
         self.chi_keys = [np.array(list(chi_star.keys())),
@@ -27,10 +27,10 @@ class Generator:
         self.indexes = range(len(self.chi_keys[0]))
 
         if surface == "planar":
-            chi_star_border = self._load_model(ps, pm, pg, pn, 3,
-                                               "X", protocol)
-            chi_plaq_border = self._load_model(ps, pm, pg, pn, 3,
-                                               "Z", protocol)
+            chi_star_border = self._load_model(ps, pm, pg, eta, a0, a1, theta,
+                                               3, "X", protocol)
+            chi_plaq_border = self._load_model(ps, pm, pg, eta, a0, a1, theta,
+                                               3, "Z", protocol)
             self.chi_border = [chi_star_border, chi_plaq_border]
 
             self.chi_keys_border = [np.array(list(chi_star_border.keys())),
@@ -51,7 +51,7 @@ class Generator:
         file_name = [protocol, parity, str(stab_size)]
         file_name = "_".join(file_name)
         # The address of the parent directory
-        script_path = dirname(dirname(realpath(__file__)))
+        script_path = dirname(realpath(__file__))
         file_name = (script_path + "/data/" + file_name
                      + "_" + param_names + ".dict")
         return file_name

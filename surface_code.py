@@ -90,7 +90,6 @@ class SurfaceCode:
         # with a 9 to mark
         self.qubits[1, self.tags != "Q"] = 0
 
-
         # Plane tags to mark boundary stabilizers
         # Only for planar topology
         if self.surface == "planar":
@@ -114,9 +113,10 @@ class SurfaceCode:
         self.cmap_norm = colors.BoundaryNorm(bounds, self.cmap.N)
 
 
-    def init_error_obj(self, ps, pm, pg, pn, protocol):
+    def init_error_obj(self, surface, ps, pm, pg, eta, a0, a1, theta, protocol):
         self.errors = errors.Generator(surface=self.surface, ps=ps, pm=pm,
-                                       pg=pg, pn=pn, protocol=protocol)
+                                       pg=pg, eta=eta, a0=a0, a1=a1,
+                                       theta=theta, protocol=protocol)
 
     def measure_all_stablizers(self, p_not_complete=0):
         """Measure all stabilizer in the code."""
@@ -260,6 +260,32 @@ class SurfaceCode:
         noise = 2*(np.random.rand(2, self.number_data_qubits) > p) - 1
         # Apply the noise
         self.qubits[:, self.tags == "Q"] *= noise
+
+    def environmental_noise(self, p):
+        pa = np.array([[p], [p]])/3.
+        noise = 2*(np.random.rand(2, self.number_data_qubits) > pa) - 1
+        # Apply the X Z noise
+        self.qubits[:, self.tags == "Q"] *= noise
+
+        # Apply the Y noise
+        noise = 2*(np.random.rand(self.number_data_qubits) > p/3.) - 1
+        self.qubits[0, self.tags == "Q"] *= noise
+        self.qubits[1, self.tags == "Q"] *= noise
+
+
+    def noisy_measurement_cycle(self, p_env):
+        # Star measurements
+        self.environmental_noise(p_env)
+        self.noisy_measurement_specific(self.stars_round1, 0, "star")
+        self.environmental_noise(p_env)
+        self.noisy_measurement_specific(self.stars_round2, 0, "star")
+
+        # Plaq measurements
+        self.environmental_noise(p_env)
+        self.noisy_measurement_specific(self.plaqs_round1, 1, "plaq")
+        self.environmental_noise(p_env)
+        self.noisy_measurement_specific(self.plaqs_round2, 1, "plaq")
+
 
     # NOTE: OLD function
     # def _apply_operation_error(self, pos, error):
