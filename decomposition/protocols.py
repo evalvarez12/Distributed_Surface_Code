@@ -19,8 +19,8 @@ pm = 0.003
 pg = 0.003
 a0 = 83.33
 # a0 = 40.
-# a1 = 1/3.
-a1 = 1/80.
+a1 = 1/3.
+# a1 = 1/80.
 # eta = (0.1)*(0.03)*(0.8)
 eta = 1/100.
 theta = .24
@@ -46,11 +46,11 @@ pd = protocols_det.ProtocolsDeterministic(0,0,0,0)
 FIDELITY = []
 TIMES = []
 
-# for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
+for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
 # for a0 in [12., 10., 8., 6., 4., 2.]:
-for a0 in [40., 30., 20., 10., 5., 2.]:
+# for a0 in [40., 30., 20., 10., 5., 2.]:
     cb.change_parameters(ps, pm, pg, eta, a0, a1, theta)
-    print("-------------------a0=" + str(a0) + "------------------")
+    print("-------------------var =" + str(eta) + "------------------")
 
     '''PROTOCOLS START HERE'''
     print("-------------------PROTOCOL SIMPLEST BK 3------------------")
@@ -91,8 +91,8 @@ for a0 in [40., 30., 20., 10., 5., 2.]:
     print("TIMES:", np.average(times))
     FIDELITY += [(np.average(fidelity), np.std(fidelity))]
     TIMES += [(np.average(times), np.std(times))]
-    name = "ghz_3_a0_" + str(round(a0, 3))
-    # qt.qsave(rho, name)
+    name = "ghz_3_eta_" + str(round(eta, 3))
+    qt.qsave(rho, name)
 
 # print(rho)
 # SIMPLE_fidelity += [(np.average(fidelity), np.std(fidelity))]
@@ -101,8 +101,8 @@ print("End protocol")
 FIDELITY = np.array(FIDELITY)
 TIMES = np.array(TIMES)
 
-np.save("a_thres_fidelity.npy", FIDELITY)
-np.save("a_thres_times.npy", TIMES)
+np.save("3eta_thres_fidelity.npy", FIDELITY)
+np.save("3eta_thres_times.npy", TIMES)
 # Average over values
 #
 

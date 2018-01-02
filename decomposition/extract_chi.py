@@ -16,8 +16,8 @@ import pickle
 
 def generate_name(ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):
     param_names = ["ps=" + str(ps), "pm=" + str(pm),
-                   "pg=" + str(pg), "eta=" + str(eta),
-                   "a0=" + str(a0), "a1=" + str(a1),
+                   "pg=" + str(pg), "eta=" + str(round(eta, 4)),
+                   "a0=" + str(round(a0, 4)), "a1=" + str(round(a1, 4)),
                    "theta=" + str(theta)]
 
     param_names = "_".join(param_names)
@@ -34,13 +34,16 @@ def generate_name(ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):
 ps = 0.003
 pm = 0.003
 pg = 0.003
-system_size = 4
+system_size = 3
 
 parity = "Z"
 
 eta = 1/100.
 theta = .24
 a1 = 1/80.
+
+# a0 = 83.333
+# a1 = 1/3.
 
 # Initialize objects
 model = noise_modeling.NoiseModel(system_size, parity)
@@ -52,10 +55,12 @@ choi = model._choi_state_ket(system_size)
 choi = choi * choi.dag()
 targets = list(range(system_size))
 
+# for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
 for a0 in [12., 10., 8., 6., 4., 2.]:
+
     prot.change_parameters(ps=ps, pm=pm, pg=pg, pn=0)
 
-    ghz_file = "ghz_4_a0_" + str(round(a0, 3))
+    ghz_file = "ghz_3_a0_" + str(round(a0, 3))
     ghz = qt.qload(ghz_file)
 
     p_res, rhos = prot.measure_ghz_stabilizer(choi, ghz, targets, parity)
@@ -63,6 +68,7 @@ for a0 in [12., 10., 8., 6., 4., 2.]:
     model.make_chi_matrix()
 
     print("a0: ", a0)
+    print("eta: ", eta)
     print("Total sum check: ", model.check_total_sum())
 
     file_name = generate_name(ps, pm, pg, eta, a0, a1, theta,
@@ -72,5 +78,5 @@ for a0 in [12., 10., 8., 6., 4., 2.]:
     pickle.dump(model.chi, pickle_out, protocol=2)
     pickle_out.close()
 
-
+    # print(model.chi)
     model.reset_chi()
