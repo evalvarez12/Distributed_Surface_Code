@@ -35,10 +35,10 @@ args = dict(arg.split('=') for arg in sys.argv[1:])
 ps = 0.003
 pm = 0.003
 pg = 0.003
-eta = 0.01
-a0 = 2.0
-a1 = 1/80.
-protocol = "GHZ"
+# eta = 0.01
+# a0 = 2.0
+# a1 = 1/80.
+# protocol = "GHZ"
 theta = .24
 NOISY_MEASUREMENT = True
 
@@ -46,12 +46,17 @@ NOISY_MEASUREMENT = True
 distance = int(args["distance"])
 topology = args["topology"]
 iterations = int(args["iterations"])
-p = float(args["p"])
-q = float(args["q"])
-if q != 0:
-    cycles = int(args["cycles"])
-else:
-    cycles = 0
+a0 = float(args["a0"])
+a1 = float(args["a1"])
+cycles = int(args["cycles"])
+eta = float(args["eta"])
+protocol = args["protocol"]
+# p = float(args["p"])
+# q = float(args["q"])
+# if q != 0:
+#     cycles = int(args["cycles"])
+# else:
+#     cycles = 0
 
 """
 Surface code simulations for one set of parameters
@@ -66,7 +71,7 @@ sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Set time for each GHZ generation
 t = 0.30347
-lamb = lambda_env(t, a0, a1)
+lamb = lambda_env(t, 0, a1)
 
 # Perform measurements
 for i in range(iterations):
@@ -105,7 +110,7 @@ for i in range(iterations):
     sc.correct_error("plaq", match_plaq)
 
     # Round of perfect detection to eliminate stray errors
-    if q!= 0 or NOISY_MEASUREMENT:
+    if NOISY_MEASUREMENT:
         lc.reset()
         sc.measure_all_stablizers()
         lc.add()
@@ -149,8 +154,8 @@ if comm.rank == 0:
         total = total/float(size)
         print("size: ", size)
         print("id: ", rank)
-        print("TOTAL: ", total)
+        print("TOTAL FAIL RATE: ", total)
         args_str = json.dumps(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/data/" + args_str)
-        # np.save(file_name, total)
+        np.save(file_name, total)

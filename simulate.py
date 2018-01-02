@@ -18,7 +18,7 @@ def lambda_env(t, a0, a1):
 
 # Define the parameters
 distance = 10
-topology = "toric"
+topology = "planar"
 weights = [1, 1]
 
 # Parameters for noisy measurement
@@ -26,7 +26,7 @@ ps = 0.003
 pm = 0.003
 pg = 0.003
 eta = 0.01
-a0 = 2.0
+a0 = 12.0
 a1 = 1/80.
 protocol = "GHZ"
 theta = .24
@@ -35,7 +35,7 @@ NOISY_MEASUREMENT = True
 p = 0.1
 q = 0
 iterations = 1
-cycles = 3
+cycles = 50
 
 # Initialize objects
 fail_rate = 0
@@ -44,10 +44,9 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Set time for each GHZ generation
-t = 0.30347
-lamb = lambda_env(t, a0, a1)
+time = 0.30347
+lamb = lambda_env(time, 0, a1)
 print("LABDA: ", lamb)
-
 # Perform measurements
 for i in range(iterations):
 
