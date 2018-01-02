@@ -338,6 +338,33 @@ class ProtocolsDeterministic:
         p_even = 0.5
         return [p_even, p_odd], [rho_even, rho_odd]
 
+    def measure_ghz_stabilizer_3on4(self, rho_initial, ghz, parity_targets, stabilizer):
+        # Apply two qubit gates
+        N_ghz = len(ghz.dims[0])
+        rho = qt.tensor(rho_initial, ghz)
+        N = len(rho.dims[0])
+        if N_ghz != 3:
+            raise ValueError("Measure stabilizer 3on4 dimension error")
+
+        # Controls are the last qubits in rho
+        controls = list(range(N - N_ghz, N)) + [N - 1]
+        rho = self.apply_two_qubit_gates(rho, N, controls,
+                                         parity_targets, stabilizer)
+        projections_even = [0] * N_ghz
+        rho_even = self.collapse_ancillas_forced(rho, N,
+                                                 N_ghz,
+                                                 projections_even)
+        projections_odd = [0] * N_ghz
+        projections_odd[-1] = 1
+        rho_odd = self.collapse_ancillas_forced(rho, N,
+                                                N_ghz,
+                                                projections_odd)
+        # NOTE: Cheating by putting probs by hand
+        p_odd = 0.5
+        p_even = 0.5
+        return [p_even, p_odd], [rho_even, rho_odd]
+
+
     def expedient(self, rho_initial, parity_targets, stabilizer):
         """
         Perform the expedient protocol.

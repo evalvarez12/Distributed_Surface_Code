@@ -34,16 +34,17 @@ def generate_name(ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):
 ps = 0.003
 pm = 0.003
 pg = 0.003
-system_size = 3
+system_size = 4
 
-parity = "Z"
+parity = "X"
 
-eta = 1/100.
+# eta = 1/100.
 theta = .24
-a1 = 1/80.
+# a1 = 1/80.
 
-# a0 = 83.333
-# a1 = 1/3.
+'''CHANGE HERE'''
+a0 = 83.333
+a1 = 1/3.
 
 # Initialize objects
 model = noise_modeling.NoiseModel(system_size, parity)
@@ -55,15 +56,15 @@ choi = model._choi_state_ket(system_size)
 choi = choi * choi.dag()
 targets = list(range(system_size))
 
-# for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
-for a0 in [12., 10., 8., 6., 4., 2.]:
+for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
+# for a0 in [12., 10., 8., 6., 4., 2.]:
 
     prot.change_parameters(ps=ps, pm=pm, pg=pg, pn=0)
 
-    ghz_file = "ghz_3_a0_" + str(round(a0, 3))
+    ghz_file = "ghz_3_eta_" + str(round(eta, 3))
     ghz = qt.qload(ghz_file)
 
-    p_res, rhos = prot.measure_ghz_stabilizer(choi, ghz, targets, parity)
+    p_res, rhos = prot.measure_ghz_stabilizer_3on4(choi, ghz, targets, parity)
     model.set_rho(rhos, p_res)
     model.make_chi_matrix()
 
@@ -72,11 +73,11 @@ for a0 in [12., 10., 8., 6., 4., 2.]:
     print("Total sum check: ", model.check_total_sum())
 
     file_name = generate_name(ps, pm, pg, eta, a0, a1, theta,
-                              system_size, parity, protocol="GHZ")
+                              system_size, parity, protocol="GHZ3")
 
     pickle_out = open(file_name, "wb")
     pickle.dump(model.chi, pickle_out, protocol=2)
     pickle_out.close()
 
-    # print(model.chi)
+    print(model.chi)
     model.reset_chi()

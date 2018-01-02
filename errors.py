@@ -43,8 +43,8 @@ class Generator:
 
     def _generate_name(self, ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):
         param_names = ["ps=" + str(ps), "pm=" + str(pm),
-                       "pg=" + str(pg), "eta=" + str(round(eta, 3)),
-                       "a0=" + str(round(a0, 3)), "a1=" + str(round(a1, 3)),
+                       "pg=" + str(pg), "eta=" + str(round(eta, 4)),
+                       "a0=" + str(round(a0, 4)), "a1=" + str(round(a1, 4)),
                        "theta=" + str(theta)]
 
         param_names = "_".join(param_names)
