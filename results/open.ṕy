@@ -11,6 +11,23 @@ import numpy as np
 from os.path import dirname, realpath
 
 
+def get_file_name(params):
+    protocol = "protocol=" + params["protocol"]
+    topology = "topology=" + params["topology"]
+    distance = "distance=" + params["distance"]
+    iterations = "iterations=" + params["iterations"]
+    cycles = "cycles=" + params["cycles"]
+    eta = "eta=" + params["eta"]
+    a0 = "a0=" + params["a0"]
+    a1 = "a1=" + params["a1"]
+    time = "time=" + params["time"]
+
+    param_names = [protocol, topology, distance, iterations, cycles,
+                   eta, a0, a1, time]
+    file_name = "_".join(param_names)
+    return file_name
+
+
 # Set parameters
 parameters = {"topology": "toric",
               "cycles": 50,
@@ -28,7 +45,7 @@ for a0 in [2.0]:
 
         args_str = json.dumps(parameters)
         script_path = dirname(realpath(__file__))
-        file_name = (script_path + "/results/" + args_str)
+        file_name = get_file_name(parameters)
         np.load(file_name)
 
         print("Distance: ", distance)

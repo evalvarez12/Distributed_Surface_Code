@@ -21,6 +21,22 @@ def lambda_env(t, a0, a1):
     lamb = (1 + np.exp(-a * t))/2.
     return 1 - lamb
 
+def get_file_name(params):
+    protocol = "protocol=" + params["protocol"]
+    topology = "topology=" + params["topology"]
+    distance = "distance=" + params["distance"]
+    iterations = "iterations=" + params["iterations"]
+    cycles = "cycles=" + params["cycles"]
+    eta = "eta=" + params["eta"]
+    a0 = "a0=" + params["a0"]
+    a1 = "a1=" + params["a1"]
+    time = "time=" + params["time"]
+
+    param_names = [protocol, topology, distance, iterations, cycles,
+                   eta, a0, a1, time]
+    file_name = "_".join(param_names)
+    return file_name
+
 
 # Start the comm for mpi4py
 comm = MPI.COMM_WORLD
