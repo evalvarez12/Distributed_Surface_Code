@@ -6,9 +6,7 @@ created-on: 09/12/17
 @author: eduardo
 """
 import sys
-import json
 import numpy as np
-import matplotlib.pyplot as plt
 from os.path import dirname, realpath
 from mpi4py import MPI
 import surface_code
@@ -175,4 +173,5 @@ if comm.rank == 0:
         args_str = get_file_name(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)
+        print(file_name)
         np.save(file_name, total)
