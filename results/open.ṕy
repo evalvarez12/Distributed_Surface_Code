@@ -8,12 +8,7 @@ created-on: 09/12/17
 import sys
 import json
 import numpy as np
-import matplotlib.pyplot as plt
 from os.path import dirname, realpath
-from mpi4py import MPI
-import surface_code
-import layers
-import matching
 
 
 # Set parameters

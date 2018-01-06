@@ -158,5 +158,5 @@ if comm.rank == 0:
         print("TOTAL FAIL RATE: ", total)
         args_str = json.dumps(args)
         script_path = dirname(realpath(__file__))
-        file_name = (script_path + "/data/" + args_str)
+        file_name = (script_path + "/results/" + args_str)
         np.save(file_name, total)
