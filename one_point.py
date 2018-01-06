@@ -51,6 +51,7 @@ a1 = float(args["a1"])
 cycles = int(args["cycles"])
 eta = float(args["eta"])
 protocol = args["protocol"]
+t = args["time"]
 # p = float(args["p"])
 # q = float(args["q"])
 # if q != 0:
@@ -70,7 +71,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Set time for each GHZ generation
-t = 0.30347
+# t = 0.30347
 lamb = lambda_env(t, 0, a1)
 
 # Perform measurements
