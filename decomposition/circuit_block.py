@@ -118,7 +118,7 @@ class Blocks:
 
     def _success_number_of_attempts(self, p_success):
         # Up to 20 tries for success
-        i = np.arange(1000000)
+        i = np.arange(100000)
         # print(p_success)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
@@ -269,8 +269,8 @@ class Blocks:
             p_success = ops.p_measurement_single_Zbasis(rho, projections[0],
                                                         N, ancillas_pos[0])
         # EPL success probability
-        elif N_ancilla == 2 and projections == [1, 1]:
-            p_success = ops.p_success_epl(rho, N=4, ancillas_pos=targets)
+        elif N_ancillas == 2 and projections == [1, 1]:
+            p_success = ops.p_success_epl(rho, N=4, ancillas_pos=ancillas_pos)
         else:
             p_success = 1
 

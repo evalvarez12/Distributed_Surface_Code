@@ -77,9 +77,9 @@ def single_selection(F1, F2):
     F = F/(F1*F2 + F1*(1 - F2)/3 + F2*(1 - F1)/3 + 5*(1 - F1)*(1 - F2)/9)
     return F
 
-F = np.load("F_good.npy")
-T = np.load("T_good.npy")
-P = np.load("P_good.npy")
+F = np.load("data/F_epl_params_raja.npy")
+T = np.load("data/T_epl_params_raja.npy")
+P = np.load("data/P_epl_params_raja.npy")
 #
 plt.figure()
 plt.ylabel(r"$F$", fontsize=17)

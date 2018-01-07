@@ -7,8 +7,8 @@ created on: 19/07/17
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib import colors
+# import matplotlib.pyplot as plt
+# from matplotlib import colors
 import errors
 
 
@@ -463,24 +463,24 @@ class SurfaceCode:
     #
     #     return pos1, pos2, c, t
 
-    def plot(self, stabilizer, backup=False):
-        """Plot the surface code."""
-        if stabilizer == "star":
-            data = self.qubits[0].copy()
-            data[self.tags == "S"] *= 2
-            data[self.tags == "P"] = 1
-        if stabilizer == "plaq":
-            data = self.qubits[0].copy()
-            data[self.tags == "Q"] = self.qubits[1, self.tags == "Q"]
-            data[self.tags == "P"] *= 2
-            data[self.tags == "S"] = 1
-
-        # Return data to plot
-        # return data, self.cmap, self.cmap_norm
-        plt.figure()
-        plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
-        # plt.colorbar()
-        # plt.show()
+    # def plot(self, stabilizer, backup=False):
+    #     """Plot the surface code."""
+    #     if stabilizer == "star":
+    #         data = self.qubits[0].copy()
+    #         data[self.tags == "S"] *= 2
+    #         data[self.tags == "P"] = 1
+    #     if stabilizer == "plaq":
+    #         data = self.qubits[0].copy()
+    #         data[self.tags == "Q"] = self.qubits[1, self.tags == "Q"]
+    #         data[self.tags == "P"] *= 2
+    #         data[self.tags == "S"] = 1
+    #
+    #     # Return data to plot
+    #     # return data, self.cmap, self.cmap_norm
+    #     plt.figure()
+    #     plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
+    #     # plt.colorbar()
+    #     # plt.show()
 
     def reset(self):
         """Reset surface code to default configuration."""

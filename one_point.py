@@ -110,7 +110,6 @@ for i in range(iterations):
         sc.noisy_measurement_cycle(lamb)
         lc.add()
 
-
     # Get anyons
     anyons_star, anyons_plaq = lc.find_anyons_all()
 
