@@ -108,9 +108,9 @@ class SurfaceCode:
         self.plaqs_round2 = self.plaqs[:, 1::2]
 
         # Color map stuff for plot
-        self.cmap = colors.ListedColormap(['red', 'orange', 'white', 'green'])
-        bounds = [-2.5, -1.5, 0, 1.5, 2.5]
-        self.cmap_norm = colors.BoundaryNorm(bounds, self.cmap.N)
+        # self.cmap = colors.ListedColormap(['red', 'orange', 'white', 'green'])
+        # bounds = [-2.5, -1.5, 0, 1.5, 2.5]
+        # self.cmap_norm = colors.BoundaryNorm(bounds, self.cmap.N)
 
 
     def init_error_obj(self, surface, ps, pm, pg, eta, a0, a1, theta, protocol):
