@@ -18,7 +18,7 @@ def lambda_env(t, a0, a1):
 
 # Define the parameters
 distance = 10
-topology = "planar"
+topology = "toric"
 weights = [1, 1]
 
 # Parameters for noisy measurement
@@ -32,10 +32,10 @@ protocol = "GHZ"
 theta = .24
 NOISY_MEASUREMENT = True
 
-p = 0.1
-q = 0
+p = 0.01
+q = 0.01
 iterations = 1
-cycles = 50
+cycles = 5
 
 # Initialize objects
 fail_rate = 0
@@ -46,29 +46,29 @@ sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 # Set time for each GHZ generation
 time = 0.30347
 lamb = lambda_env(time, 0, a1)
-print("LABDA: ", lamb)
+print("LAMBDA: ", lamb)
 # Perform measurements
 for i in range(iterations):
 
     # Errors and measurements
     # Random errors
-    # if q!= 0:
-    #     for t in range(cycles):
-    #         sc.apply_qubit_error(p, 0)
-    #         sc.measure_all_stablizers()
-    #         sc.apply_measurement_error(q)
-    #         lc.add()
-    # else:
-    #     sc.apply_qubit_error(p, 0)
-    #     sc.measure_all_stablizers()
-    #     lc.add()
+    if q != 0:
+        for t in range(cycles):
+            sc.apply_qubit_error(p, 0)
+            sc.measure_all_stablizers()
+            sc.apply_measurement_error(q)
+            lc.add()
+    else:
+        sc.apply_qubit_error(p, 0)
+        sc.measure_all_stablizers()
+        lc.add()
 
     # Noisy measurements
-    for t in range(cycles):
-        # sc.noisy_measurement("star")
-        # sc.noisy_measurement("plaq")
-        sc.noisy_measurement_cycle(lamb)
-        lc.add()
+    # for t in range(cycles):
+    #     # sc.noisy_measurement("star")
+    #     # sc.noisy_measurement("plaq")
+    #     sc.noisy_measurement_cycle(lamb)
+    #     lc.add()
 
     # Get anyons
     anyons_star, anyons_plaq = lc.find_anyons_all()

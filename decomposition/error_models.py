@@ -131,17 +131,6 @@ def bell_pair(p):
     # return H*W*H.dag()
     return W
 
-
-def bell_pair_click(p, theta):
-    s = np.sin(theta)**2
-    r = ((1 - p)*s)/(1 - p*s)
-    a = qt.bell_state('01') * qt.bell_state('01').dag()
-    b = qt.tensor(qt.basis(2, 1), qt.basis(2, 1))
-    b = b * b.dag()
-    B = (1-r)*a + r*b
-    return B
-
-
 def generate_noisy_ghz(F, N):
     # p = 1 - F
     # nu = 4**N*p/(4**N - 1)

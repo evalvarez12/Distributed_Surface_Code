@@ -1,5 +1,5 @@
 import qutip as qt
-import protocols_det
+import protocols_tools
 import error_models as errs
 import operations as ops
 import numpy as np
@@ -8,30 +8,26 @@ rho = errs.bell_pair(.4)
 rho_ideal = qt.bell_state("00")
 # print(de.fidelity(rho, rho_ideal))
 
-prot = protocols_det.ProtocolsDeterministic(0.0, 0.0075, 0.0075, .1)
-prot_perf = protocols_det.ProtocolsDeterministic(0., 0., 0., 0.,)
+prot = protocols_tools.ProtocolsTools(0.0, 0.0075, 0.0075, .1)
+prot_perf = protocols_tools.ProtocolsTools(0., 0., 0., 0.,)
 
 print("------------------SINGLE SELECTION-------------------")
-p, single = prot.single_selection(rho, [0, 1], "Z")
-print("p = ", p)
+single = prot.single_selection(rho, [0, 1], "Z")
 # print(single)
 print(qt.fidelity(single, rho_ideal))
 
 print("------------------ONE DOT-------------------")
-p, one_dot = prot.one_dot(rho, [0, 1], "Z")
-print("p = ", p)
+one_dot = prot.one_dot(rho, [0, 1], "Z")
 # print(one_dot)
 print(qt.fidelity(one_dot, rho_ideal))
 
 print("------------------TWO DOTS-------------------")
-p, two_dot = prot.two_dots(rho, [0, 1], "X")
-print("p = ", p)
+two_dot = prot.two_dots(rho, [0, 1], "X")
 # print(two_dot)
 print(qt.fidelity(two_dot, rho_ideal))
 
 print("-------------------DOUBLE SELECTION-----------")
-p, double = prot.double_selection(rho, [0, 1], "Z")
-print("p = ", p)
+double = prot.double_selection(rho, [0, 1], "Z")
 # print(double)
 print(qt.fidelity(double, rho_ideal))
 
@@ -61,7 +57,7 @@ print((ghz_ideal * ghz * ghz_ideal).tr())
 
 print("-----------P SUCCESS SINGLE SELECTION----------")
 rho = prot.generate_bell_pair()
-print(qt.fidelity(rho, qt.bell_state('00')))
+print("Fidelity: ", qt.fidelity(rho, qt.bell_state('00')))
 # Generate raw bell pair
 rho = qt.tensor(rho, prot.generate_bell_pair())
 N = len(rho.dims[0])
@@ -71,9 +67,9 @@ CNOT = qt.cnot(N, 2, 0) * qt.cnot(N, 3, 1)
 rho = CNOT * rho * CNOT.dag()
 
 p = ops.p_success_single_sel(rho, N, [2, 3])
-def p_ref(f) : return (f**2 +2*f*(1-f)/3 + 5*((1-f)/3)**2)
-print(p)
-print(p_ref(.9))
+def p_ref(f): return (f**2 +2*f*(1-f)/3 + 5*((1-f)/3)**2)
+print("p: ", p)
+print("p_ref: ", p_ref(.9))
 
 print("-----------P SUCCESS DOUBLE SELECTION----------")
 rho = prot.generate_bell_pair()

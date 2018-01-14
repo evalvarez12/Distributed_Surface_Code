@@ -69,15 +69,13 @@ class SurfaceCode:
         ind1 = np.arange(1, self.side, 2)
         ind2 = np.arange(0, self.side, 2)
 
-        # Array with the quibits to mark erors
+        # Array with the qubits to mark erors
         # self.qubits[0] marks the X errors
         # self.qubits[1] marks the Z erros
+        self.qubits = np.ones((2, self.side, self.side))
 
         starsy, starsx = np.meshgrid(ind1, ind2)
         plaqsy, plaqsx = np.meshgrid(ind2, ind1)
-
-        self.qubits = np.ones((2, self.side, self.side))
-
         self.stars = np.vstack((starsx.flatten(), starsy.flatten()))
         self.plaqs = np.vstack((plaqsx.flatten(), plaqsy.flatten()))
 
@@ -371,74 +369,6 @@ class SurfaceCode:
 
                 self.qubits[0, bord_stabs[0], bord_stabs[1]] *= m_err
 
-    # NOTE: OLD function
-    # def noisy_measurement(self, stabilizer, error_vec, error_sum, p_not_complete=0):
-    #     """
-    #     Does a noisy measurement on the stabilizer type.
-    #     The measurement is done in 2 rounds of interspersed stabilizers.
-    #     """
-    #     # NOTE this will change
-    #     # Specify stabilizer
-    #     pos1, pos2, c, t = self._select_stabilizerRounds(stabilizer)
-    #
-    #     # Find all set of probabilistic errors
-    #     err = np.random.rand(self.number_stabilizers)
-    #     err_index = np.zeros(self.number_stabilizers)
-    #     for i in range(self.number_stabilizers):
-    #         # Index of the actual error is the last True in less than rand number
-    #         err_index[i] = np.where(error_sum > err[i])[0, 0]
-    #
-    #     self.operation_error(pos1, error_vec[err_index[:len(pos1)]])
-    #     self.measure_stabilizer(pos1, c, p_not_complete)
-    #     # TODO :or ?
-    #     # self.measureStabilizer(pos, c)
-    #
-    #     self.measure_stabilizer(pos2, c, p_not_complete)
-    #     self.operation_error(pos2, error_vec[err_index[len(pos1):]])
-
-
-    # NOTE: This will be DEPRECATED
-    # def _two_rand_stab_qubits(self, pos):
-    #     """Select to random corresponding qubits for each stabilizer."""
-    #     options = np.array([[-1, 0], [1, 0], [0, -1], [0, 1]])
-    #     # TODO optimize this for
-    #     # Draw the selected options
-    #     choices = np.array([np.random.choice([0, 1, 2, 3], 2, False) for i in range(len(pos[0]))])
-    #     choices = choices.transpose()
-    #     # print("-----------CHOICES--------")
-    #     # print(choices)
-    #     # print("--------------------------")
-    #     displacement1 = options[choices[0]].transpose()
-    #     displacement2 = options[choices[1]].transpose()
-    #
-    #     # Position of the selected qubits
-    #     a = pos + displacement1
-    #     b = pos + displacement2
-    #
-    #     # Adjust for surface type
-    #     if self.surface == "toric":
-    #         a = a % (2*self.distance)
-    #         b = b % (2*self.distance)
-    #
-    #     # TODO add this plane
-    #     # if self.surface == "plane":
-    #
-    #     return a, b
-
-    # def _select_stabilizer(self, stabilizer):
-    #     """Return useful parameters for stabilizer type."""
-    #     if stabilizer == "star":
-    #         pos = self.stars
-    #         c = 0
-    #         t = "S"
-    #     if stabilizer == "plaq":
-    #         pos = self.plaqs
-    #         c = 1
-    #         t = "P"
-    #
-    #     return pos, c, t
-    #
-
     def _select_stabilizer(self, stabilizer):
         """Return useful parameters for stabilizer type."""
         if stabilizer == "star":
@@ -447,21 +377,6 @@ class SurfaceCode:
             c = 1
 
         return c
-
-    # def _select_stabilizer_rounds(self, stabilizer):
-    #     """Parameter for stabilizer type when using interspersed rounds."""
-    #     if stabilizer == "star":
-    #         pos1 = self.stars_round1
-    #         pos2 = self.stars_round2
-    #         c = 0
-    #         t = "S"
-    #     if stabilizer == "plaq":
-    #         pos1 = self.plaqs_round1
-    #         pos2 = self.plaqs_round2
-    #         c = 1
-    #         t = "P"
-    #
-    #     return pos1, pos2, c, t
 
     # def plot(self, stabilizer, backup=False):
     #     """Plot the surface code."""

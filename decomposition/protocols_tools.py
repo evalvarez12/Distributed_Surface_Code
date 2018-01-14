@@ -10,7 +10,7 @@ import error_models as errs
 import operations as ops
 
 
-class ProtocolsDeterministic:
+class ProtocolsTools:
     """
     Class for holding all protocols.
 

@@ -5,7 +5,6 @@ operators based on symbols ("IIXI", "YZZX", ... )
 import numpy as np
 import qutip as qt
 import itertools
-# from . import operations
 import operations
 
 operator_symbols = ["X", "Y", "Z"]
