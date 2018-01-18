@@ -192,4 +192,4 @@ if comm.rank == 0:
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)
         print(file_name)
-        # np.save(file_name, total)
+        np.save(file_name, total)
