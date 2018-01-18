@@ -17,7 +17,7 @@ def lambda_env(t, a0, a1):
 
 
 # Define the parameters
-distance = 20
+distance = 10
 topology = "toric"
 weights = [1, 1]
 
@@ -34,8 +34,8 @@ NOISY_MEASUREMENT = False
 
 p = 0.029
 q = 0.029
-iterations = 1
-cycles = 20
+iterations = 1000
+cycles = 10
 
 # Initialize objects
 fail_rate = 0
@@ -80,7 +80,7 @@ for i in range(iterations):
                                 "star", weights=[1, 1])
     match_plaq = matching.match_cheat(distance, anyons_plaq, topology,
                                 "plaq", weights=[1, 1])
-    sc.plot("star")
+    # sc.plot("star")
     # sc.plot("plaq")
     pre_correction = sc.qubits.copy()
 
@@ -111,9 +111,9 @@ for i in range(iterations):
     # Measure logical qubit
     logical = sc.measure_logical()
 
-    sc.plot("star")
+    # sc.plot("star")
     # sc.plot("plaq")
-    plt.show()
+    # plt.show()
 
     # Code to check when a logical error happens
     print(logical)
@@ -146,6 +146,6 @@ for i in range(iterations):
     sc.reset()
 
 fail_rate = fail_rate/float(iterations)
-print("FAILE RATE: ", fail_rate)
+print("FAIL RATE: ", fail_rate)
 
 plt.show()
