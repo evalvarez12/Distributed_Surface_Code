@@ -68,7 +68,7 @@ pg = 0.003
 # a1 = 1/80.
 # protocol = "GHZ"
 theta = .24
-NOISY_MEASUREMENT = True
+NOISY_MEASUREMENT = False
 
 # Set parameters
 distance = int(args["distance"])
@@ -111,6 +111,8 @@ for i in range(iterations):
             sc.measure_all_stablizers()
             sc.apply_measurement_error(q)
             lc.add()
+        sc.measure_all_stablizers()
+        lc.add()
     else:
         sc.apply_qubit_error(p, 0)
         sc.measure_all_stablizers()
@@ -127,10 +129,14 @@ for i in range(iterations):
     anyons_star, anyons_plaq = lc.find_anyons_all()
 
     # Decode
-    match_star = matching.match(distance, anyons_star, topology,
-                                "star", time=cycles, weights=[1, 1])
-    match_plaq = matching.match(distance, anyons_plaq, topology,
-                                "plaq", time=cycles, weights=[1, 1])
+    # match_star = matching.match(distance, anyons_star, topology,
+    #                             "star", time=cycles, weights=[1, 1])
+    # match_plaq = matching.match(distance, anyons_plaq, topology,
+    #                             "plaq", time=cycles, weights=[1, 1])
+    match_star = matching.match_cheat(distance, anyons_star, topology,
+                                      "star", weights=[1, 1])
+    match_plaq = matching.match_cheat(distance, anyons_plaq, topology,
+                                      "plaq", weights=[1, 1])
 
     # Apply corrections
     sc.correct_error("star", match_star)
@@ -186,4 +192,4 @@ if comm.rank == 0:
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)
         print(file_name)
-        np.save(file_name, total)
+        # np.save(file_name, total)

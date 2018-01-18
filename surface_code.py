@@ -7,8 +7,8 @@ created on: 19/07/17
 """
 
 import numpy as np
-# import matplotlib.pyplot as plt
-# from matplotlib import colors
+import matplotlib.pyplot as plt
+from matplotlib import colors
 import errors
 
 
@@ -106,9 +106,9 @@ class SurfaceCode:
         self.plaqs_round2 = self.plaqs[:, 1::2]
 
         # Color map stuff for plot
-        # self.cmap = colors.ListedColormap(['red', 'orange', 'white', 'green'])
-        # bounds = [-2.5, -1.5, 0, 1.5, 2.5]
-        # self.cmap_norm = colors.BoundaryNorm(bounds, self.cmap.N)
+        self.cmap = colors.ListedColormap(['red', 'orange', 'white', 'green'])
+        bounds = [-2.5, -1.5, 0, 1.5, 2.5]
+        self.cmap_norm = colors.BoundaryNorm(bounds, self.cmap.N)
 
 
     def init_error_obj(self, surface, ps, pm, pg, eta, a0, a1, theta, protocol):
@@ -378,24 +378,24 @@ class SurfaceCode:
 
         return c
 
-    # def plot(self, stabilizer, backup=False):
-    #     """Plot the surface code."""
-    #     if stabilizer == "star":
-    #         data = self.qubits[0].copy()
-    #         data[self.tags == "S"] *= 2
-    #         data[self.tags == "P"] = 1
-    #     if stabilizer == "plaq":
-    #         data = self.qubits[0].copy()
-    #         data[self.tags == "Q"] = self.qubits[1, self.tags == "Q"]
-    #         data[self.tags == "P"] *= 2
-    #         data[self.tags == "S"] = 1
-    #
-    #     # Return data to plot
-    #     # return data, self.cmap, self.cmap_norm
-    #     plt.figure()
-    #     plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
-    #     # plt.colorbar()
-    #     # plt.show()
+    def plot(self, stabilizer, backup=False):
+        """Plot the surface code."""
+        if stabilizer == "star":
+            data = self.qubits[0].copy()
+            data[self.tags == "S"] *= 2
+            data[self.tags == "P"] = 1
+        if stabilizer == "plaq":
+            data = self.qubits[0].copy()
+            data[self.tags == "Q"] = self.qubits[1, self.tags == "Q"]
+            data[self.tags == "P"] *= 2
+            data[self.tags == "S"] = 1
+
+        # Return data to plot
+        # return data, self.cmap, self.cmap_norm
+        plt.figure()
+        plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
+        # plt.colorbar()
+        # plt.show()
 
     def reset(self):
         """Reset surface code to default configuration."""
@@ -452,11 +452,12 @@ class SurfaceCode:
                 px, py, pt = pair[0]
                 qx, qy, qt = pair[1]
 
-                if pt == time + 1 or qt == time + 1:
-                    if abs(pt - qt) == 2 and px == qx and py == qy:
-                        # print("Faulty measurement: ", px, py)
-                        self.qubits[0, px, py] *= -1
-                        continue
+                # Fix faulty measurements
+                # if pt == time + 1 or qt == time + 1:
+                #     if abs(pt - qt) == 2 and px == qx and py == qy:
+                #         # print("Faulty measurement: ", px, py)
+                #         self.qubits[0, px, py] *= -1
+                #         continue
 
                 dx = qx - px
                 sx = np.sign(dx)
@@ -484,11 +485,12 @@ class SurfaceCode:
                 px, py, pt = pair[0]
                 qx, qy, qt = pair[1]
 
-                if pt == time + 1 or qt == time + 1:
-                    if abs(pt - qt) == 2 and px == qx and py == qy:
-                        # print("Faulty measurement: ", px, py)
-                        self.qubits[0, px, py] *= -1
-                        continue
+                # Fix faulty measurements
+                # if pt == time + 1 or qt == time + 1:
+                #     if abs(pt - qt) == 2 and px == qx and py == qy:
+                #         # print("Faulty measurement: ", px, py)
+                #         self.qubits[0, px, py] *= -1
+                #         continue
 
                 dx = (qx - px) % m
                 dy = (qy - py) % m

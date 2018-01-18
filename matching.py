@@ -2,6 +2,54 @@ import blossom5.py_match as pm
 import numpy as np
 
 
+def match_cheat(size, anyons, surface, stabilizer, weights=[1, 1]):
+    """
+    Find a matching to fix the errors in a 3D planar code given the positions
+    of '-1' stabilizer outcomes
+
+    Parameters:
+    -----------
+    size -- The dimension of the code
+    anyons -- A list of the locations of all '-1' value stabilizers.
+              [[x0,y0,t0],[x1,y1,t1],...]
+    weights -- The multiplicative weighting that should be assigned to graph
+               edges in the [space,time] dimensions. Default: [1,1]
+    time -- Number of syndrome extractions made under imperfect measurements
+            time = 0 assumes perfect syndrome extractrion and the decoding is
+            in 2D.
+    Returns:
+    --------
+    A list containing all the input anyon positions grouped into pairs.
+    [[[x0,y0,t0],[x1,y1,t1]],[[x2,y2,t2],...
+    """
+    N_real = len(anyons)
+    if N_real == 0:
+        return []
+
+    # Append virtal anyons
+    cyclic = True
+    if surface == "planar":
+        anyons = add_virtual_space(size, anyons, stabilizer)
+        cyclic = False
+
+    N = len(anyons)
+
+    graph = make_graph(size, anyons, N_real, weights, cyclic=cyclic)
+
+    if N % 2 == 1:
+        raise ValueError("Number of nodes is odd!")
+    matching = pm.blossom_match(N, graph)
+
+    pairs_ind = np.array([[i, matching[i]] for i in range(N) if matching[i] > i])
+    pairs = anyons[pairs_ind]
+    # Pairs format:
+    # np.array([[pair1, pair2], [pair1, pair2], ...])
+
+    # Remove unwanted pairs
+    if surface == "planar":
+        pairs = pairs_remove_out_planar_space(size, time, stabilizer, pairs)
+    return pairs
+
 def match(size, anyons, surface, stabilizer, time, weights=[1, 1]):
     """
     Find a matching to fix the errors in a 3D planar code given the positions
@@ -128,6 +176,21 @@ def pairs_remove_out_planar(size, total_time, stabilizer, pairs):
     # Get the pairs where both are outside in space-time
     out = np.logical_or(pairs[:, :, c] == -1,
                         pairs[:, :, 2] == total_time + 1)
+    # Invert to get the indices of the rest
+    ind = np.invert(np.prod(out, 1).astype(bool))
+    pairs = pairs[ind]
+    return pairs
+
+
+def pairs_remove_out_planar_space(size, stabilizer, pairs):
+    if stabilizer == "star":
+        c = 1
+    else:
+        c = 0
+
+    # Get the pairs where both are outside in space
+    out = np.logical_or(pairs[:, :, c] == -1,
+                        pairs[:, :, c] == 2*size - 1)
     # Invert to get the indices of the rest
     ind = np.invert(np.prod(out, 1).astype(bool))
     pairs = pairs[ind]

@@ -30,12 +30,12 @@ a0 = 12.0
 a1 = 1/80.
 protocol = "GHZ"
 theta = .24
-NOISY_MEASUREMENT = True
+NOISY_MEASUREMENT = False
 
-p = 0.01
-q = 0.01
+p = 0.029
+q = 0.029
 iterations = 1
-cycles = 5
+cycles = 10
 
 # Initialize objects
 fail_rate = 0
@@ -58,6 +58,8 @@ for i in range(iterations):
             sc.measure_all_stablizers()
             sc.apply_measurement_error(q)
             lc.add()
+        sc.measure_all_stablizers()
+        lc.add()
     else:
         sc.apply_qubit_error(p, 0)
         sc.measure_all_stablizers()
@@ -74,12 +76,12 @@ for i in range(iterations):
     anyons_star, anyons_plaq = lc.find_anyons_all()
 
     # Decode
-    match_star = matching.match(distance, anyons_star, topology,
-                                "star", time=cycles, weights=[1, 1])
-    match_plaq = matching.match(distance, anyons_plaq, topology,
-                                "plaq", time=cycles, weights=[1, 1])
+    match_star = matching.match_cheat(distance, anyons_star, topology,
+                                "star", weights=[1, 1])
+    match_plaq = matching.match_cheat(distance, anyons_plaq, topology,
+                                "plaq", weights=[1, 1])
     sc.plot("star")
-    sc.plot("plaq")
+    # sc.plot("plaq")
     pre_correction = sc.qubits.copy()
 
     # Apply corrections
@@ -87,7 +89,7 @@ for i in range(iterations):
     sc.correct_error("plaq", match_plaq)
 
     # Round of perfect detection to eliminate stray errors
-    if q!= 0 or NOISY_MEASUREMENT:
+    if NOISY_MEASUREMENT:
         lc.reset()
         sc.measure_all_stablizers()
         lc.add()
@@ -110,13 +112,13 @@ for i in range(iterations):
     logical = sc.measure_logical()
 
     sc.plot("star")
-    sc.plot("plaq")
+    # sc.plot("plaq")
     plt.show()
 
     # Code to check when a logical error happens
+    print(logical)
     if -1 in logical[0] or -1 in logical[1]:
         fail_rate += 1
-        print(logical)
         # sc.plot("star")
         # sc.plot("plaq")
 
