@@ -17,7 +17,7 @@ def lambda_env(t, a0, a1):
 
 
 # Define the parameters
-distance = 10
+distance = 20
 topology = "toric"
 weights = [1, 1]
 
@@ -35,7 +35,7 @@ NOISY_MEASUREMENT = False
 p = 0.029
 q = 0.029
 iterations = 1
-cycles = 10
+cycles = 20
 
 # Initialize objects
 fail_rate = 0

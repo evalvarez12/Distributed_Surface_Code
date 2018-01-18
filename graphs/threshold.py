@@ -56,10 +56,10 @@ d8 = np.array(d8)
 d12 = np.array(d12)
 d16 = np.array(d16)
 
-plt.plot(pq[7:], 1/d4[7:], 'o-', label=r"$d=4$")
-plt.plot(pq[7:], 1/d8[7:], 'o-', label=r"$d=8$")
-plt.plot(pq[7:], 1/d12[7:], 'o-', label=r"$d=12$")
-plt.plot(pq[7:], 1/d16[7:], 'o-', label=r"$d=16$")
+plt.plot(pq, 1-d4, 'o-', label=r"$d=4$")
+plt.plot(pq, 1-d8, 'o-', label=r"$d=8$")
+plt.plot(pq, 1-d12, 'o-', label=r"$d=12$")
+plt.plot(pq, 1-d16, 'o-', label=r"$d=16$")
 
 
 # plt.ylim([0.4, 1])

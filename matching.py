@@ -7,6 +7,8 @@ def match_cheat(size, anyons, surface, stabilizer, weights=[1, 1]):
     Find a matching to fix the errors in a 3D planar code given the positions
     of '-1' stabilizer outcomes
 
+    REQUIRES LAST PERFECT MEASUREMENT ROUND
+
     Parameters:
     -----------
     size -- The dimension of the code
