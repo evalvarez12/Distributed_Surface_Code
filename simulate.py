@@ -30,12 +30,12 @@ a0 = 12.0
 a1 = 1/80.
 protocol = "GHZ"
 theta = .24
-NOISY_MEASUREMENT = False
+PERFECT_LAST_ROUND = True
 
 p = 0.029
 q = 0.029
-iterations = 1000
-cycles = 10
+iterations = 1
+cycles = 20
 
 # Initialize objects
 fail_rate = 0
@@ -58,12 +58,14 @@ for i in range(iterations):
             sc.measure_all_stablizers()
             sc.apply_measurement_error(q)
             lc.add()
-        sc.measure_all_stablizers()
-        lc.add()
+        # sc.measure_all_stablizers()
+        # lc.add()
     else:
         sc.apply_qubit_error(p, 0)
         sc.measure_all_stablizers()
         lc.add()
+
+    sc.plot("star")
 
     # Noisy measurements
     # for t in range(cycles):
@@ -76,20 +78,25 @@ for i in range(iterations):
     anyons_star, anyons_plaq = lc.find_anyons_all()
 
     # Decode
-    match_star = matching.match_cheat(distance, anyons_star, topology,
-                                "star", weights=[1, 1])
-    match_plaq = matching.match_cheat(distance, anyons_plaq, topology,
-                                "plaq", weights=[1, 1])
-    # sc.plot("star")
-    # sc.plot("plaq")
+    match_star = matching.match(distance, anyons_star, topology,
+                                "star", time=cycles, weights=[1, 1])
+    match_plaq = matching.match(distance, anyons_plaq, topology,
+                                "plaq", time=cycles, weights=[1, 1])
+
+    # match_star = matching.match_cheat(distance, anyons_star, topology,
+    #                                   "star", weights=[1, 1])
+    # match_plaq = matching.match_cheat(distance, anyons_plaq, topology,
+    #                                   "plaq", weights=[1, 1])
     pre_correction = sc.qubits.copy()
 
     # Apply corrections
     sc.correct_error("star", match_star)
     sc.correct_error("plaq", match_plaq)
+    sc.plot("star")
+    # sc.plot("plaq")
 
     # Round of perfect detection to eliminate stray errors
-    if NOISY_MEASUREMENT:
+    if PERFECT_LAST_ROUND:
         lc.reset()
         sc.measure_all_stablizers()
         lc.add()
@@ -111,7 +118,7 @@ for i in range(iterations):
     # Measure logical qubit
     logical = sc.measure_logical()
 
-    # sc.plot("star")
+    sc.plot("star")
     # sc.plot("plaq")
     # plt.show()
 

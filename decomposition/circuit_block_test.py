@@ -1,3 +1,10 @@
+"""
+Test file for the functions on Circuit Block.
+
+author: Eduardo Villasenor
+created-on: 20/11/17
+"""
+
 import qutip as qt
 import circuit_block
 import error_models as errs
@@ -44,10 +51,3 @@ p, check, rho = cb.start_epl()
 print("p_success: ", p)
 print("check: ", check)
 print("F: ", qt.fidelity(rho, rho_ref))
-
-# print("------------------TWO DOTS-------------------")
-# n, rho = cb.generate_bell_pair()
-# p, n, rho = cb.two_dots(rho, [0, 1], "X")
-# print("p_success: ", p)
-# print("n steps: ", n)
-# print("F: ", qt.fidelity(rho, rho_ref))

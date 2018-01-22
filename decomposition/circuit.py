@@ -31,7 +31,7 @@ class Circuit:
         self.a1 = a1
 
     def run(self, rho, p_parent=1, check_parent=collections.Counter({})):
-        """Main function to run circuits."""
+        """Main function to run circuits recurively."""
         # First run self circuit
         p_success, check, rho = self.circuit(rho, **self.circuit_kwargs)
 
@@ -46,7 +46,7 @@ class Circuit:
         else:
             # If this is the end of the dependency calculate success event
             # starts from 0, where 0 means success on the first try
-            n_extra_attempts = self.success_number_of_tries(p_success)
+            n_extra_attempts = self._number_of_attempts(p_success)
 
             if n_extra_attempts != 0:
                 for k in check:
@@ -118,11 +118,10 @@ class Circuit:
         else:
             self.subcircuit.add_circuit(circuit_block, **kwargs)
 
-    def success_number_of_tries(self, p_success):
-        """
-        Draw a number of attempts according to the Distribution
-        """
-        # Up to 20 tries for success
+    def _number_of_attempts(self, p_success):
+        # Draw a number of attempts according to the Distribution
+
+        # Up to 1000 tries for success
         i = np.arange(1000)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]

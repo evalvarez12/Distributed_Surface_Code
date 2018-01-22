@@ -1,5 +1,6 @@
 """
-Individual circuits involved in the different steps of purification protocols.
+Individual circuits involved the remote generation of entanglement
+and in different steps of purification protocols.
 
 author: Eduardo Villasenor
 created-on: 20/11/17
@@ -64,10 +65,13 @@ class Blocks:
         self._reset_check()
 
     def _reset_check(self):
+        """Reset to 0 all vaulues from check."""
         # Reset check dictionary
         self.check = collections.Counter(dict.fromkeys(self.check, 0))
 
     def _generate_bell_single_click(self):
+        # Generate a Bell pair using the single click protocol.
+        # Only takes into account the error introducced by photon loss.
         # Probaility of success
         s = np.sin(self.theta)**2
         c = np.cos(self.theta)**2
@@ -86,6 +90,7 @@ class Blocks:
         return time, bell
 
     def _generate_bell_pair_BK(self):
+        # Generate a Bell pair using the Barret-Kok protocol.
         # Probaility of success
         s = np.sin(self.theta)**2
         r = (1 - self.eta)*s/(1 - self.eta*s)
@@ -103,6 +108,8 @@ class Blocks:
         return time, bell
 
     def _generate_noisy_plus(self):
+        # Prepare a noisy |+> state, error is the same
+        # as measurement error.
         # This circuit time
         # NOTE: Used time of a single qubit gate
         time = self.time_lookup["single_qubit_gate"]
@@ -117,8 +124,11 @@ class Blocks:
         return time, plus
 
     def _success_number_of_attempts(self, p_success):
-        # Up to 20 tries for success
-        i = np.arange(10000)
+        # Draw a number from the Distribution to simulate
+        # the number of attempts required until success.
+        # Up to 10000 tries for success
+        # NOTE: This is expensive, adjust manually as required 
+        i = np.arange(1000000)
         # print(p_success)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
@@ -130,6 +140,7 @@ class Blocks:
         return p*(1-p)**n
 
     def _append_noisy_plus(self, rho):
+        # Append noisy |+> state to the total state rho
         # Generate noisy plus
         time, plus = self.generate_noisy_plus()
 
@@ -140,6 +151,7 @@ class Blocks:
         return rho
 
     def _append_bell_pair(self, rho):
+        # Append single click Bell pair state to the total state rho
         # Generate raw Bell pair to the state.
         time, bell = self._generate_bell_single_click()
         self.check["time"] += time
@@ -152,7 +164,11 @@ class Blocks:
         return rho
 
     def _append_epl(self, rho):
+        # Append a Bell pair generated using the EPL protocol to the
+        # total state rho
+        # Copy a backup of the check dictS
         check_backup = self.check.copy()
+        # Get EPl and number of attempts
         p_success, _, rho_epl = self.start_epl()
         attempts = self._success_number_of_attempts(p_success) + 1
 
@@ -168,7 +184,7 @@ class Blocks:
         return rho
 
     def _get_two_qubit_gates(self, N, controls, targets, sigma):
-        # Construct two qubit Control type of gates.
+        # Construct two qubit C-sigma gates.
         gates = []
         if sigma == "X":
             for i in range(len(controls)):
@@ -193,10 +209,11 @@ class Blocks:
         return rho
 
     def _swap_noise(self, rho, pos):
-        N = len(rho.dims[0])
+        # Apply the noise induced by the one way SWAP gate
         # NOTE: use only two CNOTs to perform a SWAP
         # Swap noise is only single qubit gate because one of the states
         # because a one way Swap gate is used
+        N = len(rho.dims[0])
 
         # Apply noise
         for i in range(2):
@@ -204,6 +221,7 @@ class Blocks:
         return rho
 
     def _swap_pair(self, rho, pair):
+        # Apply the noise due to SWAP on two states
         # NOTE: use only two CNOTs to perform a SWAP
         self.check["two_qubit_gate"] += 2
         self.check["time"] += self.time_lookup["two_qubit_gate"]*2
@@ -302,7 +320,7 @@ class Blocks:
         return rho
 
     def start_bell_pair(self, rho=None):
-        """Start with a raw Bell pair to the state."""
+        """Start with a raw Bell pair using the single click protocol."""
         self._reset_check()
         time, bell = self._generate_bell_single_click()
         self.check["time"] += time
@@ -310,7 +328,7 @@ class Blocks:
         return 1, self.check, bell
 
     def start_BK(self, rho=None):
-        """Start with a raw Bell pair to the state."""
+        """Circuit that generates a Bell pair from the Barret-Kok protocol."""
         self._reset_check()
         time, bell = self._generate_bell_pair_BK()
         self.check["time"] += time
@@ -318,7 +336,7 @@ class Blocks:
         return 1, self.check, bell
 
     def start_epl(self, rho=None):
-        """Start by doing a round of the EPL protocol."""
+        """Circuit that generates a Bell pair using the EPL protocol."""
         self._reset_check()
         # Generate two raw Bell pairs
         time1, bell1 = self._generate_bell_single_click()

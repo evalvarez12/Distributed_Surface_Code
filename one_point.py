@@ -68,7 +68,7 @@ pg = 0.003
 # a1 = 1/80.
 # protocol = "GHZ"
 theta = .24
-NOISY_MEASUREMENT = False
+PERFECT_LAST_ROUND = False
 
 # Set parameters
 distance = int(args["distance"])
@@ -143,7 +143,7 @@ for i in range(iterations):
     sc.correct_error("plaq", match_plaq)
 
     # Round of perfect detection to eliminate stray errors
-    if NOISY_MEASUREMENT:
+    if PERFECT_LAST_ROUND:
         lc.reset()
         sc.measure_all_stablizers()
         lc.add()

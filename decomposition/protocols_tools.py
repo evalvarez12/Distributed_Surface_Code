@@ -4,13 +4,11 @@ Routines for creating the protocols: EXPEDIENT, STRINGENT and MONOLITHIC
 import qutip as qt
 import numpy as np
 import itertools
-# from . import error_models as errs
-# from . import operations as ops
 import error_models as errs
 import operations as ops
 
 
-class ProtocolsTools:
+class Tools:
     """
     Class for holding all protocols.
 
