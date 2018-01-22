@@ -144,6 +144,17 @@ def bell_pair(p):
     # return H*W*H.dag()
     return W
 
+
+def bell_pair_click(eta, theta):
+    """Return a Bell pair generated using the single click protocol."""
+    s = np.sin(theta)**2
+    r = ((1 - eta)*s)/(1 - eta*s)
+    state = qt.bell_state('01') * qt.bell_state('01').dag()
+    noise = qt.tensor(qt.basis(2, 1), qt.basis(2, 1))
+    noise = noise * noise.dag()
+    return (1-r)*state + r*noise
+
+
 def generate_noisy_ghz(F, N):
     """Generate a noisy GHZ state of a given fidelity."""
     # p = 1 - F

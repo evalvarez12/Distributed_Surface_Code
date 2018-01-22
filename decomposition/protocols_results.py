@@ -45,7 +45,7 @@ TIMES = []
 # for a0 in [12., 10., 8., 6., 4., 2.]:
 # for a0 in [40., 30., 20., 10., 5., 2.]:
 for nada in [1]:
-    ghz = protocols.BK_4(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.purification_simple_4(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []

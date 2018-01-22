@@ -14,22 +14,23 @@ def EPL_4(ps, pm, pg, a0, a1, eta, theta):
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
     # First assemeble the small single selection circuit
-    single_sel_simple2 = circuit.Circuit(a0=a0, a1=a1,
-                                         circuit_block=cb.start_epl)
+    add_EPL = circuit.Circuit(a0=a0, a1=a1,
+                              circuit_block=cb.start_epl)
+    wrap_EPL_parallel = circuit.Circuit(a0=a0, a1=a1,
+                                        circuit_block=add_EPL.run_parallel)
 
-    wrap_single_sel_simple2 = circuit.Circuit(a0=a0, a1=a1,
-                                              circuit_block=single_sel_simple2.run_parallel)
+    start_EPL = circuit.Circuit(a0=a0, a1=a1,
+                                circuit_block=cb.start_epl)
 
-    single_sel_simple1 = circuit.Circuit(a0=a0, a1=a1,
-                                         circuit_block=cb.start_epl)
-
+    start_EPL.add_circuit(circuit_block=cb.swap_pair,
+                          pair=[0, 1])
 
     # Phase 1 - Purify Bell pair
     ghz = circuit.Circuit(a0=a0, a1=a1,
-                          circuit_block=single_sel_simple1.run_parallel)
+                          circuit_block=start_EPL.run_parallel)
 
     # Phase 2 - Create GHZ
-    ghz.add_circuit(circuit_block=wrap_single_sel_simple2.append_circuit)
+    ghz.add_circuit(circuit_block=wrap_EPL_parallel.append_circuit)
     ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
                     targets=[1, 3, 0, 2], sigma="Z")
     ghz.add_circuit(circuit_block=cb.collapse_ancillas_X,
@@ -39,6 +40,31 @@ def EPL_4(ps, pm, pg, a0, a1, eta, theta):
     # Return the completed circuit
     return ghz
 
+def EPL_4_simplified(ps, pm, pg, a0, a1, eta, theta):
+
+    # Initialize the circuit block object
+    cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+    # First assemeble the small single selection circuit
+    start_EPL = circuit.Circuit(a0=a0, a1=a1,
+                                circuit_block=cb.start_epl)
+
+    start_EPL.add_circuit(circuit_block=cb.swap_pair,
+                          pair=[0, 1])
+
+    # Phase 1 - Purify Bell pair
+    ghz = circuit.Circuit(a0=a0, a1=a1,
+                          circuit_block=start_EPL.run_parallel)
+
+    # Phase 2 - Create GHZ
+    ghz.add_circuit(circuit_block=start_EPL.append_circuit)
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1, 3],
+                    targets=[4, 5], sigma="X")
+    ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
+                    ancillas_pos=[4, 5],
+                    projections=[0, 0])
+
+    # Return the completed circuit
+    return ghz
 
 
 def BK_4(ps, pm, pg, a0, a1, eta, theta):
@@ -46,22 +72,22 @@ def BK_4(ps, pm, pg, a0, a1, eta, theta):
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 
     # First assemeble the small single selection circuit
-    single_sel_simple2 = circuit.Circuit(a0=a0, a1=a1,
-                                         circuit_block=cb.start_BK)
-    single_sel_simple2.add_circuit(circuit_block=cb.swap_pair,
-                                   pair=[0, 1])
-    wrap_single_sel_simple2 = circuit.Circuit(a0=a0, a1=a1,
-                                              circuit_block=single_sel_simple2.run_parallel)
+    start_BK = circuit.Circuit(a0=a0, a1=a1,
+                               circuit_block=cb.start_BK)
+    start_BK.add_circuit(circuit_block=cb.swap_pair,
+                         pair=[0, 1])
 
-    single_sel_simple1 = circuit.Circuit(a0=a0, a1=a1,
-                                         circuit_block=cb.start_BK)
+    add_BK = circuit.Circuit(a0=a0, a1=a1,
+                             circuit_block=cb.start_BK)
+    wrap_BK_parallel = circuit.Circuit(a0=a0, a1=a1,
+                                       circuit_block=add_BK.run_parallel)
 
     # Phase 1 - Purify Bell pair
     ghz = circuit.Circuit(a0=a0, a1=a1,
-                          circuit_block=single_sel_simple1.run_parallel)
+                          circuit_block=start_BK.run_parallel)
 
     # Phase 2 - Create GHZ
-    ghz.add_circuit(circuit_block=wrap_single_sel_simple2.append_circuit)
+    ghz.add_circuit(circuit_block=wrap_BK_parallel.append_circuit)
     ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
                     targets=[1, 3, 0, 2], sigma="Z")
     ghz.add_circuit(circuit_block=cb.collapse_ancillas_X,
@@ -112,6 +138,32 @@ def BK_3(ps, pm, pg, a0, a1, eta, theta):
 
     # Phase 2 - Create GHZ
     ghz.add_circuit(circuit_block=start_BK.append_circuit)
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1],
+                    targets=[2], sigma="X")
+    ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
+                    ancillas_pos=[2],
+                    projections=[0])
+
+    # Return the completed circuit
+    return ghz
+
+def EPL_3(ps, pm, pg, a0, a1, eta, theta):
+    # Initialize the circuit block object
+    cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+
+    # First assemeble the small single selection circuit
+    start_EPL = circuit.Circuit(a0=a0, a1=a1,
+                               circuit_block=cb.start_EPL)
+    start_EPL.add_circuit(circuit_block=cb.swap_pair,
+                         pair=[0, 1])
+
+
+    # Phase 1 - Purify Bell pair
+    ghz = circuit.Circuit(a0=a0, a1=a1,
+                          circuit_block=cb.start_EPL)
+
+    # Phase 2 - Create GHZ
+    ghz.add_circuit(circuit_block=start_EPL.append_circuit)
     ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1],
                     targets=[2], sigma="X")
     ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
@@ -182,7 +234,6 @@ def purification_medium_4(ps, pm, pg, a0, a1, eta, theta):
 
     wrap_single_sel_medium2 = circuit.Circuit(a0=a0, a1=a1,
                                               circuit_block=single_sel_medium2.run_parallel)
-
 
     single_sel_medium1 = circuit.Circuit(a0=a0, a1=a1,
                                          circuit_block=cb.start_epl)
