@@ -12,22 +12,29 @@ import circuit_block
 import circuit
 import protocols_tools
 import protocols
+import names
 
 # Determine parameters
+# Very optimisitc gate and measurement paramterss
 ps = 0.003
 pm = 0.003
 pg = 0.003
+
+# Rajas optimistic entanglement and enviroment parameters
+# a1 = 1/3.
+# a0 = 83.33
+# eta = (0.1)*(0.03)*(0.8)
+
+# My very optimistic parameters
 a0 = 8.0
 a1 = 1/80.
 eta = 1/100.
+
+# Theta to optimize entanglement generation
 theta = .24
 
-# a1 = 1/3.
-# eta = (0.1)*(0.03)*(0.8)
-# a0 = 83.33
-
 # Number of iterations for a average
-iterations = 50
+iterations = 500
 
 # Initialize objects and define references
 cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
@@ -42,10 +49,11 @@ FIDELITY = []
 TIMES = []
 
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
-# for a0 in [12., 10., 8., 6., 4., 2.]:
 # for a0 in [40., 30., 20., 10., 5., 2.]:
-for nada in [1]:
-    ghz = protocols.purification_simple_4(ps, pm, pg, eta, a0, a1, theta)
+# for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
+for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
+    print("------> Var=", a0)
+    ghz = protocols.EPL_4_simplified(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -63,7 +71,11 @@ for nada in [1]:
     rho = rho/iterations
     print("F: ", np.average(fidelity), np.std(fidelity))
     print("TIMES:", np.average(times), np.std(times))
-    # FIDELITY += [(np.average(fidelity), np.std(fidelity))]
-    # TIMES += [(np.average(times), np.std(times))]
+    FIDELITY += [(np.average(fidelity), np.std(fidelity))]
+    TIMES += [(np.average(times), np.std(times))]
     # name = "ghz_3_eta_" + str(round(eta, 3))
-    # qt.qsave(rho, name)
+    name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, "EPL")
+    qt.qsave(rho, name)
+
+np.save("Fidelity_Mine_var=a0_epl.npy", FIDELITY)
+np.save("Times_Mine_var=a0_epl.npy", TIMES)

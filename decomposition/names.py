@@ -36,7 +36,7 @@ def ghz(ps, pm, pg, eta, a0, a1, theta, size, protocol):
     file_name = ["GHZ", protocol, str(size)]
     file_name = "_".join(file_name)
     # The address of the parent directory
-    script_path = dirname(dirname(realpath(__file__)))
+    script_path = dirname(realpath(__file__))
     file_name = (script_path + "/data/" + file_name
-                 + "_" + param_names + ".dict")
+                 + "_" + param_names)
     return file_name

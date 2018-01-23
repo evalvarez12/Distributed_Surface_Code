@@ -9,7 +9,7 @@ import circuit_block
 import circuit
 
 
-def EPL_4(ps, pm, pg, a0, a1, eta, theta):
+def EPL_4(ps, pm, pg, eta, a0, a1, theta):
 
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
@@ -40,7 +40,7 @@ def EPL_4(ps, pm, pg, a0, a1, eta, theta):
     # Return the completed circuit
     return ghz
 
-def EPL_4_simplified(ps, pm, pg, a0, a1, eta, theta):
+def EPL_4_simplified(ps, pm, pg, eta, a0, a1, theta):
 
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
@@ -67,7 +67,7 @@ def EPL_4_simplified(ps, pm, pg, a0, a1, eta, theta):
     return ghz
 
 
-def BK_4(ps, pm, pg, a0, a1, eta, theta):
+def BK_4(ps, pm, pg, eta, a0, a1, theta):
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 
@@ -97,7 +97,7 @@ def BK_4(ps, pm, pg, a0, a1, eta, theta):
     # Return the completed circuit
     return ghz
 
-def BK_4_simplified(ps, pm, pg, a0, a1, eta, theta):
+def BK_4_simplified(ps, pm, pg, eta, a0, a1, theta):
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 
@@ -121,7 +121,7 @@ def BK_4_simplified(ps, pm, pg, a0, a1, eta, theta):
     # Return the completed circuit
     return ghz
 
-def BK_3(ps, pm, pg, a0, a1, eta, theta):
+def BK_3(ps, pm, pg, eta, a0, a1, theta):
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 
@@ -147,7 +147,7 @@ def BK_3(ps, pm, pg, a0, a1, eta, theta):
     # Return the completed circuit
     return ghz
 
-def EPL_3(ps, pm, pg, a0, a1, eta, theta):
+def EPL_3(ps, pm, pg, eta, a0, a1, theta):
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 
@@ -174,7 +174,7 @@ def EPL_3(ps, pm, pg, a0, a1, eta, theta):
     return ghz
 
 
-def purification_simple_4(ps, pm, pg, a0, a1, eta, theta):
+def purification_simple_4(ps, pm, pg, eta, a0, a1, theta):
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 
@@ -214,7 +214,7 @@ def purification_simple_4(ps, pm, pg, a0, a1, eta, theta):
     return ghz
 
 
-def purification_medium_4(ps, pm, pg, a0, a1, eta, theta):
+def purification_medium_4(ps, pm, pg, eta, a0, a1, theta):
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 
@@ -261,7 +261,7 @@ def purification_medium_4(ps, pm, pg, a0, a1, eta, theta):
     # Return the completed circuit
     return ghz
 
-def purification_complex_4(ps, pm, pg, a0, a1, eta, theta):
+def purification_complex_4(ps, pm, pg, eta, a0, a1, theta):
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 

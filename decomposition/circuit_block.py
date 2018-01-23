@@ -127,8 +127,8 @@ class Blocks:
         # Draw a number from the Distribution to simulate
         # the number of attempts required until success.
         # Up to 10000 tries for success
-        # NOTE: This is expensive, adjust manually as required 
-        i = np.arange(1000000)
+        # NOTE: This is expensive, adjust manually as required
+        i = np.arange(100000)
         # print(p_success)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
