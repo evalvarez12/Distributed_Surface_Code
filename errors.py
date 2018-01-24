@@ -52,7 +52,7 @@ class Generator:
         file_name = ["CHI", protocol, parity, str(stab_size)]
         file_name = "_".join(file_name)
         # The address of the parent directory
-        script_path = dirname(dirname(realpath(__file__)))
+        script_path = dirname(realpath(__file__))
         file_name = (script_path + "/data/" + file_name
                      + "_" + param_names + ".dict")
         return file_name
