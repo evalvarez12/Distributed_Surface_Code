@@ -12,7 +12,6 @@ from mpi4py import MPI
 import surface_code
 import layers
 import matching
-import tools
 
 
 def lambda_env(t, a0, a1):
