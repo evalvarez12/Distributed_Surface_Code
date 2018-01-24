@@ -189,7 +189,7 @@ if comm.rank == 0:
         total = total/float(size)
         # print("size: ", size)
         # print("id: ", rank)
-        args_str = get_file_name_pq(args)
+        args_str = get_file_name(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)
         print(file_name)
