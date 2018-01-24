@@ -34,7 +34,7 @@ eta = 1/100.
 theta = .24
 
 # Number of iterations for a average
-iterations = 5000
+iterations = 500
 
 # Initialize objects and define references
 cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
@@ -53,11 +53,11 @@ TIMES = []
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
 for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
     print("------> Var=", a0)
-    ghz = protocols.BK_3(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.purification_simple_3(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
-    rho = ghz_ref*0
+    rho = ghz3_ref*0
     # check = collections.Counter({})
     for i in range(iterations):
         # print(i)
@@ -65,7 +65,7 @@ for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
         times += [c["time"]]
 
         r = pd.twirl_ghz(r)
-        fidelity += [qt.fidelity(r, ghz_ref)]
+        fidelity += [qt.fidelity(r, ghz3_ref)]
 
         rho += r
     rho = rho/iterations
@@ -74,8 +74,8 @@ for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
     FIDELITY += [(np.average(fidelity), np.std(fidelity))]
     TIMES += [(np.average(times), np.std(times))]
     # name = "ghz_3_eta_" + str(round(eta, 3))
-    name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 3, "BK")
-    qt.qsave(rho, name)
+    # name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 3, "BK")
+    # qt.qsave(rho, name)
 
-np.save("Fidelity_Mine_var=a0_bk_ghz3.npy", FIDELITY)
-np.save("Times_Mine_var=a0_bk_ghz3.npy", TIMES)
+np.save("Fidelity_Mine_var=a0_simple_ghz3.npy", FIDELITY)
+np.save("Times_Mine_var=a0_simple_ghz3.npy", TIMES)

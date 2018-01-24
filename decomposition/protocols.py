@@ -214,6 +214,39 @@ def purification_simple_4(ps, pm, pg, eta, a0, a1, theta):
     return ghz
 
 
+def purification_simple_3(ps, pm, pg, eta, a0, a1, theta):
+    # Initialize the circuit block object
+    cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+
+    # First assemeble the small single selection circuit
+    single_sel_simple2 = circuit.Circuit(a0=a0, a1=a1,
+                                         circuit_block=cb.start_epl)
+
+    single_sel_simple2.add_circuit(circuit_block=cb.single_selection,
+                                   operation_qubits=[0, 1],
+                                   sigma="X")
+    # single_sel_simple2.add_circuit(circuit_block=cb.swap_pair,
+    #                                pair=[0, 1])
+
+    # Phase 1 - Purify Bell pair
+    ghz = circuit.Circuit(a0=a0, a1=a1,
+                          circuit_block=cb.start_epl)
+    ghz.add_circuit(circuit_block=cb.single_selection,
+                    operation_qubits=[0, 1],
+                    sigma="X")
+
+    # Phase 2 - Create GHZ
+    ghz.add_circuit(circuit_block=single_sel_simple2.append_circuit)
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1],
+                    targets=[2], sigma="X")
+    ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
+                    ancillas_pos=[2],
+                    projections=[0])
+
+    # Return the completed circuit
+    return ghz
+
+
 def purification_medium_4(ps, pm, pg, eta, a0, a1, theta):
     # Initialize the circuit block object
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
