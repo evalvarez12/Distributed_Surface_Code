@@ -57,7 +57,7 @@ for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
     # Get average number of steps
     fidelity = []
     times = []
-    rho = ghz_ref*0
+    rho = ghz3_ref*0
     # check = collections.Counter({})
     for i in range(iterations):
         # print(i)
@@ -65,7 +65,7 @@ for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
         times += [c["time"]]
 
         r = pd.twirl_ghz(r)
-        fidelity += [qt.fidelity(r, ghz_ref)]
+        fidelity += [qt.fidelity(r, ghz3_ref)]
 
         rho += r
     rho = rho/iterations
