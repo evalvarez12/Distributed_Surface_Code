@@ -53,7 +53,7 @@ TIMES = []
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
 for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
     print("------> Var=", a0)
-    ghz = protocols.BK_4_simplified(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.BK_3(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -74,8 +74,8 @@ for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
     FIDELITY += [(np.average(fidelity), np.std(fidelity))]
     TIMES += [(np.average(times), np.std(times))]
     # name = "ghz_3_eta_" + str(round(eta, 3))
-    name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, "BK")
+    name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 3, "BK")
     qt.qsave(rho, name)
 
-np.save("Fidelity_Mine_var=a0_bk.npy", FIDELITY)
-np.save("Times_Mine_var=a0_bk.npy", TIMES)
+np.save("Fidelity_Mine_var=a0_bk_ghz3.npy", FIDELITY)
+np.save("Times_Mine_var=a0_bk_ghz3.npy", TIMES)
