@@ -12,6 +12,7 @@ from mpi4py import MPI
 import surface_code
 import layers
 import matching
+import tools
 
 
 def lambda_env(t, a0, a1):
@@ -74,15 +75,15 @@ PERFECT_LAST_ROUND = False
 distance = int(args["distance"])
 topology = args["topology"]
 iterations = int(args["iterations"])
-# a0 = float(args["a0"])
-# a1 = float(args["a1"])
+a0 = float(args["a0"])
+a1 = float(args["a1"])
 cycles = int(args["cycles"])
-# eta = float(args["eta"])
+eta = float(args["eta"])
 protocol = args["protocol"]
-# t = float(args["time"])
+t = float(args["time"])
 
-p = float(args["p"])
-q = float(args["q"])
+# p = float(args["p"])
+# q = float(args["q"])
 
 
 
@@ -95,35 +96,37 @@ fail_rate = 0
 # Initialize objects
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
-# sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
+sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Set time for each GHZ generation
 # t = 0.30347
-# lamb = lambda_env(t, 0, a1)
+lamb = lambda_env(t, 0, a1)
 
 # Perform measurements
 for i in range(iterations):
 
     # Errors and measurements
-    if q != 0:
-        for t in range(cycles):
-            sc.apply_qubit_error(p, 0)
-            sc.measure_all_stablizers()
-            sc.apply_measurement_error(q)
-            lc.add()
-        sc.measure_all_stablizers()
-        lc.add()
-    else:
-        sc.apply_qubit_error(p, 0)
-        sc.measure_all_stablizers()
-        lc.add()
+    # if q != 0:
+    #     for t in range(cycles):
+    #         sc.apply_qubit_error(p, 0)
+    #         sc.measure_all_stablizers()
+    #         sc.apply_measurement_error(q)
+    #         lc.add()
+    #     sc.measure_all_stablizers()
+    #     lc.add()
+    # else:
+    #     sc.apply_qubit_error(p, 0)
+    #     sc.measure_all_stablizers()
+    #     lc.add()
 
     # Noisy measurements
-    # for t in range(cycles):
-    #     # sc.noisy_measurement("star")
-    #     # sc.noisy_measurement("plaq")
-    #     sc.noisy_measurement_cycle(lamb)
-    #     lc.add()
+    for t in range(cycles):
+        # sc.noisy_measurement("star")
+        # sc.noisy_measurement("plaq")
+        sc.noisy_measurement_cycle(lamb)
+        lc.add()
+    sc.measure_all_stablizers()
+    lc.add()
 
     # Get anyons
     anyons_star, anyons_plaq = lc.find_anyons_all()
@@ -185,11 +188,11 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if comm.rank == 0:
         total = total/float(size)
-        print("size: ", size)
-        print("id: ", rank)
-        print("TOTAL FAIL RATE: ", total)
+        # print("size: ", size)
+        # print("id: ", rank)
         args_str = get_file_name_pq(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)
         print(file_name)
+        print("TOTAL FAIL RATE: ", total)
         np.save(file_name, total)

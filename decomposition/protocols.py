@@ -153,14 +153,14 @@ def EPL_3(ps, pm, pg, eta, a0, a1, theta):
 
     # First assemeble the small single selection circuit
     start_EPL = circuit.Circuit(a0=a0, a1=a1,
-                               circuit_block=cb.start_EPL)
+                               circuit_block=cb.start_epl)
     start_EPL.add_circuit(circuit_block=cb.swap_pair,
                          pair=[0, 1])
 
 
     # Phase 1 - Purify Bell pair
     ghz = circuit.Circuit(a0=a0, a1=a1,
-                          circuit_block=cb.start_EPL)
+                          circuit_block=cb.start_epl)
 
     # Phase 2 - Create GHZ
     ghz.add_circuit(circuit_block=start_EPL.append_circuit)

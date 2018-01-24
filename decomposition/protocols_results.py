@@ -7,9 +7,6 @@ created-on: 21/11/17
 
 import numpy as np
 import qutip as qt
-import collections
-import circuit_block
-import circuit
 import protocols_tools
 import protocols
 import names
@@ -37,7 +34,6 @@ theta = .24
 iterations = 500
 
 # Initialize objects and define references
-cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
 rho_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
@@ -53,7 +49,7 @@ TIMES = []
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
 for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
     print("------> Var=", a0)
-    ghz = protocols.purification_simple_3(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.EPL_3(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -77,5 +73,5 @@ for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
     # name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 3, "BK")
     # qt.qsave(rho, name)
 
-np.save("Fidelity_Mine_var=a0_simple_ghz3.npy", FIDELITY)
-np.save("Times_Mine_var=a0_simple_ghz3.npy", TIMES)
+np.save("Fidelity_Mine_var=a0_epl_ghz3.npy", FIDELITY)
+np.save("Times_Mine_var=a0_epl_ghz3.npy", TIMES)
