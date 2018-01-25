@@ -18,20 +18,20 @@ pm = 0.003
 pg = 0.003
 
 # Rajas optimistic entanglement and enviroment parameters
-# a1 = 1/3.
-# a0 = 83.33
-# eta = (0.1)*(0.03)*(0.8)
+a1 = 1/3.
+a0 = 83.33
+eta = (0.1)*(0.03)*(0.8)
 
 # My very optimistic parameters
-a0 = 8.0
-a1 = 1/80.
-eta = 1/100.
+# a0 = 8.0
+# a1 = 1/80.
+# eta = 1/100.
 
 # Theta to optimize entanglement generation
 theta = .24
 
 # Number of iterations for a average
-iterations = 500
+iterations = 50
 
 # Initialize objects and define references
 rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
@@ -46,10 +46,10 @@ TIMES = []
 
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
 # for a0 in [40., 30., 20., 10., 5., 2.]:
-# for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
-for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
-    print("------> Var=", a0)
-    ghz = protocols.EPL_3(ps, pm, pg, eta, a0, a1, theta)
+for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
+# for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
+    print("------> Var=", a0 + extra)
+    ghz = protocols.BK_3(ps, pm, pg, eta, a0 + extra, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -73,5 +73,5 @@ for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
     # name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 3, "BK")
     # qt.qsave(rho, name)
 
-np.save("Fidelity_Mine_var=a0_epl_ghz3.npy", FIDELITY)
-np.save("Times_Mine_var=a0_epl_ghz3.npy", TIMES)
+np.save("Fidelity_Rajas_var=a0_bk_ghz3.npy", FIDELITY)
+np.save("Times_Rajas_var=a0_bk_ghz3.npy", TIMES)

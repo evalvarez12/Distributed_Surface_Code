@@ -128,7 +128,7 @@ class Blocks:
         # the number of attempts required until success.
         # Up to 10000 tries for success
         # NOTE: This is expensive, adjust manually as required
-        i = np.arange(100000)
+        i = np.arange(10000000)
         # print(p_success)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
