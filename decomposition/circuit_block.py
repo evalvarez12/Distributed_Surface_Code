@@ -269,6 +269,35 @@ class Blocks:
 
         return p_success, rho
 
+    def _collapse_ancillas_EPL(self, rho, ancillas_pos):
+        # For the special EPL case
+        # Measure the ancillas in the Z basis in parallel in each node.
+        # NOTE: All ancillas are collapsed in parallel, Hadamard operations
+        # are used to measure on X basis
+        self.check["measurement"] += 1
+
+        time = self.time_lookup["measurement"]
+        self.check["time"] += time
+        self.check["time1"] += time
+        # Apply environmental error
+        rho = errs.env_error_all(rho, 0, self.a1, time)
+
+        N_ancillas = len(ancillas_pos)
+        if N_ancillas != 2:
+            raise ValueError("EPL ancillas collapse: Bad number of ancillas")
+        p_success = ops.p_success_epl(rho, N=4, ancillas_pos=ancillas_pos)
+        projections = [1, 1]
+
+        # Collapse the qubits in parrallel
+        # Sort list to be able to reduce dimension and keep track of positions
+        ancillas_pos = sorted(ancillas_pos)
+        for i in range(N_ancillas):
+            pos = ancillas_pos[i] - i
+            rho = self._collapse_single(rho, pos,
+                                        projections[i], "Z")
+        return p_success, rho
+
+
     def _collapse_ancillas_Z(self, rho, ancillas_pos, projections):
         # Measure the ancillas in the X basis in parallel in each node.
         # NOTE: All ancillas are collapsed in parallel, Hadamard operations
@@ -286,9 +315,6 @@ class Blocks:
             N = len(rho.dims[0])
             p_success = ops.p_measurement_single_Zbasis(rho, projections[0],
                                                         N, ancillas_pos[0])
-        # EPL success probability
-        elif N_ancillas == 2 and projections == [1, 1]:
-            p_success = ops.p_success_epl(rho, N=4, ancillas_pos=ancillas_pos)
         else:
             p_success = 1
 
@@ -361,7 +387,7 @@ class Blocks:
 
         # Measure ancillas in Z basis
         projections = [1] * 2
-        p_success, rho = self._collapse_ancillas_Z(rho, targets, projections)
+        p_success, rho = self._collapse_ancillas_EPL(rho, targets)
         return p_success, self.check, rho
 
     def add_bell_pair(self, rho):

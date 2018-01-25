@@ -31,9 +31,9 @@ def EPL_4(ps, pm, pg, eta, a0, a1, theta):
 
     # Phase 2 - Create GHZ
     ghz.add_circuit(circuit_block=wrap_EPL_parallel.append_circuit)
-    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
-                    targets=[1, 3, 0, 2], sigma="Z")
-    ghz.add_circuit(circuit_block=cb.collapse_ancillas_X,
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1, 3, 0, 2],
+                    targets=[4, 5, 6, 7], sigma="X")
+    ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
                     ancillas_pos=[4, 5, 6, 7],
                     projections=[0, 0, 0, 0])
 
@@ -88,9 +88,9 @@ def BK_4(ps, pm, pg, eta, a0, a1, theta):
 
     # Phase 2 - Create GHZ
     ghz.add_circuit(circuit_block=wrap_BK_parallel.append_circuit)
-    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
-                    targets=[1, 3, 0, 2], sigma="Z")
-    ghz.add_circuit(circuit_block=cb.collapse_ancillas_X,
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1, 3, 0, 2],
+                    targets=[4, 5, 6, 7], sigma="X")
+    ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
                     ancillas_pos=[4, 5, 6, 7],
                     projections=[0, 0, 0, 0])
 
@@ -204,9 +204,9 @@ def purification_simple_4(ps, pm, pg, eta, a0, a1, theta):
 
     # Phase 2 - Create GHZ
     ghz.add_circuit(circuit_block=wrap_single_sel_simple2.append_circuit)
-    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
-                    targets=[1, 3, 0, 2], sigma="Z")
-    ghz.add_circuit(circuit_block=cb.collapse_ancillas_X,
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1, 3, 0, 2],
+                    targets=[4, 5, 6, 7], sigma="X")
+    ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
                     ancillas_pos=[4, 5, 6, 7],
                     projections=[0, 0, 0, 0])
 
@@ -285,9 +285,9 @@ def purification_medium_4(ps, pm, pg, eta, a0, a1, theta):
 
     # Phase 2 - Create GHZ
     ghz.add_circuit(circuit_block=wrap_single_sel_medium2.append_circuit)
-    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
-                    targets=[1, 3, 0, 2], sigma="Z")
-    ghz.add_circuit(circuit_block=cb.collapse_ancillas_X,
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1, 3, 0, 2],
+                    targets=[4, 5, 6, 7], sigma="X")
+    ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
                     ancillas_pos=[4, 5, 6, 7],
                     projections=[0, 0, 0, 0])
 
@@ -356,10 +356,9 @@ def purification_complex_4(ps, pm, pg, eta, a0, a1, theta):
 
     # Phase 2 - Create GHZ
     ghz.add_circuit(circuit_block=wrap_single_sel_medium2.append_circuit)
-    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[4, 5, 6, 7],
-                    targets=[1, 3, 0, 2], sigma="Z")
-
-    ghz.add_circuit(circuit_block=cb.collapse_ancillas_X,
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1, 3, 0, 2],
+                    targets=[4, 5, 6, 7], sigma="X")
+    ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
                     ancillas_pos=[4, 5, 6, 7],
                     projections=[0, 0, 0, 0])
 
