@@ -105,6 +105,7 @@ plt.errorbar(thetas, F[:, 0], yerr=F[:, 1], fmt='go-', label=r"EPL")
 plt.plot(thetas, f_one_click(thetas), 'r-',label="One click")
 plt.legend(fontsize=17)
 plt.xticks(fontsize=17)
+plt.yticks(fontsize=17)
 
 
 plt.figure()
@@ -114,6 +115,7 @@ plt.plot(thetas, T[:, 0]/2., 'r-',label="One click")
 plt.xlabel(r"$\theta$", fontsize=17)
 # plt.legend(fontsize=17)
 plt.xticks(fontsize=17)
+plt.yticks(fontsize=17)
 
 #
 plt.figure()
@@ -124,8 +126,9 @@ plt.plot(thetas, 100*p_one_click(thetas), 'r-', label="100xOne click")
 plt.plot(thetas, 500*p_one_click(thetas)*P[:, 0], 'k--' )
 # plt.plot(thetas, 10000*p_bk(thetas), 'k--' )
 plt.xticks(fontsize=17)
-
+plt.yticks(fontsize=17)
 # plt.legend()
+
 # plt.plot(thetas, 500000*p_bk(thetas))
 
 
