@@ -33,10 +33,12 @@ def EPL_4(ps, pm, pg, eta, a0, a1, theta):
     ghz.add_circuit(circuit_block=wrap_EPL_parallel.append_circuit)
     ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1, 3, 0, 2],
                     targets=[4, 5, 6, 7], sigma="X")
-    ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
-                    ancillas_pos=[4, 5, 6, 7],
-                    projections=[0, 0, 0, 0])
-
+    # ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
+    #                 ancillas_pos=[4, 5, 6, 7],
+    #                 projections=[0, 0, 0, 0])
+    ghz.add_circuit(circuit_block=cb.collapse_ancillas_GHZ,
+                    ghz_size=4,
+                    ancillas_pos=[4, 5, 6, 7])
     # Return the completed circuit
     return ghz
 
@@ -59,10 +61,12 @@ def EPL_4_simplified(ps, pm, pg, eta, a0, a1, theta):
     ghz.add_circuit(circuit_block=start_EPL.append_circuit)
     ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1, 3],
                     targets=[4, 5], sigma="X")
-    ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
-                    ancillas_pos=[4, 5],
-                    projections=[0, 0])
-
+    # ghz.add_circuit(circuit_block=cb.collapse_ancillas_Z,
+    #                 ancillas_pos=[4, 5],
+    #                 projections=[0, 0])
+    ghz.add_circuit(circuit_block=cb.collapse_ancillas_GHZ,
+                    ghz_size=4,
+                    ancillas_pos=[4, 5])
     # Return the completed circuit
     return ghz
 

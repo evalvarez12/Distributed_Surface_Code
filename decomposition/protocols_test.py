@@ -10,9 +10,9 @@ import qutip as qt
 import protocols
 
 # Determine parameters
-ps = 0.00
-pm = 0.00
-pg = 0.00
+ps = 0.006
+pm = 0.006
+pg = 0.006
 a0 = 0
 a1 = 0.
 eta = 1
