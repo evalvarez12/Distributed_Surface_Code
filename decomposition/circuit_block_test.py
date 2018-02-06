@@ -15,10 +15,10 @@ import numpy as np
 ps = 0.006
 pm = 0.006
 pg = 0.006
-a0 = 20
-a1 = 1/3.
-eta = 1/1000.
-theta = np.pi/4.
+a0 = 5.
+a1 = 1/80.
+eta = 1/100.
+theta = .24
 # Initialize  objects
 cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 cb_ideal = circuit_block.Blocks(0, 0, 0, 1, 0, 0, np.pi/4.)
@@ -32,14 +32,14 @@ print("check: ", check)
 print("F: ", qt.fidelity(rho, rho_ref))
 
 print("------------------SINGLE SELECTION-------------------")
-_, _, rho = cb.start_bell_pair()
+_, _, rho = cb.start_epl()
 p, check, rho = cb.single_selection(rho, [0, 1], "X")
 print("p_success: ", p)
 print("check: ", check)
 print("F: ", qt.fidelity(rho, rho_ref))
 
 print("------------------DOUBLE SELECTION-------------------")
-_, _, rho = cb.start_bell_pair()
+_, _, rho = cb.start_epl()
 p, check, rho = cb.double_selection(rho, [0, 1], "X")
 print("p_success: ", p)
 print("check: ", check)

@@ -11,6 +11,7 @@ import collections
 import itertools
 import operations as ops
 import error_models as errs
+import p_success as ps
 
 
 class Blocks:
@@ -230,7 +231,7 @@ class Blocks:
         rho = self._swap_noise(rho, pair[1])
         return rho
 
-    def _collapse_ancillas_X(self, rho, ancillas_pos, projections):
+    def _collapse_ancillas_X(self, rho, ancillas_pos, projections, mode="None"):
         # Measure the ancillas in the X basis in parallel in each node.
         # NOTE: All ancillas are collapsed in parallel, Hadamard operations
         # are used to measure on X basis
@@ -248,12 +249,12 @@ class Blocks:
         # in single selection
         N_ancillas = len(ancillas_pos)
         N = len(rho.dims[0])
-        if N_ancillas == 2:
-            p_success = ops.p_success_single_sel(rho, N, ancillas_pos)
-        elif N_ancillas == 4:
+        if mode == "single_selection":
+            p_success = ps.single_sel(rho, N, ancillas_pos)
+        elif mode == "double_selection":
             ancillas_pos1 = ancillas_pos[:2]
             ancillas_pos2 = ancillas_pos[2:]
-            p_success = ops.p_success_double_sel(rho, N,
+            p_success = ps.double_sel(rho, N,
                                                  ancillas_pos1,
                                                  ancillas_pos2)
         else:
@@ -285,7 +286,7 @@ class Blocks:
         N_ancillas = len(ancillas_pos)
         if N_ancillas != 2:
             raise ValueError("EPL ancillas collapse: Bad number of ancillas")
-        p_success = ops.p_success_epl(rho, N=4, ancillas_pos=ancillas_pos)
+        p_success = ps.epl(rho, N=4, ancillas_pos=ancillas_pos)
         projections = [1, 1]
 
         # Collapse the qubits in parrallel
@@ -326,6 +327,41 @@ class Blocks:
             rho = self._collapse_single(rho, pos,
                                         projections[i], "Z")
         return p_success, rho
+
+    def _measure_random_ancillas_Z(self, rho, ancillas_pos):
+        # NOTE: All ancillas are collapsed in parallel
+        self.check["measurement"] += 1
+
+        time = self.time_lookup["measurement"]
+        self.check["time"] += time
+        self.check["time1"] += time
+        # Apply environmental error
+        rho = errs.env_error_all(rho, 0, self.a1, time)
+
+        # Collapse the qubits in parrallel
+        # Sort list to be able to reduce dimension and keep track of positions
+        ancillas_pos = sorted(ancillas_pos)
+        measurements = []
+        for i in range(len(ancillas_pos)):
+            pos = ancillas_pos[i] - i
+            m, rho = self._measure_random_single(rho, pos, "Z")
+            measurements += [m]
+        return measurements, rho
+
+    def _measure_random_single(self, rho, pos, basis):
+        # Measure a single qubit in the state.
+        # NOTE: Dimension is reduced after collapse
+        N = len(rho.dims[0])
+
+        if basis == "X":
+            rho = errs.single_qubit_gate_noise(rho, self.ps, N, pos)
+            measurement, rho = errs.measure_single_Xbasis_random(rho, self.pm,
+                                                                 N, pos)
+        elif basis == "Z":
+            measurement, rho = errs.measure_single_Zbasis_random(rho, self.pm,
+                                                                 N, pos)
+        return rho
+
 
     def _apply_two_qubit_gates(self, rho, controls, targets, sigma):
         # Apply one local two qubit Control type of gates in parallel
@@ -442,6 +478,28 @@ class Blocks:
                                                    projections)
         return p_success, self.check, rho
 
+    def collapse_ancillas_GHZ(self, ghz_size, rho, ancillas_pos):
+        """
+        Collapse the ancillas in the nodes to create a GHZ state
+        """
+        # Reset number of steps counter
+        self._reset_check()
+
+        measurements, rho_measured = self._measure_random_ancillas_Z(rho, ancillas_pos)
+        correction = ops.GHZ_correction_list(measurements, ghz_size)
+        if len(ancillas_pos) == 4:
+            p_success = p_success.
+
+        while correction == None:
+            measurements, rho_measured = self._measure_random_ancillas_Z(rho, ancillas_pos)
+            correction = ops.GHZ_correction_list(measurements, ghz_size)
+
+        self.check = self.check*attempts
+        rho = correction * rho_measured * correction
+        return  1,
+
+
+
     def single_selection(self, rho, operation_qubits, sigma):
         """
         Single selection round.
@@ -462,7 +520,10 @@ class Blocks:
 
         # Measure ancillas in X basis
         projections = [0] * 2
-        p_success, rho = self._collapse_ancillas_X(rho, controls, projections)
+        p_success, rho = self._collapse_ancillas_X(rho,
+                                                   controls,
+                                                   projections,
+                                                   "single_selection")
         return p_success, self.check, rho
 
     def double_selection(self, rho, operation_qubits, sigma):
@@ -492,11 +553,15 @@ class Blocks:
 
         # Measure ancillas in X basis
         projections = [0] * 2
-        p_success2, rho = self._collapse_ancillas_X(rho, controls2,
-                                                    projections)
+        p_success2, rho = self._collapse_ancillas_X(rho,
+                                                    controls2,
+                                                    projections,
+                                                    "single_selection")
         # Swap noise
         self._swap_pair(rho, controls1)
-        p_success1, rho = self._collapse_ancillas_X(rho, controls1,
-                                                    projections)
+        p_success1, rho = self._collapse_ancillas_X(rho,
+                                                    controls1,
+                                                    projections,
+                                                    "single_selection")
         p_success = p_success1 * p_success2
         return p_success, self.check, rho

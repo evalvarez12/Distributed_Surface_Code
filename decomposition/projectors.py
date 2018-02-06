@@ -1,10 +1,7 @@
 """
-Deprecated code for making projections
-Some functions may be useful later, especially
-number_to_ket.
+Some tools to generate projectors based on even/odd, binary numbers.
 """
 import qutip as qt
-import numpy as np
 
 
 def number_to_ket(system_size, number):
@@ -38,6 +35,7 @@ def odd_projectors(system_size):
         bin_list = [int(x) for x in bin(i)[2:]]
         if bin_list.count(1) % 2 == 1:
             odds += [i]
+    print(odds)
     projectors = list_numbers_to_projectors(system_size, odds)
     return projectors
 

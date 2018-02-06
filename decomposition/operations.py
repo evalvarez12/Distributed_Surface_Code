@@ -7,6 +7,7 @@ created-on: 05/06/17
 
 import qutip as qt
 import numpy as np
+import projectors
 
 
 def random_measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
@@ -160,39 +161,6 @@ def p_measurement_single_Xbasis(rho, measure, N=1, pos=0):
     p = (P * rho).tr().real
     return p
 
-
-def p_success_single_sel(rho, N, ancillas_pos):
-    P0 = (projector_single_qubit_Xbasis(0, N, ancillas_pos[0]) *
-          projector_single_qubit_Xbasis(0, N, ancillas_pos[1]))
-    P1 = (projector_single_qubit_Xbasis(1, N, ancillas_pos[0]) *
-          projector_single_qubit_Xbasis(1, N, ancillas_pos[1]))
-
-    P = P0 + P1
-    p = (P * rho).tr().real
-    return p
-
-def p_success_epl(rho, N, ancillas_pos):
-    P1 = (projector_single_qubit_Zbasis(1, N, ancillas_pos[0]) *
-          projector_single_qubit_Zbasis(1, N, ancillas_pos[1]))
-
-    p = (P1 * rho).tr().real
-    return p
-
-def p_success_double_sel(rho, N, ancillas_pos1, ancillas_pos2):
-    P0a = (projector_single_qubit_Xbasis(0, N, ancillas_pos1[0]) *
-           projector_single_qubit_Xbasis(0, N, ancillas_pos1[1]))
-    P1a = (projector_single_qubit_Xbasis(1, N, ancillas_pos2[0]) *
-           projector_single_qubit_Xbasis(1, N, ancillas_pos2[1]))
-
-    P0b = (projector_single_qubit_Xbasis(0, N, ancillas_pos2[0]) *
-           projector_single_qubit_Xbasis(0, N, ancillas_pos2[1]))
-    P1b = (projector_single_qubit_Xbasis(1, N, ancillas_pos2[0]) *
-           projector_single_qubit_Xbasis(1, N, ancillas_pos2[1]))
-
-    # All the possible succes cases in the projectors
-    P = P0a * P0b + P0a * P1b + P1a * P0b + P1a * P1b
-    p =  (P * rho).tr().real
-    return p
 
 def projector_single_qubit_Zbasis_dimRed(project, N=1, pos=0):
     # NOTE: This projector reduces the dimension of the state density matrix
