@@ -5,7 +5,6 @@ author: Eduardo Villasenor
 created-on: 21/11/17
 """
 
-import numpy as np
 import qutip as qt
 import protocols
 

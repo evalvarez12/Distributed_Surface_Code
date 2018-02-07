@@ -9,7 +9,6 @@ import numpy as np
 import qutip as qt
 import protocols_tools
 import protocols
-import names
 
 # Determine parameters
 # Very optimisitc gate and measurement paramterss

@@ -7,7 +7,6 @@ created-on: 05/06/17
 
 import qutip as qt
 import numpy as np
-import projectors
 
 
 def random_measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):

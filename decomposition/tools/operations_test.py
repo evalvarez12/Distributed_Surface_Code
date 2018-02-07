@@ -1,7 +1,6 @@
 import unittest
 import qutip as qt
 import numpy as np
-import numpy.testing as nptest
 from operations import *
 
 # Define variables for tests

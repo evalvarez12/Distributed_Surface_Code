@@ -1,6 +1,5 @@
 import qutip as qt
-import numpy as np
-import operations
+import tools.operations
 
 
 def generate_noisy_pair(F):

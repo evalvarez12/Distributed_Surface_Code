@@ -8,9 +8,10 @@ created-on: 20/11/17
 import qutip as qt
 import numpy as np
 import collections
-import operations as ops
+import tools.operations as ops
 import error_models as errs
-import p_success as ps
+import tools.p_success as ps
+import tools.ghz_correction as gc
 
 
 class Blocks:
@@ -380,6 +381,23 @@ class Blocks:
                                       targets[i])
         return rho
 
+    def _apply_single_qubit_gates(self, rho, gates, operation_qubits):
+        # Apply single qubit gates on the entire state rho
+        N = len(rho.dims[0])
+        # NOTE: Number of gates is 1 because gates are applied in parallel
+        # in the nodes
+        self.check["single_qubit_gate"] += 1
+        time = self.time_lookup["single_qubit_gate"]
+        self.check["time"] += time
+        self.check["time1"] += time
+        # Apply environmental error
+        rho = errs.env_error_all(rho, 0, self.a1, time)
+
+        for i in range(len(gates)):
+            rho = errs.single_qubit_gate(rho, gates[i], self.ps, N,
+                                         operation_qubits[i])
+        return rho
+
     def start_bell_pair(self, rho=None):
         """Start with a raw Bell pair using the single click protocol."""
         self._reset_check()
@@ -477,7 +495,7 @@ class Blocks:
                                                    projections)
         return p_success, self.check, rho
 
-    def collapse_ancillas_GHZ(self, rho, ghz_size, ancillas_pos):
+    def collapse_ancillas_GHZ(self, rho, ghz_size, measure_pos):
         """
         Collapse the ancillas in the nodes to create a GHZ state.
         In the ghz_4 connected throug 4 pairs ancillas must be the last qubit(s)
@@ -485,29 +503,34 @@ class Blocks:
         # Reset number of steps counter
         self._reset_check()
 
-        measurements, rho_measured = self._measure_random_ancillas_Z(rho, ancillas_pos)
-        measurements = np.array(measurements) % 3 - 1
+        N = len(rho.dims[0])
         p_success = 1
         # print(measurements)
-        if len(ancillas_pos) == 4:
+        if ghz_size == 4:
             p_success = ps.ghz_4(rho)
 
-        correction = ps.ghz_correction_list(measurements, ghz_size)
+        measurements, rho_measured = self._measure_random_ancillas_Z(rho, measure_pos)
+        measurements = np.array(measurements) % 3 - 1
+        N = len(rho_measured.dims[0])
+        # The qubits in which the correction applies
+        if ghz_size == 3:
+            # The last qubit if GHZ3
+            operation_pos = N - 1
+        elif ghz_size == 4:
+            # The last two if GHZ4
+            operation_pos = [N - 1, N - 2]
+
+        correction = gc.correction(measurements, ghz_size, N, operation_pos)
         # print(correction)
         while correction is None:
-            measurements, rho_measured = self._measure_random_ancillas_Z(rho, ancillas_pos)
-            correction = ps.ghz_correction_list(measurements, ghz_size)
+            measurements, rho_measured = self._measure_random_ancillas_Z(rho, measure_pos)
+            correction = gc.correction(measurements, ghz_size, N, operation_pos)
 
-        N = len(rho_measured.dims[0])
+        rho = rho_measured
         # TODO do this properly!!!
-        if correction != qt.qeye([2] * ghz_size):
-            if ghz_size == 3:
-                rho = errs.single_qubit_gate_noise(rho_measured, self.ps, N, 0)
-            elif ghz_size == 4:
-                rho = errs.single_qubit_gate_noise(rho_measured, self.ps, N, 0)
-                rho = errs.single_qubit_gate_noise(rho_measured, self.ps, N, 1)
+        if len(correction) != 0:
+            rho = self._apply_single_qubit_gates(rho, correction, operation_pos)
 
-        rho = correction * rho_measured * correction
         print(p_success)
         print(measurements)
         return p_success, self.check, rho

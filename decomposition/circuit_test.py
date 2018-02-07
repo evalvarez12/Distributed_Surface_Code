@@ -1,9 +1,6 @@
 import qutip as qt
 import circuit_block
 import circuit
-import error_models as errs
-import operations as ops
-import numpy as np
 
 # Determine parameters
 ps = 0.0

@@ -5,7 +5,6 @@ import qutip as qt
 import numpy as np
 import itertools
 import error_models as errs
-import operations as ops
 
 
 class Tools:

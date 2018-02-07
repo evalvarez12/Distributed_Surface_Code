@@ -3,7 +3,7 @@ from os.path import dirname, realpath
 # from . import noise_modeling
 # from . import protocols
 import noise_modeling
-import protocols_det
+import protocols_tools
 
 class Generator:
     def __init__(self):

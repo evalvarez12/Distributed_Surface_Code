@@ -1,7 +1,5 @@
 import unittest
 import qutip as qt
-import numpy as np
-import numpy.testing as nptest
 import error_models as errs
 
 # Define variables for tests

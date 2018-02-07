@@ -2,7 +2,6 @@ import qutip as qt
 import protocols_tools
 import error_models as errs
 import operations as ops
-import numpy as np
 
 rho = errs.bell_pair(.4)
 rho_ideal = qt.bell_state("00")

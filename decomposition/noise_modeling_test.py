@@ -1,9 +1,5 @@
-import unittest
-import qutip as qt
-import numpy as np
-import numpy.testing as nptest
 import noise_modeling as nm
-import protocols_det as pt
+import protocols_tools as pt
 
 # Initial parameters
 ps = 0.0

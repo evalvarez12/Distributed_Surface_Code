@@ -1,7 +1,6 @@
 import unittest
 import qutip as qt
 import numpy as np
-import numpy.testing as nptest
 import pauli_basis as pb
 
 # # Define variables for tests

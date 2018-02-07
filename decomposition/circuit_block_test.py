@@ -7,8 +7,6 @@ created-on: 20/11/17
 
 import qutip as qt
 import circuit_block
-import error_models as errs
-import operations as ops
 import numpy as np
 
 # Determine parameters

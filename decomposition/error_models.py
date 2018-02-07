@@ -7,7 +7,7 @@ created-on: 05/06/17
 
 import qutip as qt
 import numpy as np
-import operations as ops
+import tools.operations as ops
 
 
 def env_error_all(rho, a0, a1, t):

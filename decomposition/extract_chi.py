@@ -10,7 +10,7 @@ import qutip as qt
 import protocols_tools
 import noise_modeling
 import pickle
-import names
+import tools.names
 # Initial parameters
 ps = 0.003
 pm = 0.003

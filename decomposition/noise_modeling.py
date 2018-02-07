@@ -9,8 +9,7 @@ import qutip as qt
 import itertools
 # from . import pauli_basis
 # from . import operations as ops
-import pauli_basis
-import operations as ops
+import tools.operations as ops
 
 class NoiseModel:
     """

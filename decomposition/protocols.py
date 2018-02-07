@@ -38,7 +38,7 @@ def EPL_4(ps, pm, pg, eta, a0, a1, theta):
     #                 projections=[0, 0, 0, 0])
     ghz.add_circuit(circuit_block=cb.collapse_ancillas_GHZ,
                     ghz_size=4,
-                    ancillas_pos=[4, 5, 6, 7])
+                    measure_pos=[4, 5, 6, 7])
     # Return the completed circuit
     return ghz
 
