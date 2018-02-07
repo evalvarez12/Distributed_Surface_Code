@@ -1,5 +1,5 @@
 """
-Routines to perform entanglement purification.
+Routines to perform basic operations not suplied by qutip already.
 
 author: Eduardo Villaseñor
 created-on: 05/06/17
@@ -22,6 +22,7 @@ def random_measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
             dimentions N - 1
     """
     H = qt.snot(N, pos)
+    # H operation to rotate the state and use Z measurement
     rho = H * rho * H.dag()
     measurement, collapsed_rho = random_measure_single_Zbasis(rho, N, pos, dimRed)
     if not dimRed:
@@ -29,7 +30,7 @@ def random_measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
     return measurement, collapsed_rho
 
 
-def forced_measure_single_Xbasis(rho, N=1, pos=0, projector=0, dimRed=False):
+def forced_measure_single_Xbasis(rho, N=1, pos=0, project=0, dimRed=False):
     """
     Measure a single qubit in the X basis.
 
@@ -38,12 +39,14 @@ def forced_measure_single_Xbasis(rho, N=1, pos=0, projector=0, dimRed=False):
     rho : density matrix.
     N : system size.
     pos : position of qubit to be measured.
+    project : 0,1 the basis state to which the state collapses.
     dimRed : is the collapsed state has reduced to the
             dimentions N - 1
     """
     H = qt.snot(N, pos)
+    # H operation to rotate the state and use Z measurement
     rho = H * rho * H.dag()
-    p, collapsed_rho = forced_measure_single_Zbasis(rho, N, pos, projector, dimRed)
+    p, collapsed_rho = forced_measure_single_Zbasis(rho, N, pos, project, dimRed)
     if not dimRed:
         collapsed_rho = H * rho * H.dag()
     return p, collapsed_rho
@@ -68,7 +71,7 @@ def random_measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
     # print("P0", p0, r)
     p1 = p_measurement_single_Zbasis(rho, 1, N, pos)
     # print("P1", p1, r)
-    # Draw a measurement
+    # Draw a coin to determine the collapse
     if r < p0:
         collapsed_rho = collapse_single_Zbasis(rho, 0, N, pos, dimRed)
         measurement = 1
@@ -98,7 +101,6 @@ def forced_measure_single_Zbasis(rho, N=1, pos=0, project=0, dimRed=False):
     # print("P", project, p)
     # if p == 0:
     #     raise ZeroDivisionError("p = 0!")
-    # Draw the measurement
     collapsed_rho = collapse_single_Zbasis(rho, project, N, pos, dimRed)
     if collapsed_rho.tr() != 0:
         collapsed_rho = collapsed_rho/collapsed_rho.tr()
@@ -146,7 +148,13 @@ def collapse_single_Zbasis(rho, project, N=1, pos=0, dimRed=False):
 
 def p_measurement_single_Zbasis(rho, measure, N=1, pos=0):
     """
-    Calculate the probability of measuring the value "measure".
+    Calculate the probability of measuring the value "measure" on the Z basis.
+
+    Parameters
+    ----------
+    rho : density matrix.
+    measure : measurement result probability.
+    pos : position of qubit to be measured.
     """
     P = projector_single_qubit_Zbasis(measure, N, pos)
     p = (P * rho).tr().real
@@ -154,7 +162,12 @@ def p_measurement_single_Zbasis(rho, measure, N=1, pos=0):
 
 def p_measurement_single_Xbasis(rho, measure, N=1, pos=0):
     """
-    Calculate the probability of measuring the value "measure".
+    Calculate the probability of measuring the value "measure" on the X basis.
+    Parameters
+    ----------
+    rho : density matrix.
+    measure : measurement result probability.
+    pos : position of qubit to be measured.
     """
     P = projector_single_qubit_Xbasis(measure, N, pos)
     p = (P * rho).tr().real
@@ -190,10 +203,17 @@ def projector_single_qubit_Xbasis(project, N=1, pos=0):
     p = p * p.dag()
     return tensor_single_operator(p, N, pos)
 
+
 def tensor_single_operator(operator, N, pos):
     """
     Tensor a single qubit operator between identyties accoring to the
     position of the qubit and the system size.
+
+    Parameters
+    ----------
+    operator : operatior to be tensored.
+    N : total system dimension.
+    pos : position inside the entire system to be measured.
     """
     # TODO use qt.rx, qt.ry, qt.rz instead for sigmas?
     if pos > N:
@@ -217,6 +237,12 @@ def tensor_single_operator(operator, N, pos):
 def tensor_operator(operators, positions, N):
     """
     Tensor the product of multiple single qubit operators.
+
+    Parameters
+    ----------
+    operators : operatior list to be tensored.
+    N : total system dimension.
+    positions : list with the positions for each operator.
     """
     l = len(operators)
     res = qt.qeye([2]*N)

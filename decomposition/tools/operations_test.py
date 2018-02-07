@@ -1,3 +1,10 @@
+"""
+Routines test the functions in operations.py.
+
+author: Eduardo Villaseñor
+created-on: 05/06/17
+"""
+
 import unittest
 import qutip as qt
 import numpy as np
