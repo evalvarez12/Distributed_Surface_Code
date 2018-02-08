@@ -1,6 +1,10 @@
 """
 Individual circuits involved the remote generation of entanglement
-and in different steps of purification protocols.
+and in different steps of purification protocols. Must be used together
+with 'circuit.py' to assemeble complete circuits.
+
+Includes features to keep track of how many operations and time has passed
+after each circuit.
 
 author: Eduardo Villasenor
 created-on: 20/11/17
@@ -29,7 +33,19 @@ class Blocks:
     """
 
     def __init__(self, ps, pm, pg, eta, a0, a1, theta):
-        """Init function."""
+        """Init function.
+
+        Parameters
+        ----------
+        ps : single qubit gate error rate.
+        pm : measurement error rate.
+        pg : two qubit gate error rate.
+        eta : detection efficiency.
+        a0 : extra environmental error when electron spin is being operated.
+        a1 : default environmental error.
+        theta : determines how the states are initialized when generating remote
+                entanglement.
+        """
         # Set the parameters to all faulty opearations
         self.ps = ps
         self.pm = pm
@@ -54,7 +70,20 @@ class Blocks:
                             "measurement": 200e-6}
 
     def change_parameters(self, ps, pm, pg, eta, a0, a1, theta):
-        """Function to change the parameters of all the operations."""
+        """
+        Function to change the parameters of all the operations.
+
+        Parameters
+        ----------
+        ps : single qubit gate error rate.
+        pm : measurement error rate.
+        pg : two qubit gate error rate.
+        eta : detection efficiency.
+        a0 : extra environmental error when electron spin is being operated.
+        a1 : default environmental error.
+        theta : determines how the states are initialized when generating remote
+                entanglement.
+        """
         # Reset all the parameters for the faulty operations
         self.ps = ps
         self.pm = pm
@@ -66,8 +95,7 @@ class Blocks:
         self._reset_check()
 
     def _reset_check(self):
-        """Reset to 0 all vaulues from check."""
-        # Reset check dictionary
+        # Reset to 0 all vaulues from check
         self.check = collections.Counter(dict.fromkeys(self.check, 0))
 
     def _generate_bell_single_click(self):
@@ -204,9 +232,11 @@ class Blocks:
 
         if basis == "X":
             rho = errs.single_qubit_gate_noise(rho, self.ps, N, pos)
-            rho = errs.measure_single_Xbasis_forced(rho, self.pm, project, N, pos)
+            rho = errs.measure_single_Xbasis_forced(rho, self.pm,
+                                                    project, N, pos)
         elif basis == "Z":
-            rho = errs.measure_single_Zbasis_forced(rho, self.pm, project, N, pos)
+            rho = errs.measure_single_Zbasis_forced(rho, self.pm,
+                                                    project, N, pos)
         return rho
 
     def _swap_noise(self, rho, pos):
@@ -399,7 +429,12 @@ class Blocks:
         return rho
 
     def start_bell_pair(self, rho=None):
-        """Start with a raw Bell pair using the single click protocol."""
+        """
+        Start with a raw Bell pair using the single click protocol.
+
+        NOTE: rho is not taken from arguments, only exists due to
+        how 'circuit.py' is constructed.
+        """
         self._reset_check()
         time, bell = self._generate_bell_single_click()
         self.check["time"] += time
@@ -407,7 +442,12 @@ class Blocks:
         return 1, self.check, bell
 
     def start_BK(self, rho=None):
-        """Circuit that generates a Bell pair from the Barret-Kok protocol."""
+        """
+        Circuit that generates a Bell pair from the Barret-Kok protocol.
+
+        NOTE: rho is not taken from arguments, only exists due to
+        how 'circuit.py' is constructed.
+        """
         self._reset_check()
         time, bell = self._generate_bell_pair_BK()
         self.check["time"] += time
@@ -415,7 +455,12 @@ class Blocks:
         return 1, self.check, bell
 
     def start_epl(self, rho=None):
-        """Circuit that generates a Bell pair using the EPL protocol."""
+        """
+        Circuit that generates a Bell pair using the EPL protocol.
+
+        NOTE: rho is not taken from arguments, only exists due to
+        how 'circuit.py' is constructed.
+        """
         self._reset_check()
         # Generate two raw Bell pairs
         time1, bell1 = self._generate_bell_single_click()
@@ -444,9 +489,14 @@ class Blocks:
         return p_success, self.check, rho
 
     def add_bell_pair(self, rho):
-        """Append a raw Bell pair to the state."""
+        """Append a single click Bell pair to the state.
+
+        Parameters
+        ----------
+        rho : density matrix in which the bell pair appends.
+        """
         self._reset_check()
-        time, bell = self._generate_bell_pair()
+        time, bell = self._generate_bell_single_click()
         # Apply environmental error
         rho = errs.env_error_all(rho, self.a0, self.a1, time)
         self.check["time"] += time
@@ -456,7 +506,15 @@ class Blocks:
         return 1, self.check, rho
 
     def swap_pair(self, rho, pair):
-        """Does not really make a SWAP, only applies the noise."""
+        """
+        Does not really make a SWAP, only applies the noise.
+        Position of states in each node must be keep track manually.
+
+        Parameters
+        ----------
+        rho : density matrix
+        pair : pair of qubits to be swaped ex. [2, 3]
+        """
         self._reset_check()
         # Apply the noise
         self._swap_pair(rho, pair)
@@ -466,17 +524,28 @@ class Blocks:
         """
         Apply one local two qubit Control type of gates in parallel
         on each node.
+
+        Parameters
+        ----------
+        rho : density matrix
+        controls : list with the control qubits position
+        targets : list with the target qubits position
+        sigma : X or Z depending on the gate
         """
         self._reset_check()
-
         rho = self._apply_two_qubit_gates(rho, controls, targets, sigma)
-
         return 1, self.check, rho
 
     def collapse_ancillas_X(self, rho, ancillas_pos, projections):
         """
         Measure the ancillas in the X basis in parallel in each node.
         Ancillas position need to be the last part of the state.
+
+        Parameters
+        ----------
+        rho : density matrix
+        ancillas_pos : list with the positions of ancillas to be measured
+        projections : list with the projections in which every ancilla collapses
         """
         # Reset check
         self._reset_check()
@@ -488,6 +557,12 @@ class Blocks:
         """
         Measure the ancillas in the X basis in parallel in each node.
         Ancillas position need to be the last part of the state.
+
+        Parameters
+        ----------
+        rho : density matrix
+        ancillas_pos : list with the positions of ancillas to be measured
+        projections : list with the projections in which every ancilla collapses
         """
         # Reset check
         self._reset_check()
@@ -499,13 +574,20 @@ class Blocks:
         """
         Collapse the ancillas in the nodes to create a GHZ state.
         In the ghz_4 connected throug 4 pairs ancillas must be the last qubit(s)
+
+        Parameters
+        ----------
+        rho : density matrix
+        ghz_size : size of the GHZ state being formed, must be 3 or 4
+        measure_pos : list with the positions of ancillas to be measured
         """
         # Reset number of steps counter
         self._reset_check()
 
         N = len(rho.dims[0])
         p_success = 1
-        # print(measurements)
+
+        # Success probability for the GHZ4 case with 4 pairs.
         if ghz_size == 4:
             p_success = ps.ghz_4(rho)
 
@@ -521,24 +603,32 @@ class Blocks:
             operation_pos = [N - 1, N - 2]
 
         correction = gc.correction(measurements, ghz_size, N, operation_pos)
-        # print(correction)
+        # For the case of GHZ4 using 4 pairs theres a chance the entire protocol
+        # fails due the to the extra error correction, if thats the case just
+        # redo measurements.
         while correction is None:
             measurements, rho_measured = self._measure_random_ancillas_Z(rho, measure_pos)
             correction = gc.correction(measurements, ghz_size, N, operation_pos)
 
         rho = rho_measured
-        # TODO do this properly!!!
+        # Check if correction is really nedded
         if len(correction) != 0:
             rho = self._apply_single_qubit_gates(rho, correction, operation_pos)
 
-        print(p_success)
-        print(measurements)
+        # print(p_success)
+        # print(measurements)
         return p_success, self.check, rho
 
     def single_selection(self, rho, operation_qubits, sigma):
         """
-        Single selection round.
-        Uses 2 ancilla qubits.
+        Single selection round. Uses 2 ancilla qubits.
+
+        Parameters
+        ----------
+        rho : density matrix
+        operation_pos : list with the positions of the qubits to be purified
+                        by the protocol
+        sigma : X or Z parity used in the purification
         """
         # Reset number of steps counter
         self._reset_check()
@@ -563,8 +653,14 @@ class Blocks:
 
     def double_selection(self, rho, operation_qubits, sigma):
         """
-        Double selection round.
-        Uses 4 ancilla qubits.
+        Double selection round. Uses 4 ancilla qubits.
+
+        Parameters
+        ----------
+        rho : density matrix
+        operation_pos : list with the positions of the qubits to be purified
+                        by the protocol
+        sigma : X or Z parity used in the purification
         """
         # Reset number of steps counter
         self._reset_check()

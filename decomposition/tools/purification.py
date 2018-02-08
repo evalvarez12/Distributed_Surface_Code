@@ -6,7 +6,6 @@ created-on: 20/06/17
 """
 
 import qutip as qt
-import tools.operations
 
 
 def generate_noisy_pair(F):

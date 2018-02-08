@@ -1,5 +1,5 @@
 """
-File to generate a analysis of how the error types depend on the
+Routines to generate a analysis of how the error types depend on the
 Fidelity of the GHZ state used into making the stabilizer measurements
 in the distributed surface code.
 

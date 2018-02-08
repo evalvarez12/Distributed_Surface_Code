@@ -1,5 +1,7 @@
 """
-Internal circuits involved in the different steps of purification protocols.
+Wrapper functions to put together cirtcuits involved
+in the proccess of making GHZ states out of entangled Bell pairs.
+Must be used with 'circuit_block.py'
 
 author: Eduardo Villasenor
 created-on: 20/11/17
@@ -12,13 +14,27 @@ import collections
 
 class Circuit:
     """
-    Class to hold a block in the overall purification protocol.
+    Class to hold a block in the overall GHZ state formation protocol.
     Subcircuit object for the circuit that goes inside this block.
+
     Circuits are assembled using recursive objects and circuit blocks.
+    After each level with a success probability a number of attempts is calculated
+    and used to evaluate the time it required unit success. Similar to an event
+    oriented simulation.
     """
 
     def __init__(self, a0, a1, circuit_block, **kwargs):
-        """Init function."""
+        """
+        Init function.
+
+        Parameters
+        -----------
+        a0 : environmental error parameter
+        a1 : environmental error parameter
+        cicuit_block : function from circuit_block.py to be evaluated
+                       in a step of the circuit
+        **kwargs : arguments for evaluating the cicuit_block
+        """
         # Save circuit block function of this level
         self.circuit = circuit_block
         self.circuit_kwargs = kwargs
@@ -30,8 +46,18 @@ class Circuit:
         self.a0 = a0
         self.a1 = a1
 
-    def run(self, rho, p_parent=1, check_parent=collections.Counter({})):
-        """Main function to run circuits recurively."""
+    def run(self, rho):
+        """
+        Main function to run circuits recurively.
+
+        Parameters
+        -----------
+        rho : density matrix involved in the circuit, can be None depending
+              on the circuit block
+        """
+        return self._run(rho)
+
+    def _run(self, rho, p_parent=1, check_parent=collections.Counter({})):
         # First run self circuit
         p_success, check, rho = self.circuit(rho, **self.circuit_kwargs)
 
@@ -42,7 +68,7 @@ class Circuit:
 
         # Now check if it has a subcircuit
         if self.subcircuit:
-                _, check, rho = self.subcircuit.run(rho, p_success, check)
+                _, check, rho = self.subcircuit._run(rho, p_success, check)
         else:
             # If this is the end of the dependency calculate success event
             # starts from 0, where 0 means success on the first try
@@ -63,6 +89,11 @@ class Circuit:
         Run circuit two times in parallel, tensoring the resulting states,
         and dephasing the one that was generated first accordingly.
         Cicuits must be self contained events to be able to run in parallel.
+
+        Parameters
+        -----------
+        rho : density matrix involved in the circuit, can be None depending
+              on the circuit block
         """
         _, check1, rho1 = self.run(rho)
         _, check2, rho2 = self.run(rho)
@@ -84,6 +115,11 @@ class Circuit:
         """
         Appended circuit, and dephase accordingly.
         Must be self contained event
+
+        Parameters
+        -----------
+        rho : density matrix involved in the circuit, can be None depending
+              on the circuit block
         """
         _, check, rho_app = self.run(None)
         time0 = check["time0"]
@@ -98,8 +134,14 @@ class Circuit:
 
     def append_circuit_diff_node(self, rho):
         """
-        Appended circuit, and dephase accordingly.
-        Must be self contained event
+        Appended circuit, and dephase considering the appended ciruit is
+        executed entirely in different nodes.
+        Must be self contained event.
+
+        Parameters
+        -----------
+        rho : density matrix involved in the circuit, can be None depending
+              on the circuit block
         """
         _, check, rho_app = self.run(None)
         time = check["time"]
@@ -111,7 +153,13 @@ class Circuit:
 
     def add_circuit(self, circuit_block, **kwargs):
         """
-        Add a circuit to the current chain.
+        Add a circuit to the current circuit chain.
+
+        Parameters
+        -----------
+        cicuit_block : function from circuit_block.py to be evaluated
+                       in a step of the circuit
+        **kwargs : arguments for evaluating the cicuit_block
         """
         if not self.subcircuit:
             self.subcircuit = Circuit(self.a0, self.a1, circuit_block, **kwargs)

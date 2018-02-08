@@ -1,3 +1,14 @@
+""""
+Wrapper object to feed error models into the surface code from the noisy circuits
+making the GHZ states.
+
+NOTE: Due to changes in the way the GHZ states are calculated this routines are no longer
+utilizable.
+
+author: Eduardo Villasenor
+created-on: 028/08/17
+"""
+
 import pickle
 from os.path import dirname, realpath
 # from . import noise_modeling

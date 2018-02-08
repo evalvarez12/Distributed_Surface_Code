@@ -14,11 +14,12 @@ def env_error_all(rho, a0, a1, t):
     """
     Apply environtmental dephasing on all qubits in the state rho.
 
-    Parameters:
-    rho - The state to be dephased.
-    a0  - Dephaising effect due to the entanglement generation attemts.
-    a1  - Dephasing due to the environment interactions.
-    t   - Time in wich the dephasing ocurrs.
+    Parameters
+    -----------
+    rho : the state to be dephased.
+    a0 : dephaising effect due to the entanglement generation attemts.
+    a1 : dephasing due to the environment interactions.
+    t : time in wich the dephasing ocurrs.
     """
     N = len(rho.dims[0])
     qubits = list(range(N))
@@ -26,7 +27,18 @@ def env_error_all(rho, a0, a1, t):
 
 
 def env_error(rho, a0, a1, t, N, qubits):
-    """Apply environmental error on the selected qubits from the list."""
+    """
+    Apply environmental error on the selected qubits from the list.
+
+    Parameters
+    -----------
+    rho : the state to be dephased.
+    a0 : depolarizing effect due to the entanglement generation attemts.
+    a1 : depolarizing due to the environment interactions.
+    t : time in wich the dephasing ocurrs.
+    N : total size of the system
+    qubits : list with the qubits on which the error applies
+    """
     for i in qubits:
         rho = env_error_single(rho, a0, a1, t, N, i)
     return rho
@@ -53,7 +65,7 @@ def get_sigmas(N=1, pos=0):
 
 
 def single_qubit_gate_noise(rho, p, N=1, pos=0):
-    """Apply depholarizing noise due a single qubit operation."""
+    """Apply depolarizing noise due a single qubit operation."""
     res = rho*(1 - p)
     sigmas = get_sigmas(N, pos)
     for noise in sigmas[1:]:
@@ -62,14 +74,24 @@ def single_qubit_gate_noise(rho, p, N=1, pos=0):
 
 
 def single_qubit_gate(rho, gate, p, N=1, pos=0):
-    """Apply a single qubit with the corresponding noise."""
+    """
+    Apply a single qubit with the corresponding noise.
+
+    Parameters
+    -----------
+    rho : the state to apply the noisy gate on
+    gate : ideal gate to be applied
+    p : error rate
+    N : total system size
+    pos : position of the qubit in which the gate applies
+    """
     new_rho = gate * rho * gate.dag()
     new_rho = single_qubit_gate_noise(new_rho, p, N, pos)
     return new_rho
 
 
 def two_qubit_gate_noise(rho, p, N=2, pos1=0, pos2=1):
-    """Depholarizing noise due to a noisy two qubit gate."""
+    """Depolarizing noise due to a noisy two qubit gate."""
     # Remove the extra added p/15 due to
     # the 2 identities in the sigmas list
     res = rho*(1 - p)
@@ -91,14 +113,34 @@ def two_qubit_gate_noise(rho, p, N=2, pos1=0, pos2=1):
 
 
 def two_qubit_gate(rho, gate, p, N=2, pos1=0, pos2=1):
-    """Apply a two quit gate with its corresponding noise."""
+    """
+    Apply a two quit gate with its corresponding noise.
+
+    Parameters
+    -----------
+    rho : the state to apply the noisy gate on
+    gate : ideal gate to be applied
+    p : error rate
+    N : total system size
+    pos1 : position of the first qubit in which the gate applies
+    pos2 : position of the second qubit in which the gate applies
+    """
     rho = gate * rho * gate.dag()
     rho = two_qubit_gate_noise(rho, p, N, pos1, pos2)
     return rho
 
 
 def measure_single_Zbasis_random(rho, p, N=1, pos=0):
-    """Probabilisticly measure and collapse the state on the given position."""
+    """
+    Probabilisticly measure and collapse the state on the given position.
+
+    Parameters
+    -----------
+    rho : the state to apply the noisy gate on
+    p : measurement error rate
+    N : total system size
+    pos : position of the qubit to be measured
+    """
     X = qt.rx(np.pi, N, pos)
     rho = (1 - p)*rho + p*(X * rho * X.dag())
     measurement, collapsed_rho = ops.random_measure_single_Zbasis(rho, N,
@@ -107,7 +149,17 @@ def measure_single_Zbasis_random(rho, p, N=1, pos=0):
 
 
 def measure_single_Zbasis_forced(rho, p, project, N=1, pos=0):
-    """Collapse the state on the given position and to the given projector."""
+    """
+    Collapse the state on the given position and to the given projector.
+
+    Parameters
+    -----------
+    rho : the state to apply the noisy gate on
+    p : measurement error rate
+    project : 0 or 1, projector involved in the measurement collapse
+    N : total system size
+    pos : position of the qubit to be measured
+    """
     X = qt.rx(np.pi, N, pos)
     rho = (1 - p)*rho + p*(X * rho * X.dag())
     p, collapsed_rho = ops.forced_measure_single_Zbasis(rho, N, pos,
@@ -134,7 +186,13 @@ def measure_single_Xbasis_forced(rho, p, project, N=1, pos=0):
 
 
 def bell_pair(p):
-    """Return a noisy phi+ Bell pair."""
+    """
+    Return a noisy |phi+> Bell pair.
+
+    Parameters
+    -----------
+    p : error rate
+    """
     a = qt.bell_state('00') * qt.bell_state('00').dag()
     b = qt.bell_state('01') * qt.bell_state('01').dag() \
         + qt.bell_state('10') * qt.bell_state('10').dag() \
@@ -146,7 +204,16 @@ def bell_pair(p):
 
 
 def bell_pair_click(eta, theta):
-    """Return a Bell pair generated using the single click protocol."""
+    """
+    Return a Bell pair generated using the single click protocol.
+    Initial qubits are initialized in the states: sin(theta)|0> + cos(theta)|1>
+
+    Parameters
+    -----------
+    eta : detection efficiency
+    theta : determines how the initial qubits are initialized
+    """
+
     s = np.sin(theta)**2
     r = ((1 - eta)*s)/(1 - eta*s)
     state = qt.bell_state('01') * qt.bell_state('01').dag()
@@ -156,7 +223,14 @@ def bell_pair_click(eta, theta):
 
 
 def generate_noisy_ghz(F, N):
-    """Generate a noisy GHZ state of a given fidelity."""
+    """
+    Generate a noisy GHZ state of a given fidelity.
+
+    Parameters
+    -----------
+    F : fidelity of the final state
+    N : size of the final GHZ
+    """
     # p = 1 - F
     # nu = 4**N*p/(4**N - 1)
     nu = (4**N) * (1 - F**2) / (4**N - 1)

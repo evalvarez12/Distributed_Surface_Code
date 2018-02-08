@@ -1,5 +1,11 @@
-import generate
+"""
+Test routines for generate.py
 
+author: Eduardo Villasenor
+created-on: 028/08/17
+"""
+
+import generate
 
 generator = generate.Generator()
 

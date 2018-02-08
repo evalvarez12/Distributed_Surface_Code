@@ -1,3 +1,9 @@
+"""
+Test routines for the functions in error_models.py
+
+author: Eduardo Villasenor
+created-on: 05/06/17
+"""
 import unittest
 import qutip as qt
 import error_models as errs
@@ -27,11 +33,11 @@ class TestErrorModels(unittest.TestCase):
         print("Error: p = ", p)
         print(rho_coll)
 
-    def test_env_dephasing(self):
+    def test_env_error(self):
         print("----------Test env dephasing-----------")
         n_steps = 10
-        rho_noise1 = errs.env_dephasing(rho_test, 20, .3, 25e-6, 2, [0, 1])
-        rho_noise2 = errs.env_dephasing(rho_test, 0, .3, 25e-6, 2, [0, 1])
+        rho_noise1 = errs.env_error(rho_test, 20, .3, 25e-6, 2, [0, 1])
+        rho_noise2 = errs.env_error(rho_test, 0, .3, 25e-6, 2, [0, 1])
         # print(rho_noise1)
         # print(rho_noise.tr())
         print(qt.fidelity(rho_noise1, psi_test))
