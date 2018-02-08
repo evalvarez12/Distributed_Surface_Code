@@ -1,3 +1,10 @@
+"""
+Old routines for playing with entanglement purification.
+
+author: Eduardo Villaseñor
+created-on: 20/06/17
+"""
+
 import qutip as qt
 import tools.operations
 

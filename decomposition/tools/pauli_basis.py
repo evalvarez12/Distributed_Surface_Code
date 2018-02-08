@@ -1,6 +1,9 @@
 """
 Routines to assemble the pauli basis based on constructiong the
 operators based on symbols ("IIXI", "YZZX", ... )
+
+author: Eduardo Villaseñor
+created-on: 18/11/17
 """
 import numpy as np
 import qutip as qt
@@ -23,6 +26,12 @@ def string_to_operator(s, positions, system_size):
     """
     Takes a string and returns a gate acting on the corresponding qubits.
     Strings example: IXZI, YYYZ, ...
+
+    Parameters
+    ----------
+    s : string of single qubit operators.
+    positions : position in which each operator acts.
+    system_size : total system size.
     """
     s_list = list(s)
     operator = qt.qeye([2] * system_size)
@@ -34,7 +43,15 @@ def string_to_operator(s, positions, system_size):
 
 def combinations(n_operators, ops_positions, system_size):
     """
-    Returns all the possible operator combinations for a given number of operators.
+    Returns all the possible operator combinations for a given number
+    of operators and system size
+
+    Parameters
+    ----------
+    n_operators : number of operators in which the combinations are going to be
+                  obtained.
+    ops_positions : position in which each operator acts.
+    system_size : total system size.
     """
     # Dict to save all operators
     operators = {}
@@ -67,7 +84,7 @@ def combinations(n_operators, ops_positions, system_size):
 
 
 def get_basis(operator_positions, system_size):
-    """Get all operators from 0 to system_size."""
+    """Get all operators comninations from 0 to system_size."""
     # Initialize dictionary with the identity
     all_operators = combinations(0, operator_positions, system_size)
     # Update dict with all combinations for each number of identities
@@ -76,6 +93,10 @@ def get_basis(operator_positions, system_size):
     return all_operators
 
 def symbol_product(symbolA, symbolB):
+    """
+    Do the operation of two operators in symbol form up to a -1 factor.
+    ex. XYZZ * IXZY = XZIX
+    """
     # Turn symbols into lists
     list_A = list(symbolA)
     list_B = list(symbolB)
@@ -89,7 +110,9 @@ def symbol_product(symbolA, symbolB):
     # Return the result in a single string
     return ''.join(prod)
 
+
 def product_rules(A, B):
+    """Rulles that used in the symbol product function."""
     # Check first for identities
     if A == "I":
         return B
@@ -97,7 +120,7 @@ def product_rules(A, B):
         return A
 
     # Check arguments
-    if not A in operator_symbols or not B in operator_symbols:
+    if A not in operator_symbols or B not in operator_symbols:
         raise ValueError("Arguments are not in {X, Y, Z}")
 
     # Check if they are equal

@@ -1,5 +1,8 @@
 """
-Some tools to generate projectors based on even/odd, binary numbers.
+Some tools to generate projectors based on even/odd or binary numbers.
+
+author: Eduardo Villaseñor
+created-on: 18/11/17
 """
 import qutip as qt
 

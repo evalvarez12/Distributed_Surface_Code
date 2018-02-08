@@ -1,3 +1,10 @@
+"""
+Routines to test the functions in 'pauli_basis.py'
+
+author: Eduardo Villaseñor
+created-on: 18/11/17
+"""
+
 import unittest
 import qutip as qt
 import numpy as np
