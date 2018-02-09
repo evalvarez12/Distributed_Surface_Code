@@ -46,11 +46,11 @@ def epl(rho, N, ancillas_pos):
     ancilla_pos : position of qubit to be measured.
     """
     # Create the required projectors
-    P1 = (ops.projector_single_qubit_Zbasis(1, N, ancillas_pos[0]) *
-          ops.projector_single_qubit_Zbasis(1, N, ancillas_pos[1]))
+    P = (ops.projector_single_qubit_Zbasis(1, N, ancillas_pos[0]) *
+         ops.projector_single_qubit_Zbasis(1, N, ancillas_pos[1]))
 
     # Compute probability
-    p = (P1 * rho * P1).tr()
+    p = (P * rho * P).tr()
     return p
 
 
@@ -68,8 +68,8 @@ def double_sel(rho, N, ancillas_pos1, ancillas_pos2):
     # Create the required projectors
     P0a = (ops.projector_single_qubit_Xbasis(0, N, ancillas_pos1[0]) *
            ops.projector_single_qubit_Xbasis(0, N, ancillas_pos1[1]))
-    P1a = (ops.projector_single_qubit_Xbasis(1, N, ancillas_pos2[0]) *
-           ops.projector_single_qubit_Xbasis(1, N, ancillas_pos2[1]))
+    P1a = (ops.projector_single_qubit_Xbasis(1, N, ancillas_pos1[0]) *
+           ops.projector_single_qubit_Xbasis(1, N, ancillas_pos1[1]))
 
     P0b = (ops.projector_single_qubit_Xbasis(0, N, ancillas_pos2[0]) *
            ops.projector_single_qubit_Xbasis(0, N, ancillas_pos2[1]))
@@ -77,7 +77,7 @@ def double_sel(rho, N, ancillas_pos1, ancillas_pos2):
            ops.projector_single_qubit_Xbasis(1, N, ancillas_pos2[1]))
 
     # All the possible succes cases in the projectors
-    P = P0a * P0b + P0a * P1b + P1a * P0b + P1a * P1b
+    P = (P0a * P0b) + (P0a * P1b) + (P1a * P0b) + (P1a * P1b)
     p = (P * rho * P.dag()).tr()
     return p
 

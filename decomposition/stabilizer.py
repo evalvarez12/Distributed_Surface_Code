@@ -1,8 +1,6 @@
 """
-Routines for creating the protocols of Naomi Nickerson:
-EXPEDIENT, STRINGENT and MONOLITHIC
-
-NOTE: This is not used anymore
+Routines for measuring stabilizers in a local system or in a disitributed
+one by means of GHZ states.
 
 author: Eduardo Villasenor
 created-on: 05/02/18

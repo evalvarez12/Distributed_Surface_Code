@@ -84,6 +84,24 @@ class TestOperations(unittest.TestCase):
         rho_ref = psi * psi.dag()
         self.assertEqual(rho, rho_ref)
 
+    def test_p_measurement_Xbasis(self):
+        print("----------Test p measurement X basis----------")
+        psi = qt.basis(2, 1)
+        rho = qt.tensor(psi, psi)
+        rho = rho * rho.dag()
+        p = p_measurement_single_Xbasis(rho, 0, 2, 0)
+        self.assertEqual(round(p, 5), 0.5)
+
+    def test_p_measurement_Zbasis(self):
+        print("----------Test p measurement Z basis----------")
+        psi = qt.snot() * qt.basis(2, 1)
+        rho = qt.tensor(psi, psi)
+        rho = rho * rho.dag()
+        p = p_measurement_single_Zbasis(rho, 0, 2, 0)
+        self.assertEqual(round(p, 5), 0.5)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
