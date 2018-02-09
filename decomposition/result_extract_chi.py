@@ -7,7 +7,7 @@ author: Eduardo Villasenor
 created-on: 03/01/18
 """
 import qutip as qt
-import protocols_tools
+import stabilizer
 import noise_modeling
 import pickle
 import tools.names
@@ -33,7 +33,7 @@ for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
         # Initialize objects
         model = noise_modeling.NoiseModel(stab_size, parity)
         model.separate_basis_parity()
-        prot = protocols_tools.Tools(ps=ps, pm=pm, pg=pg, pn=0)
+        stab = stabilizer.Stabilizer(ps=ps, pm=pm, pg=pg)
 
         # Choi state for noise noise modeling
         choi = model._choi_state_ket(stab_size)
@@ -48,10 +48,10 @@ for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
 
         extra_name = ""
         if stab_size == 4 and ghz_size == 3:
-            p_res, rhos = prot.measure_ghz_stabilizer_3on4(choi, ghz, targets, parity)
+            p_res, rhos = stab.measure_ghz_stabilizer_3on4(choi, ghz, targets, parity)
             extra_name = "3on4"
         else:
-            p_res, rhos = prot.measure_ghz_stabilizer(choi, ghz, targets, parity)
+            p_res, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
 
 
         # Set channel output and make chi matrix

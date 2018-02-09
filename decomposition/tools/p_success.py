@@ -30,7 +30,7 @@ def single_sel(rho, N, ancillas_pos):
 
     P = P0 + P1
     # Compute the probability
-    p = (P * rho).tr().real
+    p = (P * rho * P.dag()).tr()
     return p
 
 
@@ -50,7 +50,7 @@ def epl(rho, N, ancillas_pos):
           ops.projector_single_qubit_Zbasis(1, N, ancillas_pos[1]))
 
     # Compute probability
-    p = (P1 * rho).tr().real
+    p = (P1 * rho * P1).tr()
     return p
 
 
@@ -78,14 +78,14 @@ def double_sel(rho, N, ancillas_pos1, ancillas_pos2):
 
     # All the possible succes cases in the projectors
     P = P0a * P0b + P0a * P1b + P1a * P0b + P1a * P1b
-    p = (P * rho).tr().real
+    p = (P * rho * P.dag()).tr()
     return p
 
 
 def ghz_4(rho):
     """
     Compute the probability of success for the special case when creating
-    a GHZ state from
+    a GHZ state from 4 bell pairs.
     Requires that ancillas are on the last part of the entire state rho.
 
     Parameters
@@ -100,5 +100,5 @@ def ghz_4(rho):
     # Add an identity before the projector
     P = qt.tensor(qt.qeye([2]*rest), P)
     # Compute probability
-    p = (P * rho).tr().real
+    p = (P * rho * P.dag()).tr()
     return p

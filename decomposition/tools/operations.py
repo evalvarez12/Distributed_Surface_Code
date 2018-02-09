@@ -157,7 +157,7 @@ def p_measurement_single_Zbasis(rho, measure, N=1, pos=0):
     pos : position of qubit to be measured.
     """
     P = projector_single_qubit_Zbasis(measure, N, pos)
-    p = (P * rho).tr().real
+    p = (P * rho * P.dag()).tr()
     return p
 
 def p_measurement_single_Xbasis(rho, measure, N=1, pos=0):
@@ -170,7 +170,7 @@ def p_measurement_single_Xbasis(rho, measure, N=1, pos=0):
     pos : position of qubit to be measured.
     """
     P = projector_single_qubit_Xbasis(measure, N, pos)
-    p = (P * rho).tr().real
+    p = (P * rho * P.dag()).tr()
     return p
 
 

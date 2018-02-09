@@ -8,6 +8,7 @@ import qutip as qt
 
 
 def number_to_ket(system_size, number):
+    # Returns a qubit ket based on the binary representation of a number
     # Obtain int list binary representation of the number
     bin_list = [int(x) for x in bin(number)[2:]]
     # Attach missing zeros
@@ -23,39 +24,52 @@ def number_to_ket(system_size, number):
         state = qt.tensor(state, qt.basis(2, i))
     return state
 
-def list_numbers_to_projectors(system_size, numbers):
+def numbers_to_projectors(system_size, numbers):
+    # Takes a list of number and returns a list with the projectors of each one|
     ps = []
     for i in numbers:
         ket = number_to_ket(system_size, i)
         ps += [ket * ket.dag()]
     return ps
 
+def numbers_to_kets(system_size, numbers):
+    # Returns a list of the ket representation of each number
+    kets = []
+    for i in numbers:
+        ket = number_to_ket(system_size, i)
+        kets += [ket]
+    return kets
 
 def odd_projectors(system_size):
-    # Odd numbers in binary wise
+    """
+    Returns all the odd projectors in the qubit basis of a given system size.
+    """
+    # All the odd numbers in Hamming weight
     odds = []
     for i in range(2**system_size):
         bin_list = [int(x) for x in bin(i)[2:]]
         if bin_list.count(1) % 2 == 1:
             odds += [i]
-    print(odds)
-    projectors = list_numbers_to_projectors(system_size, odds)
-    return projectors
+    odd_projectors = numbers_to_projectors(system_size, odds)
+    return sum(odd_projectors)
 
 
 def even_projectors(system_size):
-    # Even numbers in binary wise
+    """
+    Returns all the even projectors in the qubit basis of a given system size.
+    """
+    # All the even numbers in Hamming weigth
     evens = []
     for i in range(2**system_size):
         bin_list = [int(x) for x in bin(i)[2:]]
         if bin_list.count(1) % 2 == 0:
             evens += [i]
-
-    projectors = list_numbers_to_projectors(system_size, evens)
-    return projectors
+    even_projectors = numbers_to_projectors(system_size, evens)
+    return sum(even_projectors)
 
 
 def project_odd(rho):
+    # Project state rho into odd subspace
     system_size = len(rho.dims[0])
     projectors = odd_projectors(system_size)
     projected_rho = rho * 0
@@ -67,6 +81,7 @@ def project_odd(rho):
     return projected_rho
 
 def project_even(rho):
+    # Project state rho into even subspace
     system_size = len(rho.dims[0])
     projectors = even_projectors(system_size)
     projected_rho = rho * 0

@@ -1,5 +1,11 @@
 """
-Routines for creating the protocols: EXPEDIENT, STRINGENT and MONOLITHIC
+Routines for creating the protocols of Naomi Nickerson:
+EXPEDIENT, STRINGENT and MONOLITHIC
+
+NOTE: This is not used anymore
+
+author: Eduardo Villasenor
+created-on: 12/08/17
 """
 import qutip as qt
 import numpy as np
@@ -7,9 +13,9 @@ import itertools
 import error_models as errs
 
 
-class Tools:
+class Protocols:
     """
-    Class for holding all protocols.
+    Class for holding GHZ formation protocolsprotocols.
 
     Paramenters
     -----------
@@ -304,119 +310,31 @@ class Tools:
 
         return rho
 
-    def twirl_ghz(self, ghz):
-        N = len(ghz.dims[0])
-        twirled_state = ghz * 0
-        permutations = itertools.permutations(range(N), N)
-        for p in permutations:
-            twirled_state += ghz.permute(p)
-        return twirled_state/np.math.factorial(N)
-
-    def measure_ghz_stabilizer(self, rho_initial, ghz, parity_targets, stabilizer):
-        # Apply two qubit gates
-        N_ghz = len(ghz.dims[0])
-        rho = qt.tensor(rho_initial, ghz)
-        N = len(rho.dims[0])
-        # Controls are the last qubits in rho
-        controls = list(range(N - N_ghz, N))
-        rho = self.apply_two_qubit_gates(rho, N, controls,
-                                         parity_targets, stabilizer)
-        projections_even = [0] * N_ghz
-        rho_even = self.collapse_ancillas_forced(rho, N,
-                                                         N_ghz,
-                                                         projections_even)
-        projections_odd = [0] * N_ghz
-        projections_odd[-1] = 1
-        rho_odd = self.collapse_ancillas_forced(rho, N,
-                                                       N_ghz,
-                                                       projections_odd)
-        # NOTE: Cheating by putting probs by hand
-        p_odd = 0.5
-        p_even = 0.5
-        return [p_even, p_odd], [rho_even, rho_odd]
-
-    def measure_ghz_stabilizer_3on4(self, rho_initial, ghz, parity_targets, stabilizer):
-        # Apply two qubit gates
-        N_ghz = len(ghz.dims[0])
-        rho = qt.tensor(rho_initial, ghz)
-        N = len(rho.dims[0])
-        if N_ghz != 3:
-            raise ValueError("Measure stabilizer 3on4 dimension error")
-
-        # Controls are the last qubits in rho
-        controls = list(range(N - N_ghz, N)) + [N - 1]
-        rho = self.apply_two_qubit_gates(rho, N, controls,
-                                         parity_targets, stabilizer)
-        projections_even = [0] * N_ghz
-        rho_even = self.collapse_ancillas_forced(rho, N,
-                                                 N_ghz,
-                                                 projections_even)
-        projections_odd = [0] * N_ghz
-        projections_odd[-1] = 1
-        rho_odd = self.collapse_ancillas_forced(rho, N,
-                                                N_ghz,
-                                                projections_odd)
-        # NOTE: Cheating by putting probs by hand
-        p_odd = 0.5
-        p_even = 0.5
-        return [p_even, p_odd], [rho_even, rho_odd]
-
-
-    def expedient(self, rho_initial, parity_targets, stabilizer):
-        """
-        Perform the expedient protocol.
-        Uses 4 data qubits and 12 ancillas.
-        """
-        # GHZ number of qubits is same as the number of qubits
-        # in the state to be parity measured
-        N_parity = len(parity_targets)
-        ghz = self.make_ghz_expedient(N_parity)
-        ghz = self.twirl_ghz(ghz)
-        return self.measure_ghz_stabilizer(rho_initial, ghz,
-                                           parity_targets,
-                                           stabilizer)
-
-    def stringent(self, rho_initial, parity_targets, stabilizer):
-        """
-        Perform the stringent protocol.
-        Uses 4 ancillas per data qubit at maximum.
-        """
-        # GHZ number of qubits is same as the number of qubits
-        # in the state to be parity measured
-        N_parity = len(parity_targets)
-        ghz = self.make_ghz_stringent(N_parity)
-        ghz = self.twirl_ghz(ghz)
-        return self.measure_ghz_stabilizer(rho_initial, ghz,
-                                           parity_targets,
-                                           stabilizer)
-
-    def local_stabilizer(self, rho_initial, parity_targets, stabilizer):
-        """
-        Perform the monolithic stabilizer protocol.
-        Uses 4 data qubits and 1 ancillas.
-        """
-        # Append the initialized ancilla to the state|
-        # NOTE: Naomi starts adding error to the initialized
-        ancilla = self.generate_noisy_plus()
-        rho = qt.tensor(rho_initial, ancilla)
-        N = len(rho.dims[0])
-        N_ancillas = 1
-
-        # Apply two qubit gates
-        controls = [N-1]*len(parity_targets)
-        rho = self.apply_two_qubit_gates(rho, N, controls,
-                                         parity_targets, stabilizer)
-
-        # Get both projections of the state
-        rho_even = self.collapse_ancillas_forced(rho,
-                                                         N,
-                                                         N_ancillas,
-                                                         [0])
-        rho_odd = self.collapse_ancillas_forced(rho,
-                                                       N,
-                                                       N_ancillas,
-                                                       [1])
-        # NOTE: Cheating by putting probs by hand
-        p_odd = 0.5
-        p_even = 0.5
-        return [p_even, p_odd], [rho_even, rho_odd]
+    # NOTE: Functions below required removed functions
+    # def expedient(self, rho_initial, parity_targets, stabilizer):
+    #     """
+    #     Perform the expedient protocol.
+    #     Uses 4 data qubits and 12 ancillas.
+    #     """
+    #     # GHZ number of qubits is same as the number of qubits
+    #     # in the state to be parity measured
+    #     N_parity = len(parity_targets)
+    #     ghz = self.make_ghz_expedient(N_parity)
+    #     ghz = self.twirl_ghz(ghz)
+    #     return self.measure_ghz_stabilizer(rho_initial, ghz,
+    #                                        parity_targets,
+    #                                        stabilizer)
+    #
+    # def stringent(self, rho_initial, parity_targets, stabilizer):
+    #     """
+    #     Perform the stringent protocol.
+    #     Uses 4 ancillas per data qubit at maximum.
+    #     """
+    #     # GHZ number of qubits is same as the number of qubits
+    #     # in the state to be parity measured
+    #     N_parity = len(parity_targets)
+    #     ghz = self.make_ghz_stringent(N_parity)
+    #     ghz = self.twirl_ghz(ghz)
+    #     return self.measure_ghz_stabilizer(rho_initial, ghz,
+    #                                        parity_targets,
+    #                                        stabilizer)

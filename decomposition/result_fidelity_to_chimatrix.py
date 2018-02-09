@@ -5,7 +5,7 @@ in the distributed surface code.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import protocols_det
+import stabilizer
 import noise_modeling
 import error_models as errs
 
@@ -24,17 +24,16 @@ def get_errors_dict(dict, ok):
 
 
 # Initial parameters
-ps = 0.0
+ps = 0.015
 pm = 0.015
 pg = 0.015
-pn = 0.1
 system_size = 4
 parity = "X"
 
 # Initialize objects
 model = noise_modeling.NoiseModel(system_size, parity)
 model.separate_basis_parity()
-prot = protocols_det.ProtocolsDeterministic(ps, pm, pg, pm)
+stab = stabilizer.Stabilizer(ps=ps, pm=pm, pg=pg)
 
 # Choi state for noise noise modeling
 choi = model._choi_state_ket(system_size)
@@ -48,7 +47,7 @@ E_full = []
 pgs = [0.003, 0.006, 0.0075, 0.009]
 fs = np.linspace(.5, 1, 50)
 for pg in pgs:
-    prot.change_parameters(ps, pm, pg, pn)
+    stab.change_parameters(ps, pm, pg)
     I_OK = []
     I_NOK = []
     E = []
@@ -56,7 +55,7 @@ for pg in pgs:
 
     for f in fs:
         ghz = errs.generate_noisy_ghz(f, system_size)
-        ps, rhos = prot.measure_ghz_stabilizer(choi, ghz, targets, parity)
+        ps, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
         model.set_rho(rhos, ps)
         model.make_chi_matrix()
 
