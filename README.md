@@ -10,9 +10,9 @@ for the decoder.
 
 
 ### Files:
-..* surface_code.py : Main class for the surface code. Contains all relevant functions
+* surface_code.py : Main class for the surface code. Contains all relevant functions
 required for measuring noisy stabilizers and applying the corrections given by the decoder.
-..* layers.py : Class for embedding a surface code object, that allows for recording several
+* layers.py : Class for embedding a surface code object, that allows for recording several
 continuous stabilizer measurements as required when doing imperfect measurements.
-..* matching.py : Functions for interacting with the decoder. This included transforming the measurements into the graphs required.
-..* result_* : Code for obtaining results/testing the simulations.
+* matching.py : Functions for interacting with the decoder. This included transforming the measurements into the graphs required.
+* result_* : Code for obtaining results/testing the simulations.
