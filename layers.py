@@ -7,6 +7,7 @@ created-on: 12/07/17
 """
 
 import numpy as np
+import matching
 
 class Layers:
     """
@@ -48,6 +49,26 @@ class Layers:
 
         self.syndromes_star = []
         self.syndromes_plaq = []
+
+    def decode(self, weights=[1, 1]):
+        """Decode the measured syndromes using MWPM"""
+        # Get anyons
+        anyons_star, anyons_plaq = self.find_anyons_all()
+
+        # The number of measurements done so far
+        time = len(self.syndromes_star)
+        # Decode the stabilizer measuements
+        match_star = matching.match_simple(self.surface_code.distance,
+                                           anyons_star,
+                                           self.surface_code.surface,
+                                           "star", weights=weights)
+        match_plaq = matching.match_simple(self.surface_code.distance,
+                                           anyons_plaq,
+                                           self.surface_code.surface,
+                                           "plaq", weights=weights)
+        # Apply corrections to the surface code
+        self.surface_code.correct_error("star", match_star)
+        self.surface_code.correct_error("plaq", match_plaq)
 
 
     def add(self):

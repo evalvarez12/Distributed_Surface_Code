@@ -11,7 +11,7 @@ def match_simple(size, anyons, surface, stabilizer, weights=[1, 1]):
     Find a matching to fix the errors in a 3D planar code given the positions
     of '-1' stabilizer outcomes
 
-    REQUIRES LAST PERFECT MEASUREMENT ROUND
+    NOTE: REQUIRES LAST PERFECT MEASUREMENT ROUND
 
     Parameters:
     -----------

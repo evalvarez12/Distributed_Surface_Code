@@ -113,8 +113,9 @@ class Blocks:
 
     def _generate_bell_pair_BK(self):
         # Generate a Bell pair using the Barret-Kok protocol.
+        # For this case set the initial state to be |+>
         # Probaility of success
-        s = np.sin(self.theta)**2
+        s = .5
         r = (1 - self.eta)*s/(1 - self.eta*s)
         p_success = (1 - r)*self.eta**2
 

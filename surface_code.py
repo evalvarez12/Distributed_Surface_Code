@@ -131,7 +131,7 @@ class SurfaceCode:
                                        pg=pg, eta=eta, a0=a0, a1=a1,
                                        theta=theta, protocol=protocol)
 
-    def measure_all_stablizers(self, p_not_complete=0):
+    def measure_all_stabilizers(self, p_not_complete=0):
         """
         Measure all stabilizer in the code.
 

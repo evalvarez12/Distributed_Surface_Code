@@ -41,7 +41,7 @@ cycles = 20
 fail_rate = 0
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
-sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
+# sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Set time for each GHZ generation
 time = 0.30347
@@ -78,15 +78,15 @@ for i in range(iterations):
     anyons_star, anyons_plaq = lc.find_anyons_all()
 
     # Decode
-    match_star = matching.match(distance, anyons_star, topology,
-                                "star", time=cycles, weights=[1, 1])
-    match_plaq = matching.match(distance, anyons_plaq, topology,
-                                "plaq", time=cycles, weights=[1, 1])
+    # match_star = matching.match(distance, anyons_star, topology,
+    #                             "star", time=cycles, weights=[1, 1])
+    # match_plaq = matching.match(distance, anyons_plaq, topology,
+    #                             "plaq", time=cycles, weights=[1, 1])
 
-    # match_star = matching.match_cheat(distance, anyons_star, topology,
-    #                                   "star", weights=[1, 1])
-    # match_plaq = matching.match_cheat(distance, anyons_plaq, topology,
-    #                                   "plaq", weights=[1, 1])
+    match_star = matching.match_simple(distance, anyons_star, topology,
+                                       "star", weights=[1, 1])
+    match_plaq = matching.match_simple(distance, anyons_plaq, topology,
+                                       "plaq", weights=[1, 1])
     pre_correction = sc.qubits.copy()
 
     # Apply corrections
@@ -118,7 +118,7 @@ for i in range(iterations):
     # Measure logical qubit
     logical = sc.measure_logical()
 
-    sc.plot("star")
+    # sc.plot("star")
     # sc.plot("plaq")
     # plt.show()
 

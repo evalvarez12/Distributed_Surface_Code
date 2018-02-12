@@ -1,6 +1,6 @@
-# Fault tolerant surface code siulations.
+# Fault tolerant surface code simulations.
 
-Surface code simulations for a distributed implemenation using considering NV centers
+Surface code simulations for a distributed implementation using considering NV centers
 for the quantum nodes.
 
 The simulations depend first on the creation of GHZ states from which a error model

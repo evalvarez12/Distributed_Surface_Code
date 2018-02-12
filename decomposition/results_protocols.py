@@ -56,7 +56,7 @@ for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
     # check = collections.Counter({})
     for i in range(iterations):
         # print(i)
-        _, c, r = ghz.run(None)
+        r, c = ghz.run(None)
         times += [c["time"]]
 
         r = pd.twirl_ghz(r)

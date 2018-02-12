@@ -55,8 +55,9 @@ class Circuit:
         rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
-        return self._run(rho)
-
+        p, check, rho = self._run(rho)
+        return rho, check
+        
     def _run(self, rho, p_parent=1, check_parent=collections.Counter({})):
         # First run self circuit
         p_success, check, rho = self.circuit(rho, **self.circuit_kwargs)
