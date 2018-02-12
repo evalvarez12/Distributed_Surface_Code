@@ -1,20 +1,19 @@
 import noise_modeling as nm
-import protocols_tools as pt
+import stabilizer as st
 
 # Initial parameters
 ps = 0.0
 pm = 0.009
 pg = 0.009
-pn = 0.0
 system_size = 4
 parity = "X"
 
 # Initialize objects
-protocol = pt.ProtocolsDeterministic(ps, pm, pg, pn)
+stab = st.Stabilizer(ps, pm, pg)
 model = nm.NoiseModel(system_size, parity)
 
 # Define function and apply superoperator
-superoperator_function = protocol.local_stabilizer
+superoperator_function = stab.local_stabilizer
 model.apply_superoperator(superoperator_function)
 
 # Separate basis using the parity symmetry

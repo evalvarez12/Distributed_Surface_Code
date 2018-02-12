@@ -1,5 +1,10 @@
 """
-Complete list of processed errors for the noisy operators.
+Load a error model for the specified parameters.
+The error model must be in the folder data/ following the name format
+stablished by decomposition/tools/names.py.
+
+author: Eduardo Villasenor
+created-on: 21/08/17
 """
 import numpy as np
 import pickle
@@ -10,7 +15,21 @@ I, X, Y, Z = [1, 1], [-1, 1], [-1, -1], [1, -1]
 
 class Generator:
     def __init__(self, surface, ps, pm, pg, eta, a0, a1, theta, protocol):
-        # self.generator = gen.Generator()
+        """Init function.
+
+        Parameters
+        ----------
+        surface : (string) planar or toric code
+        ps : (scalar) single qubit gate error rate.
+        pm : (scalar) measurement error rate.
+        pg : (scalar) two qubit gate error rate.
+        eta : (scalar) detection efficiency.
+        a0 : (scalar) extra environmental error when electron spin is being operated.
+        a1 : (scalar) default environmental error.
+        theta : (scalar) determines how the states are initialized when generating remote
+                entanglement.
+        protocol : (string) name of the protocol used in generating the states
+        """
 
         chi_star = self._load_model(ps, pm, pg, eta, a0, a1, theta,
                                     4, "X", protocol)
@@ -58,6 +77,7 @@ class Generator:
         return file_name
 
     def _load_model(self, ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):
+        # Load a file with a error model in a dictionary
         file_name = self._generate_name(ps, pm, pg, eta, a0, a1, theta,
                                         stab_size, parity, protocol)
         # try:
@@ -67,6 +87,17 @@ class Generator:
             # raise NameError("Model file not found: " + file_name)
 
     def get_errors(self, num_errors, stabilizer, border=False):
+        """
+        Get a list of errors corresponding to the loaded error model.
+
+        Paramaters
+        -----------
+        num_errors : (int) number of stabilizers measured on which errors are
+                     applied
+        stabilizer : (string) plaq or star, type of the stabilizer measured
+        border : (bool) if the stabilizer measured is in the border of the
+                 planar code
+        """
         if stabilizer == "star":
             c = 0
         elif stabilizer == "plaq":
@@ -102,14 +133,19 @@ class Generator:
         return m_errors, q_errors
 
     def _symbol_to_error_list(self, symbol_list, border=False):
+        # Transform the symbols in the error dictionary to lists with the
+        # corresponding errors
         N = len(symbol_list)
         if border:
             d_qubits = 3
         else:
             d_qubits = 4
 
+        # Create lists to save the errors
         qubit_errs = np.ones((d_qubits, 2, N))
         measurement_errs = np.ones(N)
+        # Iterate through the error filling the lists with the corresponding
+        # values
         for i in range(N):
             m, q = self._symbol_to_error(symbol_list[i])
 
@@ -122,6 +158,7 @@ class Generator:
         return [measurement_errs, qubit_errs]
 
     def _symbol_to_error(self, symbol):
+        # Tansform a errror symbol into a list representation
         if "N" in symbol:
             measurement = -1
             symbol = symbol.replace("_NOK", "")
@@ -134,6 +171,7 @@ class Generator:
         return measurement, errors
 
     def _pauli_error(self, s):
+        # Individual string to list representation
         if s == "I":
             return I
         elif s == "X":

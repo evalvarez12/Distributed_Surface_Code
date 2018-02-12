@@ -43,6 +43,10 @@ def numbers_to_kets(system_size, numbers):
 def odd_projectors(system_size):
     """
     Returns all the odd projectors in the qubit basis of a given system size.
+
+    Parameters
+    -----------
+    system_size : (int) total size of the system to be projected
     """
     # All the odd numbers in Hamming weight
     odds = []
@@ -57,6 +61,10 @@ def odd_projectors(system_size):
 def even_projectors(system_size):
     """
     Returns all the even projectors in the qubit basis of a given system size.
+
+    Parameters
+    -----------
+    system_size : (int) total size of the system to be projected
     """
     # All the even numbers in Hamming weigth
     evens = []

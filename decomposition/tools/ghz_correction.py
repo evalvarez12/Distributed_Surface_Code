@@ -16,9 +16,9 @@ def correction(measurements, ghz_size, N, operation_pos):
 
     Parameters
     ----------
-    measuements : Measurements results of the collaped ancillas ex. [0, 1, 1, 0].
-    N : system size.
-    operation_pos : position of qubit(s) in which the corrections apply.
+    measuements : (int) Measurements results of the collaped ancillas ex. [0, 1, 1, 0].
+    N : (int) system size.
+    operation_pos : (list) position of qubit(s) in which the corrections apply.
     """
     if ghz_size == 4:
         return correction_ghz4(measurements, N, operation_pos)

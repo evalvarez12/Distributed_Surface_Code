@@ -1,18 +1,27 @@
 """
-Layers class for 3d codes.
+Layers class for holding the measurement sheets when performing imperfect measurements
+on the surface code.
 
-@author: eduardo
+author: Eduardo Villasenor
+created-on: 12/07/17
 """
 
 import numpy as np
 
 class Layers:
     """
-    Layers to store the anyon positions in the surface codes.
+    Layers to store the syndrome measurements in the surface codes.
     Works as a 3d surface code where time is the third dimension.
     """
 
     def __init__(self, surface_code):
+        """
+        Init function
+
+        Parameters
+        -----------
+        surface_code : (SurfaceCode) surface code object
+        """
         # Save the suface code object
         self.surface_code = surface_code
 
@@ -29,9 +38,11 @@ class Layers:
         self.plaqs_pos = self.surface_code.plaqs.transpose()
 
     def get_time(self):
+        """Returns the number of measurements done so far"""
         return len(self.syndromes_star)
 
     def reset(self):
+        """Erases all saved syndroms"""
         self.past_syndrome_star = np.ones(self.surface_code.number_stabs)
         self.past_syndrome_plaq = np.ones(self.surface_code.number_stabs)
 
@@ -40,6 +51,7 @@ class Layers:
 
 
     def add(self):
+        """Add the current measuement status as another layer."""
         # New layer is obtained by comparing the previous one
         # with the new one, so physical errors are only carried once
         code_stars = self.surface_code.get_stars()
@@ -56,11 +68,15 @@ class Layers:
         self.syndromes_plaq += [new_plaq_layer]
 
     def find_anyons_all(self):
+        """Return all the stabilizer measuements so far"""
         anyons_star = self.find_anyons("star")
         anyons_plaq = self.find_anyons("plaq")
         return anyons_star, anyons_plaq
 
     def find_anyons(self, stabilizer):
+        # Return a list with all the stabilizer measurements
+        # Anyons array format is:
+        # [[x1, y1, t1], [x2, y2, t2], [x3, y3, t3], ...]
         # Specify stabilizers
         if stabilizer == "plaq":
             stabs_pos = self.plaqs_pos
@@ -92,8 +108,6 @@ class Layers:
             anyons = np.vstack((anyons, stabs))
             empty = False
 
-        # Anyons array format is:
-        # [[x1, y1, t1], [x2, y2, t2], [x3, y3, t3], ...]
         if empty:
             return []
         return anyons[1:]

@@ -1,8 +1,12 @@
+"""
+Functions for performing the decoding of the surface code.
+Relies on Kolmogorov's implementation of the Blossom algorithm: Blossom V
+"""
 import blossom5.py_match as pm
 import numpy as np
 
 
-def match_cheat(size, anyons, surface, stabilizer, weights=[1, 1]):
+def match_simple(size, anyons, surface, stabilizer, weights=[1, 1]):
     """
     Find a matching to fix the errors in a 3D planar code given the positions
     of '-1' stabilizer outcomes
@@ -11,14 +15,12 @@ def match_cheat(size, anyons, surface, stabilizer, weights=[1, 1]):
 
     Parameters:
     -----------
-    size -- The dimension of the code
-    anyons -- A list of the locations of all '-1' value stabilizers.
+    size : (int) The dimension of the code
+    anyons : (list) A list of the locations of all '-1' value stabilizers.
               [[x0,y0,t0],[x1,y1,t1],...]
-    weights -- The multiplicative weighting that should be assigned to graph
+    surface : (string) planar or toric, the surface of the code
+    weights : (list) The multiplicative weighting that should be assigned to graph
                edges in the [space,time] dimensions. Default: [1,1]
-    time -- Number of syndrome extractions made under imperfect measurements
-            time = 0 assumes perfect syndrome extractrion and the decoding is
-            in 2D.
     Returns:
     --------
     A list containing all the input anyon positions grouped into pairs.
@@ -59,14 +61,15 @@ def match(size, anyons, surface, stabilizer, time, weights=[1, 1]):
 
     Parameters:
     -----------
-    size -- The dimension of the code
-    anyons -- A list of the locations of all '-1' value stabilizers.
+    size : (int) The dimension of the code
+    anyons : (list) A list of the locations of all '-1' value stabilizers.
               [[x0,y0,t0],[x1,y1,t1],...]
-    weights -- The multiplicative weighting that should be assigned to graph
-               edges in the [space,time] dimensions. Default: [1,1]
-    time -- Number of syndrome extractions made under imperfect measurements
+    surface : (string) planar or toric, the surface of the code
+    time : (int) Number of syndrome extractions made under imperfect measurements
             time = 0 assumes perfect syndrome extractrion and the decoding is
             in 2D.
+    weights : (list) The multiplicative weighting that should be assigned to graph
+               edges in the [space,time] dimensions. Default: [1,1]
     Returns:
     --------
     A list containing all the input anyon positions grouped into pairs.
@@ -106,6 +109,7 @@ def match(size, anyons, surface, stabilizer, time, weights=[1, 1]):
 
 
 def make_graph(size, nodes, N_real, weights=[1, 1], cyclic=True):
+    # Function to make the graph representation of the anyons
     # Nodes array format is:
     # [[x1, y1, t1], [x2, y2, t2], [x3, y3, t3], ...]
     N = len(nodes)
@@ -150,6 +154,7 @@ def make_graph(size, nodes, N_real, weights=[1, 1], cyclic=True):
 
 
 def pairs_remove_out_planar(size, total_time, stabilizer, pairs):
+    # Remove pairs that match ouside of the surface code
     if stabilizer == "star":
         c = 1
     else:
@@ -185,6 +190,7 @@ def pairs_remove_out_planar(size, total_time, stabilizer, pairs):
 
 
 def pairs_remove_out_planar_space(size, stabilizer, pairs):
+    # Remove pairs that match ouside of the surface code
     if stabilizer == "star":
         c = 1
     else:
@@ -210,6 +216,8 @@ def pairs_remove_out_toric(total_time, pairs):
 
 
 def add_virtual_space(size, anyons, stabilizer):
+    # Add virual anyons in the space, outside of the boundaries for the plannar
+    # code
     N = len(anyons)
     virtual = anyons.copy()
     if stabilizer == "star":
@@ -222,6 +230,7 @@ def add_virtual_space(size, anyons, stabilizer):
 
 
 def add_virtual_time(total_time, anyons):
+    # Add virtual anyons in the last + 1 sheet of measurements
     N = len(anyons)
     t = int(total_time/2)
     virtual = anyons.copy()

@@ -1,5 +1,5 @@
 """
-Surface code class.
+Surface code simulation class.
 
 created on: 19/07/17
 
@@ -48,7 +48,7 @@ class SurfaceCode:
         ----------
         distance : int
             The distance of the surface of the surface code.
-        surface = "toric" / "planar" : string, optional
+        surface : (string) "toric" or "planar"
             Topology of the code.
         """
         if surface != "toric" and surface != "planar":
@@ -110,14 +110,36 @@ class SurfaceCode:
         bounds = [-2.5, -1.5, 0, 1.5, 2.5]
         self.cmap_norm = colors.BoundaryNorm(bounds, self.cmap.N)
 
-
     def init_error_obj(self, surface, ps, pm, pg, eta, a0, a1, theta, protocol):
+        """
+        Initialize a error objecto to load an error model.
+
+        Parameters
+        ----------
+        surface : (string) planar or toric code
+        ps : (scalar) single qubit gate error rate.
+        pm : (scalar) measurement error rate.
+        pg : (scalar) two qubit gate error rate.
+        eta : (scalar) detection efficiency.
+        a0 : (scalar) extra environmental error when electron spin is being operated.
+        a1 : (scalar) default environmental error.
+        theta : (scalar) determines how the states are initialized when generating remote
+                entanglement.
+        protocol : (string) name of the protocol used in generating the states
+        """
         self.errors = errors.Generator(surface=self.surface, ps=ps, pm=pm,
                                        pg=pg, eta=eta, a0=a0, a1=a1,
                                        theta=theta, protocol=protocol)
 
     def measure_all_stablizers(self, p_not_complete=0):
-        """Measure all stabilizer in the code."""
+        """
+        Measure all stabilizer in the code.
+
+        Parameters
+        -----------
+        p_not_complete : (scalar) probability that a stabilizer is not able
+                         to complete the measuement in time
+        """
         self.measure_stabilizer_type("star", p_not_complete)
         self.measure_stabilizer_type("plaq", p_not_complete)
 
@@ -127,7 +149,7 @@ class SurfaceCode:
 
         Parameters
         ----------
-        stabilizer: string - either "star" or "plaq"
+        stabilizer: (string) either "star" or "plaq"
         """
         if stabilizer == "star":
             pos = self.stars
@@ -144,12 +166,12 @@ class SurfaceCode:
 
         Parameters
         ----------
-        pos : array [[x1, x2, x3, ...], [y1, y2, y3, ...]]
+        pos : (array) [[x1, x2, x3, ...], [y1, y2, y3, ...]]
             Positions of the stabilizers to be measured.
         c   : 0 or 1 channel of the stabilizer type
-        stabilizer : string - "star" or "plaq"
+        stabilizer : (string) - "star" or "plaq"
             Kind of stabilizer to be measured.
-        p_not_complete=0 : float
+        p_not_complete=0 : (scalar)
             Probaility to not complete stabilizer measurement.
         """
 
@@ -164,36 +186,37 @@ class SurfaceCode:
             self.measure_stabilizer_boundary(pos, c)
 
     def measure_stabilizer_bulk(self, pos, c):
-            stab_qubits = self._stabilizer_qubits_bulk(pos)
-            # Get all values on a multi dimensional array
-            vals = self.qubits[c, stab_qubits[:, 0], stab_qubits[:, 1]]
-            # Product over the desired dimension
-            vals = np.prod(vals, axis=0)
-            # Set the measurement results to the stabilizers
-            self.qubits[0, pos[0], pos[1]] = vals
+        stab_qubits = self._stabilizer_qubits_bulk(pos)
+        # Get all values on a multi dimensional array
+        vals = self.qubits[c, stab_qubits[:, 0], stab_qubits[:, 1]]
+        # Product over the desired dimension
+        vals = np.prod(vals, axis=0)
+        # Set the measurement results to the stabilizers
+        self.qubits[0, pos[0], pos[1]] = vals
 
     def measure_stabilizer_boundary(self, pos, c):
-            borders = ["t", "b", "l", "r"]
-            for b in borders:
-                self.measure_stabilizer_side(pos, b, c)
+        borders = ["t", "b", "l", "r"]
+        for b in borders:
+            self.measure_stabilizer_side(pos, b, c)
 
     def measure_stabilizer_side(self, pos, bord, c):
-            # Separate all stabilizers in top, bottom, etc.
-            bord_stabs = pos[:, self.plane[pos[0], pos[1]] == bord]
+        # Separate all stabilizers in top, bottom, etc.
+        bord_stabs = pos[:, self.plane[pos[0], pos[1]] == bord]
 
-            # Get corresponding qubits
-            bord_qubits = self._stabilizer_qubits_boundary(bord_stabs, bord)
+        # Get corresponding qubits
+        bord_qubits = self._stabilizer_qubits_boundary(bord_stabs, bord)
 
-            # Get all values on a multi dimensional array
-            vals = self.qubits[c, bord_qubits[:, 0], bord_qubits[:, 1]]
-            # Product over the desired dimension
-            vals = np.prod(vals, axis=0)
-            # Set the measurement results to the stabilizers
-            self.qubits[0, bord_stabs[0], bord_stabs[1]] = vals
+        # Get all values on a multi dimensional array
+        vals = self.qubits[c, bord_qubits[:, 0], bord_qubits[:, 1]]
+        # Product over the desired dimension
+        vals = np.prod(vals, axis=0)
+        # Set the measurement results to the stabilizers
+        self.qubits[0, bord_stabs[0], bord_stabs[1]] = vals
 
 
     def _stabilizer_qubits_bulk(self, pos):
-        """Find qubits corresponing to the given stabilizers."""
+        # Find qubits corresponing to the given stabilizers assuming they ara
+        # in the bulk.
         top = pos + np.array([[-1], [0]])
         bottom = pos + np.array([[1], [0]])
         left = pos + np.array([[0], [-1]])
@@ -260,6 +283,9 @@ class SurfaceCode:
         self.qubits[:, self.tags == "Q"] *= noise
 
     def environmental_noise(self, p):
+        """
+        Add environmental depolarizing noise. See decomposition/erros.py
+        """
         pa = np.array([[p], [p]])/3.
         noise = 2*(np.random.rand(2, self.number_data_qubits) > pa) - 1
         # Apply the X Z noise
@@ -272,6 +298,14 @@ class SurfaceCode:
 
 
     def noisy_measurement_cycle(self, p_env):
+        """
+        Noisy stabilizer measuement cylce following the insterspersed
+        protocol for a distributed surface code.
+
+        Parameters
+        -----------
+        p_env : depolarizing error rate due to the environment
+        """
         # Star measurements
         self.environmental_noise(p_env)
         self.noisy_measurement_specific(self.stars_round1, 0, "star")
@@ -284,22 +318,8 @@ class SurfaceCode:
         self.environmental_noise(p_env)
         self.noisy_measurement_specific(self.plaqs_round2, 1, "plaq")
 
-
-    # NOTE: OLD function
-    # def _apply_operation_error(self, pos, error):
-    #     """Apply operation error."""
-    #     pos_qubit1, pos_qubit2 = self.two_rand_stab_qubits(pos)
-    #
-    #     err_measurement, err_qubit1, err_qubit2 = error
-    #     # Errors have shape:
-    #     # [[e1X, e2X, e3X, ...], [e1Z, e2Z, e3Z, ...]]
-    #     self.qubits[:, pos_qubit1[0], pos_qubit1[1]] *= err_qubit1
-    #     self.qubits[:, pos_qubit2[0], pos_qubit2[1]] *= err_qubit2
-    #
-    #     # Apply error to stabilizer
-    #     self.qubitts[0, pos[0], pos[1]] *= err_measurement
-
     def separate_bulk_boundary(self, pos):
+        # Separate the stabilizers in bulk and boundary. Used in planar code only
         # Mask to identify bulk from boundary
         maskx = np.ones_like(pos[0], dtype=bool)
         masky = np.ones_like(pos[0], dtype=bool)
@@ -318,6 +338,7 @@ class SurfaceCode:
         return bulk, boundary
 
     def noisy_measurement(self, stabilizer):
+        """Return useful parameters for stabilizer type."""
         if stabilizer == "star":
             pos = self.stars
             c = 0
@@ -328,6 +349,7 @@ class SurfaceCode:
         self.noisy_measurement_specific(pos, c, stabilizer)
 
     def noisy_measurement_specific(self, pos, c, stabilizer):
+        # Measure the given stabilizers and apply the corresponding errors
         if self.surface == "toric":
             N = len(pos[0])
             m_err, q_err = self.errors.get_errors(N, stabilizer)
@@ -430,11 +452,21 @@ class SurfaceCode:
         return X, Z
 
 
-    def correct_error(self, error_type, match, time=0):
+    def correct_error(self, stab_type, match, time=0):
+        """
+        Apply error corrections resulting from de decoding process.
+        Uses MWPM as a decoder.
+
+        Paramters
+        ----------
+        stab_type : (string) stabilizer type where corrections are being applied
+        match : (list) matchings obtained from the decoder.
+        time : (int) if imperfect measurements, number of measuements made
+        """
         if len(match) == 0:
             return
 
-        c = self._select_stabilizer(error_type)
+        c = self._select_stabilizer(stab_type)
         m = self.side
 
         # Index where one pair is on the last time sheet and the other
@@ -459,6 +491,7 @@ class SurfaceCode:
                 #         self.qubits[0, px, py] *= -1
                 #         continue
 
+                # Disntances and direcction to be transversed
                 dx = qx - px
                 sx = np.sign(dx)
                 dx = np.abs(dx)
@@ -466,6 +499,7 @@ class SurfaceCode:
                 sy = np.sign(dy)
                 dy = np.abs(dy)
 
+                # Get coords of the connecting points
                 stepsx = sx*np.arange(1, dx, 2) + px
                 stepsy = sy*np.arange(1, dy, 2) + py
                 coord_x = np.ones_like(stepsy) * qx
@@ -492,6 +526,7 @@ class SurfaceCode:
                 #         self.qubits[0, px, py] *= -1
                 #         continue
 
+                # Distances in the plane
                 dx = (qx - px) % m
                 dy = (qy - py) % m
 
@@ -514,10 +549,13 @@ class SurfaceCode:
 
                 coord_x = np.ones_like(stepsy) * endx
 
+                # Get coords of the connecting points
                 stepsx = np.append(stepsx, coord_x).astype(int)
                 stepsy = np.append(coord_y, stepsy).astype(int)
 
                 # print("Steps")
                 # print(stepsx)
                 # print(stepsy)
+
+                # Flip the values of the conecting points
                 self.qubits[c, stepsx, stepsy] *= -1

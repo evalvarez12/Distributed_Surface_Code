@@ -29,9 +29,9 @@ def string_to_operator(s, positions, system_size):
 
     Parameters
     ----------
-    s : string of single qubit operators.
-    positions : position in which each operator acts.
-    system_size : total system size.
+    s : (string) string representation of single qubit operators.
+    positions : (list) position in which each operator acts.
+    system_size : (int) total system size.
     """
     s_list = list(s)
     operator = qt.qeye([2] * system_size)
@@ -48,10 +48,10 @@ def combinations(n_operators, ops_positions, system_size):
 
     Parameters
     ----------
-    n_operators : number of operators in which the combinations are going to be
+    n_operators : (int) number of operators in which the combinations are going to be
                   obtained.
-    ops_positions : position in which each operator acts.
-    system_size : total system size.
+    ops_positions : (list) position in which each operator acts.
+    system_size : (int) total system size.
     """
     # Dict to save all operators
     operators = {}

@@ -14,14 +14,7 @@ import tools.projectors as proj
 
 class Stabilizer:
     """
-    Class for holding GHZ formation protocolsprotocols.
-
-    Paramenters
-    -----------
-    ps - single qubit gate error
-    pm - single qubit measurement error
-    pg - two-qubit gate error
-    pn - network error
+    Class for holding functions relevant to making stabilizer measurements
     """
 
     def __init__(self, ps, pm, pg):
@@ -30,9 +23,9 @@ class Stabilizer:
 
         Parameters
         ----------
-        ps : single qubit gate error rate.
-        pm : measurement error rate.
-        pg : two qubit gate error rate.
+        ps : (scalar) single qubit gate error rate.
+        pm : (scalar) measurement error rate.
+        pg : (scalar) two qubit gate error rate.
         """
         self.ps = ps
         self.pm = pm
@@ -44,9 +37,9 @@ class Stabilizer:
 
         Parameters
         ----------
-        ps : single qubit gate error rate.
-        pm : measurement error rate.
-        pg : two qubit gate error rate.
+        ps : (scalar) single qubit gate error rate.
+        pm : (scalar) measurement error rate.
+        pg : (scalar) two qubit gate error rate.
         """
         self.ps = ps
         self.pm = pm
@@ -82,11 +75,11 @@ class Stabilizer:
 
         Parameters
         ----------
-        rho : density matrix
-        N : total system size
-        controls : list with the control qubits position
-        targets : list with the target qubits position
-        sigma : X or Z depending on the gate
+        rho : (densmat) density matrix
+        N : (int) total system size
+        controls : (list) list with the control qubits position
+        targets : (list) list with the target qubits position
+        sigma : (string) X or Z depending on the gate
         """
         gates = self.get_two_qubit_gates(N, controls, targets, sigma)
         for i in range(len(gates)):
@@ -120,10 +113,10 @@ class Stabilizer:
 
         Parameters
         ----------
-        rho : density matrix
-        N : total system size
-        N_ancillas : number of ancillas to be measured
-        projections : list with the projections in which every ancilla collapses
+        rho : (densmat) density matrix
+        N : (int) total system size
+        N_ancillas : (int) number of ancillas to be measured
+        projections : (list) list with the projections in which every ancilla collapses
         """
         # The secuencial probabilities of finding the forced state
         probabilities = []
@@ -139,7 +132,7 @@ class Stabilizer:
 
         Parameters
         -----------
-        ghz : density matrix of a ghz state.
+        ghz : (densmat) density matrix of a ghz state.
         """
         N = len(ghz.dims[0])
         twirled_state = ghz * 0
@@ -168,7 +161,6 @@ class Stabilizer:
         # Compute probabilites
         p_even = (P_even * rho * P_even.dag()).tr()
         p_odd = (P_odd * rho * P_odd.dag()).tr()
-        print("P_(even, odd) :", p_even, p_odd)
         return [p_even, p_odd]
 
     def measure_ghz_stabilizer(self, rho, ghz, parity_targets, stabilizer):
@@ -178,10 +170,10 @@ class Stabilizer:
 
         Parameters
         -----------
-        rho : state to be measured by the stabilizer
-        ghz : GHZ state to be used in the stabilizer measurement
-        parity_targets : positions of the qubits to be measured
-        stabilizer : star or plaquette
+        rho : (densmat) state to be measured by the stabilizer
+        ghz : (densmat) GHZ state to be used in the stabilizer measurement
+        parity_targets : (list) positions of the qubits to be measured
+        stabilizer : (string) star or plaquette
         """
         # Apply two qubit gates
         N_ghz = len(ghz.dims[0])
@@ -210,10 +202,10 @@ class Stabilizer:
 
         Parameters
         -----------
-        rho : state to be measured by the stabilizer
-        ghz : GHZ state to be used in the stabilizer measurement
-        parity_targets : positions of the qubits to be measured
-        stabilizer : star or plaquette
+        rho : (densmat) state to be measured by the stabilizer
+        ghz : (densmat) GHZ state to be used in the stabilizer measurement
+        parity_targets : (list) positions of the qubits to be measured
+        stabilizer : (string) star or plaquette
         """
         # Apply two qubit gates
         N_ghz = len(ghz.dims[0])
@@ -244,9 +236,9 @@ class Stabilizer:
 
         Parameters
         -----------
-        rho : state to be measured by the stabilizer
-        parity_targets : positions of the qubits to be measured
-        stabilizer : star or plaquette
+        rho : (densmat) state to be measured by the stabilizer
+        parity_targets : (list) positions of the qubits to be measured
+        stabilizer : (string) star or plaquette
         """
         # Append the initialized ancilla to the state|
         # NOTE: Naomi starts adding error to the initialized

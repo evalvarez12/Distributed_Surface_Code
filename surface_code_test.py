@@ -1,5 +1,5 @@
 """
-Test routines for the surface code implementation
+Test routines for the functions in 'surface_code.py'
 
 created on: 20/07/17
 

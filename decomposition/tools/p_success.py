@@ -18,9 +18,9 @@ def single_sel(rho, N, ancillas_pos):
 
     Parameters
     ----------
-    rho : density matrix.
-    N : system size.
-    ancilla_pos : position of qubit to be measured.
+    rho : (densmat) density matrix.
+    N : (int) system size.
+    ancilla_pos : (int) position of qubit to be measured.
     """
     # Create the required projectors
     P0 = (ops.projector_single_qubit_Xbasis(0, N, ancillas_pos[0]) *
@@ -41,9 +41,9 @@ def epl(rho, N, ancillas_pos):
 
     Parameters
     ----------
-    rho : density matrix.
-    N : system size.
-    ancilla_pos : position of qubit to be measured.
+    rho : (densmat) density matrix.
+    N : (int) system size.
+    ancilla_pos : (int) position of qubit to be measured.
     """
     # Create the required projectors
     P = (ops.projector_single_qubit_Zbasis(1, N, ancillas_pos[0]) *
@@ -61,9 +61,9 @@ def double_sel(rho, N, ancillas_pos1, ancillas_pos2):
 
     Parameters
     ----------
-    rho : density matrix.
-    N : system size.
-    ancilla_pos : position of qubit to be measured.
+    rho : (densmat) density matrix.
+    N : (int) system size.
+    ancilla_pos : (int) position of qubit to be measured.
     """
     # Create the required projectors
     P0a = (ops.projector_single_qubit_Xbasis(0, N, ancillas_pos1[0]) *
@@ -90,15 +90,14 @@ def ghz_4(rho):
 
     Parameters
     ----------
-    rho : density matrix.
+    rho : (densmat) density matrix.
     """
     # Get a list of all even projectors for the 4 ancillas
     N = len(rho.dims[0])
     P_even = prj.even_projectors(4)
     rest = N - 4
-    P = sum(P_even)
     # Add an identity before the projector
-    P = qt.tensor(qt.qeye([2]*rest), P)
+    P = qt.tensor(qt.qeye([2]*rest), P_even)
     # Compute probability
     p = (P * rho * P.dag()).tr()
     return p

@@ -23,13 +23,6 @@ class Blocks:
     Class for holding all protocols.
     Each circuit block returns the resulting state, number of steps used
     and the probability of success if applicable.
-
-    Parameters
-    -----------
-    ps - single qubit gate error
-    pm - single qubit measurement error
-    pg - two-qubit gate error
-    pn - network error
     """
 
     def __init__(self, ps, pm, pg, eta, a0, a1, theta):
@@ -37,13 +30,13 @@ class Blocks:
 
         Parameters
         ----------
-        ps : single qubit gate error rate.
-        pm : measurement error rate.
-        pg : two qubit gate error rate.
-        eta : detection efficiency.
-        a0 : extra environmental error when electron spin is being operated.
-        a1 : default environmental error.
-        theta : determines how the states are initialized when generating remote
+        ps : (scalar) single qubit gate error rate.
+        pm : (scalar) measurement error rate.
+        pg : (scalar) two qubit gate error rate.
+        eta : (scalar) detection efficiency.
+        a0 : (scalar) extra environmental error when electron spin is being operated.
+        a1 : (scalar) default environmental error.
+        theta : (scalar) determines how the states are initialized when generating remote
                 entanglement.
         """
         # Set the parameters to all faulty opearations
@@ -75,13 +68,13 @@ class Blocks:
 
         Parameters
         ----------
-        ps : single qubit gate error rate.
-        pm : measurement error rate.
-        pg : two qubit gate error rate.
-        eta : detection efficiency.
-        a0 : extra environmental error when electron spin is being operated.
-        a1 : default environmental error.
-        theta : determines how the states are initialized when generating remote
+        ps : (scalar) single qubit gate error rate.
+        pm : (scalar) measurement error rate.
+        pg : (scalar) two qubit gate error rate.
+        eta : (scalar) detection efficiency.
+        a0 : (scalar) extra environmental error when electron spin is being operated.
+        a1 : (scalar) default environmental error.
+        theta : (scalar) determines how the states are initialized when generating remote
                 entanglement.
         """
         # Reset all the parameters for the faulty operations
@@ -493,7 +486,7 @@ class Blocks:
 
         Parameters
         ----------
-        rho : density matrix in which the bell pair appends.
+        rho : (densmat) density matrix in which the bell pair appends.
         """
         self._reset_check()
         time, bell = self._generate_bell_single_click()
@@ -512,8 +505,8 @@ class Blocks:
 
         Parameters
         ----------
-        rho : density matrix
-        pair : pair of qubits to be swaped ex. [2, 3]
+        rho : (densmat) density matrix
+        pair : (list) pair of qubits to be swaped ex. [2, 3]
         """
         self._reset_check()
         # Apply the noise
@@ -527,10 +520,10 @@ class Blocks:
 
         Parameters
         ----------
-        rho : density matrix
-        controls : list with the control qubits position
-        targets : list with the target qubits position
-        sigma : X or Z depending on the gate
+        rho : (densmat) density matrix
+        controls : (list) list with the control qubits position
+        targets : (list) list with the target qubits position
+        sigma : (string) X or Z depending on the gate
         """
         self._reset_check()
         rho = self._apply_two_qubit_gates(rho, controls, targets, sigma)
@@ -543,9 +536,9 @@ class Blocks:
 
         Parameters
         ----------
-        rho : density matrix
-        ancillas_pos : list with the positions of ancillas to be measured
-        projections : list with the projections in which every ancilla collapses
+        rho : (densmat) density matrix
+        ancillas_pos : (int) list with the positions of ancillas to be measured
+        projections : (list) list with the projections in which every ancilla collapses
         """
         # Reset check
         self._reset_check()
@@ -560,9 +553,9 @@ class Blocks:
 
         Parameters
         ----------
-        rho : density matrix
-        ancillas_pos : list with the positions of ancillas to be measured
-        projections : list with the projections in which every ancilla collapses
+        rho : (densmat) density matrix
+        ancillas_pos : (int) list with the positions of ancillas to be measured
+        projections : (list) list with the projections in which every ancilla collapses
         """
         # Reset check
         self._reset_check()
@@ -577,9 +570,9 @@ class Blocks:
 
         Parameters
         ----------
-        rho : density matrix
-        ghz_size : size of the GHZ state being formed, must be 3 or 4
-        measure_pos : list with the positions of ancillas to be measured
+        rho : (densmat) density matrix
+        ghz_size : (int) size of the GHZ state being formed, must be 3 or 4
+        measure_pos : (int) list with the positions of ancillas to be measured
         """
         # Reset number of steps counter
         self._reset_check()
@@ -625,10 +618,10 @@ class Blocks:
 
         Parameters
         ----------
-        rho : density matrix
-        operation_pos : list with the positions of the qubits to be purified
+        rho : (densmat) density matrix
+        operation_pos : (list) list with the positions of the qubits to be purified
                         by the protocol
-        sigma : X or Z parity used in the purification
+        sigma : (string) X or Z parity used in the purification
         """
         # Reset number of steps counter
         self._reset_check()
@@ -657,10 +650,10 @@ class Blocks:
 
         Parameters
         ----------
-        rho : density matrix
-        operation_pos : list with the positions of the qubits to be purified
+        rho : (densmat) density matrix
+        operation_pos : (list) list with the positions of the qubits to be purified
                         by the protocol
-        sigma : X or Z parity used in the purification
+        sigma : (string) X or Z parity used in the purification
         """
         # Reset number of steps counter
         self._reset_check()

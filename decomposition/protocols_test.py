@@ -24,8 +24,6 @@ rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
 ghz_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 
 
-
-'''PROTOCOLS START HERE'''
 print("-------------------PROTOCOL TEST------------------")
 circuit = protocols.EPL_4(ps, pm, pg, eta, a0, a1, theta)
 p, ops, rho = circuit.run(None)

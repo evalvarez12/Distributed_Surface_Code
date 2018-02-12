@@ -1,6 +1,6 @@
 """
-Wrapper functions to put together cirtcuits involved
-in the proccess of making GHZ states out of entangled Bell pairs.
+Wrapper functions to put together circuits involved
+in the process of making GHZ states out of entangled Bell pairs.
 Must be used with 'circuit_block.py'
 
 author: Eduardo Villasenor
@@ -29,9 +29,9 @@ class Circuit:
 
         Parameters
         -----------
-        a0 : environmental error parameter
-        a1 : environmental error parameter
-        cicuit_block : function from circuit_block.py to be evaluated
+        a0 : (scalar)  environmental error parameter
+        a1 : (scalar) environmental error parameter
+        cicuit_block : (Blocks) function from circuit_block.py to be evaluated
                        in a step of the circuit
         **kwargs : arguments for evaluating the cicuit_block
         """
@@ -52,7 +52,7 @@ class Circuit:
 
         Parameters
         -----------
-        rho : density matrix involved in the circuit, can be None depending
+        rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
         return self._run(rho)
@@ -92,7 +92,7 @@ class Circuit:
 
         Parameters
         -----------
-        rho : density matrix involved in the circuit, can be None depending
+        rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
         _, check1, rho1 = self.run(rho)
@@ -118,7 +118,7 @@ class Circuit:
 
         Parameters
         -----------
-        rho : density matrix involved in the circuit, can be None depending
+        rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
         _, check, rho_app = self.run(None)
@@ -140,7 +140,7 @@ class Circuit:
 
         Parameters
         -----------
-        rho : density matrix involved in the circuit, can be None depending
+        rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
         _, check, rho_app = self.run(None)
@@ -157,7 +157,7 @@ class Circuit:
 
         Parameters
         -----------
-        cicuit_block : function from circuit_block.py to be evaluated
+        cicuit_block : (Blocks) function from circuit_block.py to be evaluated
                        in a step of the circuit
         **kwargs : arguments for evaluating the cicuit_block
         """

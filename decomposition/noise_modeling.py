@@ -7,10 +7,10 @@ created-on: 30/06/17
 import numpy as np
 import qutip as qt
 import itertools
-# from . import pauli_basis
-# from . import operations as ops
 import tools.operations as ops
 import tools.pauli_basis as pb
+
+
 class NoiseModel:
     """
     Noise modeling consists on obtaining the chi matrix of the stabilizer
@@ -24,8 +24,8 @@ class NoiseModel:
 
         Parameters
         -----------
-        system_size : total system size
-        parity : parity of the stabilizer measurement to be made
+        system_size : (int) total system size
+        parity : (string) X or Z parity of the stabilizer measurement
         """
         self.basis_parity = parity
 
@@ -50,7 +50,7 @@ class NoiseModel:
 
         Parameters
         -----------
-        superoperator_function : function corresponding to the stabilizer measurement
+        superoperator_function : (function) function corresponding to the stabilizer measurement
         """
         # Apply the superoperator to the Choi state
         self.ps, self.rhos = superoperator_function(self.rhos, self.targets,
@@ -64,8 +64,8 @@ class NoiseModel:
 
         Parameters
         -----------
-        rhos : output density matrices of the stabilizer chanel
-        ps : corresponding probabilities of the density matrices
+        rhos : (list) output density matrices of the stabilizer chanel
+        ps : (list) corresponding probabilities of the density matrices
         """
         self.rhos = rhos
         self.ps = ps

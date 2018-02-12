@@ -1,5 +1,5 @@
 """
-Routines to perform basic operations not suplied by qutip already.
+Routines to perform basic operations not supplied by qutip already.
 
 author: Eduardo Villaseñor
 created-on: 05/06/17
@@ -15,10 +15,10 @@ def random_measure_single_Xbasis(rho, N=1, pos=0, dimRed=False):
 
     Parameters
     ----------
-    rho : density matrix.
-    N : system size.
-    pos : position of qubit to be measured.
-    dimRed : is the collapsed state has reduced to the
+    rho : (densmat) density matrix.
+    N : (int) system size.
+    pos : (int) position of qubit to be measured.
+    dimRed : (bool) is the collapsed state has reduced to the
             dimentions N - 1
     """
     H = qt.snot(N, pos)
@@ -36,11 +36,11 @@ def forced_measure_single_Xbasis(rho, N=1, pos=0, project=0, dimRed=False):
 
     Parameters
     ----------
-    rho : density matrix.
-    N : system size.
-    pos : position of qubit to be measured.
-    project : 0,1 the basis state to which the state collapses.
-    dimRed : is the collapsed state has reduced to the
+    rho : (densmat) density matrix.
+    N : (int) system size.
+    pos : (int) position of qubit to be measured.
+    project : (0, 1) the basis state to which the state collapses.
+    dimRed : (bool) is the collapsed state has reduced to the
             dimentions N - 1
     """
     H = qt.snot(N, pos)
@@ -59,10 +59,10 @@ def random_measure_single_Zbasis(rho, N=1, pos=0, dimRed=False):
 
     Parameters
     ----------
-    rho : density matrix.
-    N : system size.
-    pos : position of qubit to be measured.
-    dimRed : is the collapsed state has reduced to the
+    rho : (densmat) density matrix.
+    N : (int) system size.
+    pos : (int) position of qubit to be measured.
+    dimRed : (bool) is the collapsed state has reduced to the
             dimentions N - 1
     """
     # Calculate the probability of measurment 1
@@ -89,11 +89,11 @@ def forced_measure_single_Zbasis(rho, N=1, pos=0, project=0, dimRed=False):
 
     Parameters
     ----------
-    rho : density matrix.
-    N : system size.
-    pos : position of qubit to be measured.
-    project : force the measurement into the desired projector
-    dimRed : is the collapsed state has reduced to the
+    rho : (densmat) density matrix.
+    N : (int) system size.
+    pos : (int) position of qubit to be measured.
+    project : (0, 1) force the measurement into the desired projector
+    dimRed : (bool) is the collapsed state has reduced to the
             dimentions N - 1
     """
     # Calculate the actual probability of doing the measurement
@@ -152,9 +152,9 @@ def p_measurement_single_Zbasis(rho, measure, N=1, pos=0):
 
     Parameters
     ----------
-    rho : density matrix.
-    measure : measurement result probability.
-    pos : position of qubit to be measured.
+    rho : (densmat) density matrix.
+    measure : (0, 1) measurement result probability.
+    pos : (int) position of qubit to be measured.
     """
     P = projector_single_qubit_Zbasis(measure, N, pos)
     p = (P * rho * P.dag()).tr()
@@ -165,9 +165,9 @@ def p_measurement_single_Xbasis(rho, measure, N=1, pos=0):
     Calculate the probability of measuring the value "measure" on the X basis.
     Parameters
     ----------
-    rho : density matrix.
-    measure : measurement result probability.
-    pos : position of qubit to be measured.
+    rho : (densmat) density matrix.
+    measure : (0, 1) measurement result probability.
+    pos : (int) position of qubit to be measured.
     """
     P = projector_single_qubit_Xbasis(measure, N, pos)
     p = (P * rho * P.dag()).tr()
@@ -211,9 +211,9 @@ def tensor_single_operator(operator, N, pos):
 
     Parameters
     ----------
-    operator : operatior to be tensored.
-    N : total system dimension.
-    pos : position inside the entire system to be measured.
+    operator : (operator) operatior to be tensored.
+    N : (int) total system dimension.
+    pos : (int) position inside the entire system to be measured.
     """
     # TODO use qt.rx, qt.ry, qt.rz instead for sigmas?
     if pos > N:
@@ -240,8 +240,8 @@ def tensor_operator(operators, positions, N):
 
     Parameters
     ----------
-    operators : operatior list to be tensored.
-    N : total system dimension.
+    operators : (list) operator list to be tensored.
+    N : (int) total system dimension.
     positions : list with the positions for each operator.
     """
     l = len(operators)
