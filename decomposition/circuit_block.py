@@ -149,13 +149,13 @@ class Blocks:
     def _success_number_of_attempts(self, p_success):
         # Draw a number from the Distribution to simulate
         # the number of attempts required until success.
-        # Up to 10000 tries for success
+
         # NOTE: This is expensive, adjust manually as required
-        i = np.arange(10000000)
-        # print(p_success)
+        # 100000 tries required for EPL
+        # 1000000 for BK
+        i = np.arange(100000)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
-        # return 0
 
     def _distribution(self, p, n):
         # Distribution for the probability in the number of tries of
@@ -567,7 +567,8 @@ class Blocks:
     def collapse_ancillas_GHZ(self, rho, ghz_size, measure_pos):
         """
         Collapse the ancillas in the nodes to create a GHZ state.
-        In the ghz_4 connected throug 4 pairs ancillas must be the last qubit(s)
+        In the ghz_4 connected through 4 pairs then the
+        ancillas must be the last qubit(s)
 
         Parameters
         ----------
@@ -581,11 +582,13 @@ class Blocks:
         N = len(rho.dims[0])
         p_success = 1
 
-        # Success probability for the GHZ4 case with 4 pairs.
-        if ghz_size == 4:
+        # Special case: Success probability for the GHZ4 case with 4 pairs.
+        if ghz_size == 4 and len(measure_pos) == 4:
             p_success = ps.ghz_4(rho)
 
+        # Get random measuements outcomes
         measurements, rho_measured = self._measure_random_ancillas_Z(rho, measure_pos)
+        # Transform measurements from 1 and -1 to 0 and 1
         measurements = np.array(measurements) % 3 - 1
         N = len(rho_measured.dims[0])
         # The qubits in which the correction applies
@@ -602,6 +605,7 @@ class Blocks:
         # redo measurements.
         while correction is None:
             measurements, rho_measured = self._measure_random_ancillas_Z(rho, measure_pos)
+            measurements = np.array(measurements) % 3 - 1
             correction = gc.correction(measurements, ghz_size, N, operation_pos)
 
         rho = rho_measured

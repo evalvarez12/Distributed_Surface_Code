@@ -57,7 +57,7 @@ class Circuit:
         """
         p, check, rho = self._run(rho)
         return rho, check
-        
+
     def _run(self, rho, p_parent=1, check_parent=collections.Counter({})):
         # First run self circuit
         p_success, check, rho = self.circuit(rho, **self.circuit_kwargs)
@@ -96,8 +96,8 @@ class Circuit:
         rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
-        _, check1, rho1 = self.run(rho)
-        _, check2, rho2 = self.run(rho)
+        _, check1, rho1 = self._run(rho)
+        _, check2, rho2 = self._run(rho)
 
         # Only take the check with the longest time
         diff_time = np.abs(check1["time"] - check2["time"])
@@ -122,7 +122,7 @@ class Circuit:
         rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
-        _, check, rho_app = self.run(None)
+        _, check, rho_app = self._run(None)
         time0 = check["time0"]
         rho = errs.env_error_all(rho, self.a0,
                                  self.a1, time0)
@@ -144,7 +144,7 @@ class Circuit:
         rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
-        _, check, rho_app = self.run(None)
+        _, check, rho_app = self._run(None)
         time = check["time"]
         rho = errs.env_error_all(rho, 0,
                                  self.a1, time)

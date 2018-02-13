@@ -10,24 +10,24 @@ import qutip as qt
 import stabilizer
 import noise_modeling
 import pickle
-import tools.names
+import tools.names as names
 # Initial parameters
 ps = 0.003
 pm = 0.003
 pg = 0.003
-eta = 1/100.
+eta = 1/50.
 theta = .24
 a1 = 1/80.
-ghz_size = 3
+ghz_size = 4
 stab_size = 4
-protocol = "BK"
+protocol = "DEMO"
 
 '''CHANGE HERE'''
 # a0 = 83.333
 # a1 = 1/3.
 
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
-for a0 in [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0]:
+for a0 in [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0]:
 
     for parity in ["X", "Z"]:
         # Initialize objects

@@ -149,12 +149,10 @@ class Stabilizer:
         # Get the sum of ven and odd projectors
         P_even = proj.even_projectors(N_ghz)
         P_odd = proj.odd_projectors(N_ghz)
-        print("P even: ", P_even)
-        print("P odd: ", P_odd)
+
         # Tensor with corresponding identity
-        # GHZ is at the end of the state
+        # Remember GHZ state is at the end of the state
         if N != 0:
-            print(N)
             P_even = qt.tensor(qt.qeye([2]*N), P_even)
             P_odd = qt.tensor(qt.qeye([2]*N), P_odd)
 

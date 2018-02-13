@@ -95,7 +95,7 @@ def EPL_4_simplified(ps, pm, pg, eta, a0, a1, theta):
                     targets=[4, 5], sigma="X")
     ghz.add_circuit(circuit_block=cb.collapse_ancillas_GHZ,
                     ghz_size=4,
-                    ancillas_pos=[4, 5])
+                    measure_pos=[4, 5])
     # Return the completed circuit
     return ghz
 
@@ -180,7 +180,7 @@ def BK_4_simplified(ps, pm, pg, eta, a0, a1, theta):
                     targets=[4, 5], sigma="X")
     ghz.add_circuit(circuit_block=cb.collapse_ancillas_GHZ,
                     ghz_size=4,
-                    ancillas_pos=[4, 5])
+                    measure_pos=[4, 5])
 
     # Return the completed circuit
     return ghz
