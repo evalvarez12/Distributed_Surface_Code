@@ -13,6 +13,7 @@ from os.path import dirname, realpath
 
 I, X, Y, Z = [1, 1], [-1, 1], [-1, -1], [1, -1]
 
+
 class Generator:
     def __init__(self, surface, ps, pm, pg, eta, a0, a1, theta, protocol):
         """Init function.
