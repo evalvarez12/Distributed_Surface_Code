@@ -51,7 +51,7 @@ def match_simple(size, anyons, surface, stabilizer, weights=[1, 1]):
 
     # Remove unwanted pairs
     if surface == "planar":
-        pairs = pairs_remove_out_planar_space(size, time, stabilizer, pairs)
+        pairs = pairs_remove_out_planar_space(size, stabilizer, pairs)
     return pairs
 
 def match(size, anyons, surface, stabilizer, time, weights=[1, 1]):

@@ -296,27 +296,50 @@ class SurfaceCode:
         self.qubits[0, self.tags == "Q"] *= noise
         self.qubits[1, self.tags == "Q"] *= noise
 
+    def _env_error_rate(self, t, a):
+        # Function to calculate the error to the enviroment for step of stabilizers
+        # measurements
+        x = sum(a)*t
+        p_env = (1 + np.exp(-x * t))/2.
+        return 1 - p_env
 
-    def noisy_measurement_cycle(self, p_env):
+    def select_measurement_protocol(self, t, a, protocol):
+        """
+        Select measuement protocol depending on the number of data qubits
+        per node.
+
+        Paramaters
+        -----------
+        p_env : (scalar) time it took to generate a GHZ state between nodes
+        a : (list) [a0, a1] paramters for the environmental error
+        protocol : (string) protocol in with stabilizer measurements are made
+        """
+        # Set memory error rate
+        self.p_env = self._env_error_rate(t, a)
+        # Select protocol function
+        if protocol == "single":
+            self.stab_protocol = self.measuement_protocol_single
+
+    def measuement_protocol_single(self):
         """
         Noisy stabilizer measuement cylce following the insterspersed
         protocol for a distributed surface code.
-
-        Parameters
-        -----------
-        p_env : depolarizing error rate due to the environment
         """
         # Star measurements
-        self.environmental_noise(p_env)
+        self.environmental_noise(self.p_env)
         self.noisy_measurement_specific(self.stars_round1, 0, "star")
-        self.environmental_noise(p_env)
+        self.environmental_noise(self.p_env)
         self.noisy_measurement_specific(self.stars_round2, 0, "star")
 
         # Plaq measurements
-        self.environmental_noise(p_env)
+        self.environmental_noise(self.p_env)
         self.noisy_measurement_specific(self.plaqs_round1, 1, "plaq")
-        self.environmental_noise(p_env)
+        self.environmental_noise(self.p_env)
         self.noisy_measurement_specific(self.plaqs_round2, 1, "plaq")
+
+    def noisy_measurement_cycle(self):
+        """Execute a measurement cycle with the selected protocol."""
+        self.stab_protocol()
 
     def separate_bulk_boundary(self, pos):
         # Separate the stabilizers in bulk and boundary. Used in planar code only
@@ -400,8 +423,14 @@ class SurfaceCode:
 
         return c
 
-    def plot(self, stabilizer, backup=False):
-        """Plot the surface code."""
+    def plot(self, stabilizer):
+        """
+        Plot the surface code given stabilizer.
+
+        Parameters
+        -----------
+        stabilizer : (string) "star" or "plaq".
+        """
         if stabilizer == "star":
             data = self.qubits[0].copy()
             data[self.tags == "S"] *= 2
@@ -416,8 +445,30 @@ class SurfaceCode:
         # return data, self.cmap, self.cmap_norm
         plt.figure()
         plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
-        # plt.colorbar()
-        # plt.show()
+
+    def plot_all(self):
+        """Plot the surface code stabilizers."""
+        data_s = self.qubits[0].copy()
+        data_s[self.tags == "S"] *= 2
+        data_s[self.tags == "P"] = 1
+
+        data_p = self.qubits[0].copy()
+        data_p[self.tags == "Q"] = self.qubits[1, self.tags == "Q"]
+        data_p[self.tags == "P"] *= 2
+        data_p[self.tags == "S"] = 1
+
+        # Return data to plot
+        # return data, self.cmap, self.cmap_norm
+        plt.figure()
+        plt.subplot(1, 2, 1)
+        plt.imshow(data_s, cmap=self.cmap, norm=self.cmap_norm)
+        plt.xticks([])
+        plt.yticks([])
+
+        plt.subplot(1, 2, 2)
+        plt.imshow(data_p, cmap=self.cmap, norm=self.cmap_norm)
+        plt.xticks([])
+        plt.yticks([])
 
     def reset(self):
         """Reset surface code to default configuration."""
