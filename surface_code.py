@@ -283,8 +283,8 @@ class SurfaceCode:
         self.qubits[:, self.tags == "Q"] *= noise
 
     def apply_random_error(self, p):
-        """Apply random X, Y or Z errors with probability p/3 each."""
-        self.environmental_noise(p)
+        """Apply random X, Y or Z errors with probability p each."""
+        self.environmental_noise(3*p)
 
     def environmental_noise(self, p):
         """
