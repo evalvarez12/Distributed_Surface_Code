@@ -282,10 +282,6 @@ class SurfaceCode:
         # Apply the X Z noise
         self.qubits[:, self.tags == "Q"] *= noise
 
-    def apply_random_error(self, p):
-        """Apply random X, Y or Z errors with probability p each."""
-        self.environmental_noise(3*p)
-
     def environmental_noise(self, p):
         """
         Add environmental depolarizing noise. See decomposition/errors.py
