@@ -74,24 +74,9 @@ for i in range(iterations):
     #     sc.noisy_measurement_cycle(lamb)
     #     lc.add()
 
-    # Get anyons
-    anyons_star, anyons_plaq = lc.find_anyons_all()
-
     # Decode
-    # match_star = matching.match(distance, anyons_star, topology,
-    #                             "star", time=cycles, weights=[1, 1])
-    # match_plaq = matching.match(distance, anyons_plaq, topology,
-    #                             "plaq", time=cycles, weights=[1, 1])
+    lc.decode()
 
-    match_star = matching.match_simple(distance, anyons_star, topology,
-                                       "star", weights=[1, 1])
-    match_plaq = matching.match_simple(distance, anyons_plaq, topology,
-                                       "plaq", weights=[1, 1])
-    pre_correction = sc.qubits.copy()
-
-    # Apply corrections
-    sc.correct_error("star", match_star)
-    sc.correct_error("plaq", match_plaq)
     sc.plot("star")
     # sc.plot("plaq")
 

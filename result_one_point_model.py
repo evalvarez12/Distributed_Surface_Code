@@ -35,21 +35,6 @@ def get_file_name(params):
     file_name = "_".join(param_names)
     return file_name
 
-def get_file_name_pq(params):
-    protocol = "protocol=" + params["protocol"]
-    topology = "topology=" + params["topology"]
-    distance = "distance=" + params["distance"]
-    iterations = "iterations=" + params["iterations"]
-    cycles = "cycles=" + params["cycles"]
-    p = "p=" + params["p"]
-    q = "q=" + params["q"]
-
-    param_names = [protocol, topology, distance, iterations, cycles,
-                   p, q]
-    file_name = "_".join(param_names)
-    return file_name
-
-
 # Start the comm for mpi4py
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -63,12 +48,7 @@ args = dict(arg.split('=') for arg in sys.argv[1:])
 ps = 0.003
 pm = 0.003
 pg = 0.003
-# eta = 0.01
-# a0 = 2.0
-# a1 = 1/80.
-# protocol = "GHZ"
 theta = .24
-PERFECT_LAST_ROUND = False
 
 # Set parameters
 distance = int(args["distance"])
@@ -81,14 +61,6 @@ eta = float(args["eta"])
 protocol = args["protocol"]
 t = float(args["time"])
 
-# p = float(args["p"])
-# q = float(args["q"])
-
-
-
-"""
-Surface code simulations for one set of parameters
-"""
 # Initialize fail rate
 fail_rate = 0
 
@@ -97,52 +69,26 @@ sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
-# Set time for each GHZ generation
-# t = 0.30347
-lamb = lambda_env(t, 0, a1)
+# Choose a measurement protocol
+sc.select_measurement_protocol(t, [0, a1], "single")
+
 
 # Perform measurements
 for i in range(iterations):
 
-    # Errors and measurements
-    # if q != 0:
-    #     for t in range(cycles):
-    #         sc.apply_qubit_error(p, 0)
-    #         sc.measure_all_stablizers()
-    #         sc.apply_measurement_error(q)
-    #         lc.add()
-    #     sc.measure_all_stablizers()
-    #     lc.add()
-    # else:
-    #     sc.apply_qubit_error(p, 0)
-    #     sc.measure_all_stablizers()
-    #     lc.add()
+
 
     # Noisy measurements
     for t in range(cycles):
         # sc.noisy_measurement("star")
         # sc.noisy_measurement("plaq")
-        sc.noisy_measurement_cycle(lamb)
+        sc.noisy_measurement_cycle()
         lc.add()
-    sc.measure_all_stablizers()
+    sc.measure_all_stabilizers()
     lc.add()
 
-    # Get anyons
-    anyons_star, anyons_plaq = lc.find_anyons_all()
-
-    # Decode
-    # match_star = matching.match(distance, anyons_star, topology,
-    #                             "star", time=cycles, weights=[1, 1])
-    # match_plaq = matching.match(distance, anyons_plaq, topology,
-    #                             "plaq", time=cycles, weights=[1, 1])
-    match_star = matching.match_cheat(distance, anyons_star, topology,
-                                      "star", weights=[1, 1])
-    match_plaq = matching.match_cheat(distance, anyons_plaq, topology,
-                                      "plaq", weights=[1, 1])
-
-    # Apply corrections
-    sc.correct_error("star", match_star)
-    sc.correct_error("plaq", match_plaq)
+    # Decode and apply corrections
+    lc.decode()
 
     # Round of perfect detection to eliminate stray errors
     if PERFECT_LAST_ROUND:
@@ -187,7 +133,7 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if comm.rank == 0:
         total = total/float(size)
-        # print("size: ", size)
+        print("size: ", size)
         # print("id: ", rank)
         args_str = get_file_name(args)
         script_path = dirname(realpath(__file__))

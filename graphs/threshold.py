@@ -87,11 +87,20 @@ d16= [0.0001, 0.0000, 0.0001, 0.0003, 0.0014, 0.0024, 0.0115, 0.0386, 0.1097, 0.
 # plt.plot(eta, GHZ_12, 'o-', label=r"$d=12$")
 # plt.plot(eta, GHZ_16, 'o-', label=r"$d=16$")
 
+
+# Recalculation of the PQ test ------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 d4 = np.array(d4)
 d8 = np.array(d8)
 d12 = np.array(d12)
 d16 = np.array(d16)
-pq = np.linspace(3.0, 5, 15)
 
 plt.plot(pq, 1-d4, 'o-', label=r"$d=4$")
 plt.plot(pq, 1-d8, 'o-', label=r"$d=8$")
