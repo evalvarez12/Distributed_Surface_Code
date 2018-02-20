@@ -6,6 +6,7 @@ in the distributed surface code.
 import matplotlib.pyplot as plt
 import stabilizer
 import noise_modeling
+import error_models as errs
 import tools.names as names
 import pickle
 
@@ -50,7 +51,7 @@ I_OK_full = []
 I_NOK_full = []
 E_full = []
 
-pgs = [0.0060, 0.0065, 0.0070, 0.0075, 0.0080, 0.0085, 0.0090]
+pgs = [0.0040, 0.0045, 0.0050, 0.0055, 0.0060, 0.0065, 0.0070, 0.0075, 0.0080, 0.0085, 0.0090]
 # fs = np.linspace(.5, 1, 50)
 for pg in pgs:
     ps = pg
@@ -63,19 +64,20 @@ for pg in pgs:
 
 
     for f in [1]:
-        # ghz = errs.generate_noisy_ghz(f, system_size)
-        # probs, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
-        probs, rhos = stab.local_stabilizer(choi, targets, parity)
+        ghz = errs.generate_noisy_ghz(f, system_size)
+        probs, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
+        # probs, rhos = stab.local_stabilizer(choi, targets, parity)
         model.set_rho(rhos, probs)
         model.make_chi_matrix()
 
         print("Total sum check: ", model.check_total_sum())
+        print("LEN: ", len(model.chi))
         I_OK += [model.chi["IIII_OK"]]
         I_NOK += [model.chi["IIII_NOK"]]
         # The sum of all physical errors
         E += [(1 - model.chi["IIII_OK"] - model.chi["IIII_NOK"])/4.]
 
-        print("Errors:")
+        print("Errors:", pg)
         print("OK: ", I_OK)
         print("NOK: ", I_NOK)
         print("E: ", E)
@@ -84,12 +86,12 @@ for pg in pgs:
         file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
                               system_size, parity, protocol)
 
-        pickle_out = open(file_name, "wb")
-        pickle.dump(model.chi, pickle_out, protocol=2)
-        pickle_out.close()
+        # pickle_out = open(file_name, "wb")
+        # pickle.dump(model.chi, pickle_out, protocol=2)
+        # pickle_out.close()
 
         # print(model.chi)
-        model.reset_chi()
+        # model.reset_chi()
         # model.reset_chi()
 
     # I_OK_full += [I_OK]

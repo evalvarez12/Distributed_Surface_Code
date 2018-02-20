@@ -103,7 +103,9 @@ class Generator:
             i = self.indexes
             v = self.chi_vals[c]
             e = self.errors[c]
-
+        print(stabilizer)
+        print("I:", len(i))
+        print("V:", len(v))
         e_index = np.array(np.random.choice(i, num_errors, p=v))
         m_errors = e[0][e_index]
         # Qubit erros format:
