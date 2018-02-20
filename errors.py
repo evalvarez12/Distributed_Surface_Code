@@ -10,6 +10,7 @@ import numpy as np
 import pickle
 from os.path import dirname, realpath
 # import decomposition.generate as gen
+import decomposition.tools.names as names
 
 I, X, Y, Z = [1, 1], [-1, 1], [-1, -1], [1, -1]
 
@@ -63,18 +64,8 @@ class Generator:
 
     def _generate_name(self, ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):
         """Name for CHI matrix file."""
-        param_names = ["ps=" + str(ps), "pm=" + str(pm),
-                       "pg=" + str(pg), "eta=" + str(round(eta, 4)),
-                       "a0=" + str(round(a0, 4)), "a1=" + str(round(a1, 4)),
-                       "theta=" + str(theta)]
-
-        param_names = "_".join(param_names)
-        file_name = ["CHI", protocol, parity, str(stab_size)]
-        file_name = "_".join(file_name)
-        # The address of the parent directory
-        script_path = dirname(realpath(__file__))
-        file_name = (script_path + "/data/" + file_name
-                     + "_" + param_names + ".dict")
+        file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
+                              stab_size, parity, protocol)
         return file_name
 
     def _load_model(self, ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):

@@ -114,7 +114,7 @@ class Circuit:
 
     def append_circuit(self, rho):
         """
-        Appended circuit, and dephase accordingly.
+        Appended circuit, and depolarize accordingly.
         Must be self contained event
 
         Parameters

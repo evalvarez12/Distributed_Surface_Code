@@ -239,7 +239,7 @@ class Stabilizer:
         stabilizer : (string) star or plaquette
         """
         # Append the initialized ancilla to the state|
-        # NOTE: Naomi starts adding error to the initialized
+        # NOTE: Initialized ancilla in mixed state
         ancilla = self.generate_noisy_plus()
         rho = qt.tensor(rho, ancilla)
         N = len(rho.dims[0])

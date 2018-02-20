@@ -3,7 +3,7 @@ Simple simulation to test the surface code simulation is working
 without looking at plots.
 
 Run this code using mpi4py:
-mpiexec python result_one_point_random.py topology=toric distance=10 iterations=500 cycles=10 protocol=PQ_TEST_cycle_cd p=0.006 q=0.006
+mpiexec python result_one_point_local.py topology=toric distance=10 iterations=50 cycles=10 protocol=LOCAL_TEST p=0.006
 
 created-on: 09/12/17
 @author: eduardo
@@ -16,20 +16,18 @@ import surface_code
 import layers
 import matching
 
-def get_file_name_pq(params):
+
+def get_file_name(params):
     protocol = "protocol=" + params["protocol"]
     topology = "topology=" + params["topology"]
     distance = "distance=" + params["distance"]
     iterations = "iterations=" + params["iterations"]
     cycles = "cycles=" + params["cycles"]
     p = "p=" + params["p"]
-    q = "q=" + params["q"]
 
-    param_names = [protocol, topology, distance, iterations, cycles,
-                   p, q]
+    param_names = [protocol, topology, distance, iterations, cycles, p]
     file_name = "_".join(param_names)
     return file_name
-
 
 # Start the comm for mpi4py
 comm = MPI.COMM_WORLD
@@ -40,61 +38,52 @@ size = comm.Get_size()
 pythonfile = sys.argv[0]
 args = dict(arg.split('=') for arg in sys.argv[1:])
 
+# Parameters for noisy measurement
+eta = 0.0
+a0 = 0.0
+a1 = 0.0
+theta = 0.0
+
 # Set parameters
 distance = int(args["distance"])
 topology = args["topology"]
 iterations = int(args["iterations"])
+p = float(args["p"])
 cycles = int(args["cycles"])
 protocol = args["protocol"]
-p = float(args["p"])
-q = float(args["q"])
 
 # Initialize fail rate
 fail_rate = 0
 
+# Paramters
+ps = p
+pm = p
+pg = p
+
 # Initialize objects
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
+sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
+
+# Choose a measurement protocol
+sc.select_measurement_protocol(0, [0, 0], "local")
 
 # Perform measurements
 for i in range(iterations):
 
-    # Errors and measurements
-    if q != 0:
-        for t in range(cycles):
-            sc.apply_qubit_error(p, 0)
-            sc.measure_all_stabilizers()
-            sc._stabilizer_lie("S", q)
-            lc.add()
-        sc.measure_all_stabilizers()
+
+
+    # Noisy measurements
+    for t in range(cycles):
+        # sc.noisy_measurement("star")
+        # sc.noisy_measurement("plaq")
+        sc.noisy_measurement_cycle()
         lc.add()
-    else:
-        sc.apply_qubit_error(p, 0)
-        sc.measure_all_stabilizers()
-        lc.add()
+    sc.measure_all_stabilizers()
+    lc.add()
 
     # Decode and apply corrections
     lc.decode()
-
-    # Round of perfect detection to eliminate stray errors
-    # if PERFECT_LAST_ROUND:
-    #     lc.reset()
-    #     sc.measure_all_stablizers()
-    #     lc.add()
-    #     anyons_star, anyons_plaq = lc.find_anyons_all()
-    #     match_star = matching.match(distance, anyons_star, topology,
-    #                                 "star", time=0, weights=[1, 1])
-    #     match_plaq = matching.match(distance, anyons_plaq, topology,
-    #                                 "plaq", time=0, weights=[1, 1])
-    #     sc.correct_error("star", match_star, cycles)
-    #     sc.correct_error("plaq", match_plaq, cycles)
-
-    # # Check for errors in decoding and correcting
-    # sc.measure_stabilizer_type("star")
-    # sc.measure_stabilizer_type("plaq")
-    # if (sc.qubits[:, sc.tags != "Q"] == -1).any():
-    #     print("FAILURE CORRECTING")
-    #     fail_rate = -9999
 
     # Measure logical qubit
     logical = sc.measure_logical()
@@ -119,11 +108,11 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if comm.rank == 0:
         total = total/float(size)
-        # print("size: ", size)
+        print("size: ", size)
         # print("id: ", rank)
-        args_str = get_file_name_pq(args)
+        args_str = get_file_name(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)
         print(file_name)
         print("TOTAL FAIL RATE: ", total)
-        # np.save(file_name, total)
+        np.save(file_name, total)

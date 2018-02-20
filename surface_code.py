@@ -316,9 +316,11 @@ class SurfaceCode:
         self.p_env = self._env_error_rate(t, a)
         # Select protocol function
         if protocol == "single":
-            self.stab_protocol = self.measuement_protocol_single
+            self.stab_protocol = self.measurement_protocol_single
+        elif protocol == "local":
+            self.stab_protocol = self.measurement_protocol_local
 
-    def measuement_protocol_single(self):
+    def measurement_protocol_single(self):
         """
         Noisy stabilizer measuement cylce following the insterspersed
         protocol for a distributed surface code.
@@ -334,6 +336,14 @@ class SurfaceCode:
         self.noisy_measurement_specific(self.plaqs_round1, 1, "plaq")
         self.environmental_noise(self.p_env)
         self.noisy_measurement_specific(self.plaqs_round2, 1, "plaq")
+
+    def measurement_protocol_local(self):
+        """Noisy stabilizer measuement cicly for the monolithic arquitecture."""
+        # Star measurements
+        self.noisy_measurement("star")
+
+        # Plaq measurements
+        self.noisy_measurement("plaq")
 
     def noisy_measurement_cycle(self):
         """Execute a measurement cycle with the selected protocol."""
