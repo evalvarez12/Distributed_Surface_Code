@@ -108,7 +108,7 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if comm.rank == 0:
         total = total/float(size)
-        print("size: ", size)
+        # print("size: ", size)
         # print("id: ", rank)
         args_str = get_file_name(args)
         script_path = dirname(realpath(__file__))
