@@ -29,7 +29,7 @@ ps = 0.0075
 pm = 0.0075
 pg = 0.0075
 system_size = 4
-parity = "Z"
+parity = "X"
 
 eta = 0.0
 a0 = 0.0
@@ -42,10 +42,10 @@ model = noise_modeling.NoiseModel(system_size, parity)
 model.separate_basis_parity()
 stab = stabilizer.Stabilizer(ps=ps, pm=pm, pg=pg)
 
-# Choi state for noise noise modeling
-choi = model._choi_state_ket(system_size)
-choi = choi * choi.dag()
-targets = list(range(system_size))
+# # Choi state for noise noise modeling
+# choi = model._choi_state_ket(system_size)
+# choi = choi * choi.dag()
+# targets = list(range(system_size))
 
 I_OK_full = []
 I_NOK_full = []
@@ -64,10 +64,14 @@ for pg in pgs:
 
 
     for f in [1]:
-        ghz = errs.generate_noisy_ghz(f, system_size)
-        probs, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
+        # ghz = errs.generate_noisy_ghz(f, system_size)
+        # probs, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
         # probs, rhos = stab.local_stabilizer(choi, targets, parity)
-        model.set_rho(rhos, probs)
+        # model.set_rho(rhos, probs)
+
+        # Define function and apply superoperator
+        superoperator_function = stab.local_stabilizer
+        model.apply_superoperator(superoperator_function)
         model.make_chi_matrix()
 
         print("Total sum check: ", model.check_total_sum())
@@ -86,18 +90,21 @@ for pg in pgs:
         file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
                               system_size, parity, protocol)
 
-        # pickle_out = open(file_name, "wb")
-        # pickle.dump(model.chi, pickle_out, protocol=2)
-        # pickle_out.close()
+        pickle_out = open(file_name, "wb")
+        pickle.dump(model.chi, pickle_out, protocol=2)
+        pickle_out.close()
 
         # print(model.chi)
-        # model.reset_chi()
-        # model.reset_chi()
+        model.reset_chi()
 
     # I_OK_full += [I_OK]
     # I_NOK_full += [I_NOK]
     # E_full += [E]
 
+
+
+
+############################ GRAPH STUFF
 # fig, ax = plt.subplots(nrows=3, ncols=1)
 # titles = iter([r"NO ERROR", r"MEASUREMENT ERROR", r"PHYSICAL ERROR"])
 # it = iter(pgs)

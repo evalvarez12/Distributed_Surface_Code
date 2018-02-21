@@ -2,9 +2,9 @@ import noise_modeling as nm
 import stabilizer as st
 
 # Initial parameters
-ps = 0.0
-pm = 0.009
-pg = 0.009
+ps = 0.001
+pm = 0.001
+pg = 0.001
 system_size = 4
 parity = "X"
 
@@ -22,6 +22,9 @@ model.separate_basis_parity()
 # Calculate chi matrix
 model.make_chi_matrix()
 
+print("Total sum: ", model.check_total_sum())
+# Lenght must be 38
+print("len: ", len(model.chi))
 
 
 # class TestNoiseModeling(unittest.TestCase):

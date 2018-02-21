@@ -175,7 +175,15 @@ class NoiseModel:
         return total
 
     def reset_chi(self):
-        """Reset the chi matrix to an empty dictionary."""
+        """
+        Reset the chi matrix to an empty dictionary, and re initialize
+        the Choi state.
+        """
+        # Restore the initial state bipartite state (Choi state)
+        choi = self._choi_state_ket(self.system_size)
+        self.rhos = choi * choi.dag()
+
+        # Empty dictionary to store the chi matrix
         self.chi = {}
 
     def _chi_reduce_permutations(self):
@@ -208,7 +216,7 @@ class NoiseModel:
                 str_symbol = ''.join(p)
 
                 p_symbol = str_symbol + residue
-                # print("Peruting: ", p_symbol)
+                # print("Permuting: ", p_symbol)
                 # Try with the current symbol permutation
                 if p_symbol in self.chi:
                     # print("He is in chi: ", p_symbol)
@@ -217,12 +225,14 @@ class NoiseModel:
                 # If not success try with the parity correspondant
                 else:
                     str_symbol = pb.symbol_product(str_symbol,
-                                                            prod_parity)
+                                                   prod_parity)
                     p_symbol = str_symbol + residue
                     # print("Will try thi one: ", p_symbol)
                     if p_symbol in self.chi:
                         p_sum += self.chi[p_symbol]
                         del self.chi[p_symbol]
 
-            if p_sum != 0:
-                self.chi[k] = p_sum
+            # Only add if the result is not 0
+            # if p_sum != 0:
+            #     self.chi[k] = p_sum
+            self.chi[k] = p_sum
