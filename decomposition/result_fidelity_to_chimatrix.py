@@ -43,9 +43,9 @@ model.separate_basis_parity()
 stab = stabilizer.Stabilizer(ps=ps, pm=pm, pg=pg)
 
 # # Choi state for noise noise modeling
-# choi = model._choi_state_ket(system_size)
-# choi = choi * choi.dag()
-# targets = list(range(system_size))
+choi = model._choi_state_ket(system_size)
+choi = choi * choi.dag()
+targets = list(range(system_size))
 
 I_OK_full = []
 I_NOK_full = []
@@ -66,12 +66,12 @@ for pg in pgs:
     for f in [1]:
         # ghz = errs.generate_noisy_ghz(f, system_size)
         # probs, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
-        # probs, rhos = stab.local_stabilizer(choi, targets, parity)
-        # model.set_rho(rhos, probs)
+        probs, rhos = stab.local_stabilizer(choi, targets, parity)
+        model.set_rho(rhos, probs)
 
         # Define function and apply superoperator
-        superoperator_function = stab.local_stabilizer
-        model.apply_superoperator(superoperator_function)
+        # superoperator_function = stab.local_stabilizer
+        # model.apply_superoperator(superoperator_function)
         model.make_chi_matrix()
 
         print("Total sum check: ", model.check_total_sum())
@@ -95,6 +95,7 @@ for pg in pgs:
         pickle_out.close()
 
         # print(model.chi)
+        chi = model.chi
         model.reset_chi()
 
     # I_OK_full += [I_OK]

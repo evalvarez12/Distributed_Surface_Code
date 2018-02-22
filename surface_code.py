@@ -158,9 +158,9 @@ class SurfaceCode:
             pos = self.plaqs
             c = 1
 
-        self.measure_stabilizer(pos, c, p_not_complete)
+        self._measure_stabilizer(pos, c, p_not_complete)
 
-    def measure_stabilizer(self, pos, c, p_not_complete=0):
+    def _measure_stabilizer(self, pos, c, p_not_complete=0):
         """
         Measure stabilizers on the given position.
 
@@ -178,14 +178,14 @@ class SurfaceCode:
         if p_not_complete != 0:
             pos = self._incomplete_measuerement(pos, p_not_complete)
         if self.surface == "toric":
-            self.measure_stabilizer_bulk(pos, c)
+            self._measure_stabilizer_bulk(pos, c)
         elif self.surface == "planar":
             # Separate all stabilizers in bulk and boundaries.
             bulk_stabs = pos[:, self.plane[pos[0], pos[1]] == "o"]
-            self.measure_stabilizer_bulk(bulk_stabs, c)
-            self.measure_stabilizer_boundary(pos, c)
+            self._measure_stabilizer_bulk(bulk_stabs, c)
+            self._measure_stabilizer_boundary(pos, c)
 
-    def measure_stabilizer_bulk(self, pos, c):
+    def _measure_stabilizer_bulk(self, pos, c):
         stab_qubits = self._stabilizer_qubits_bulk(pos)
         # Get all values on a multi dimensional array
         vals = self.qubits[c, stab_qubits[:, 0], stab_qubits[:, 1]]
@@ -194,12 +194,12 @@ class SurfaceCode:
         # Set the measurement results to the stabilizers
         self.qubits[0, pos[0], pos[1]] = vals
 
-    def measure_stabilizer_boundary(self, pos, c):
+    def _measure_stabilizer_boundary(self, pos, c):
         borders = ["t", "b", "l", "r"]
         for b in borders:
-            self.measure_stabilizer_side(pos, b, c)
+            self._measure_stabilizer_side(pos, b, c)
 
-    def measure_stabilizer_side(self, pos, bord, c):
+    def _measure_stabilizer_side(self, pos, bord, c):
         # Separate all stabilizers in top, bottom, etc.
         bord_stabs = pos[:, self.plane[pos[0], pos[1]] == bord]
 
@@ -329,13 +329,15 @@ class SurfaceCode:
         self.environmental_noise(self.p_env)
         self.noisy_measurement_specific(self.stars_round1, 0, "star")
         self.environmental_noise(self.p_env)
-        self.noisy_measurement_specific(self.stars_round2, 0, "star")
+        self.noisy_measurement_specific(self.stars_round2, 0, "star",
+                                        reverse=True)
 
         # Plaq measurements
         self.environmental_noise(self.p_env)
         self.noisy_measurement_specific(self.plaqs_round1, 1, "plaq")
         self.environmental_noise(self.p_env)
-        self.noisy_measurement_specific(self.plaqs_round2, 1, "plaq")
+        self.noisy_measurement_specific(self.plaqs_round2, 1, "plaq",
+                                        reverse=True)
 
     def measurement_protocol_local(self):
         """Noisy stabilizer measuement cicly for the monolithic arquitecture."""
@@ -379,18 +381,39 @@ class SurfaceCode:
 
         self.noisy_measurement_specific(pos, c, stabilizer)
 
-    def noisy_measurement_specific(self, pos, c, stabilizer):
+    def _noisy_measurement_noreversed(self, stab, stab_qubits, m_err, q_err, c):
+        # Apply error to qubits
+        self.qubits[:, stab_qubits[:, 0], stab_qubits[:, 1]] *= q_err
+
+        # Measure stabilizers
+        self._measure_stabilizer(stab, c)
+        # Apply errors to measurements
+        self.qubits[0, stab[0], stab[1]] *= m_err
+
+
+    def _noisy_measurement_reversed(self, stab, stab_qubits, m_err, q_err, c):
+        # Measure stabilizers
+        self._measure_stabilizer(stab, c)
+        # Apply errors to measurements
+        self.qubits[0, stab[0], stab[1]] *= m_err
+
+        # Apply error to qubits
+        self.qubits[:, stab_qubits[:, 0], stab_qubits[:, 1]] *= q_err
+
+    def noisy_measurement_specific(self, pos, c, stabilizer, reverse=False):
         # Measure the given stabilizers and apply the corresponding errors
         if self.surface == "toric":
             N = len(pos[0])
             m_err, q_err = self.errors.get_errors(N, stabilizer)
             stab_qubits = self._stabilizer_qubits_bulk(pos)
-            # Apply error to qubits
-            self.qubits[:, stab_qubits[:, 0], stab_qubits[:, 1]] *= q_err
-            # Measure stabilizers
-            self.measure_stabilizer(pos, c)
-            # Apply errors to measurements
-            self.qubits[0, pos[0], pos[1]] *= m_err
+
+            if reverse:
+                self._noisy_measurement_reversed(pos, stab_qubits,
+                                                 m_err, q_err, c)
+            else:
+                self._noisy_measurement_noreversed(pos, stab_qubits,
+                                                   m_err, q_err, c)
+
         elif self.surface == "planar":
             # First the bulk stabilizers
             bulk_stabs = pos[:, self.plane[pos[0], pos[1]] == "o"]
@@ -398,12 +421,12 @@ class SurfaceCode:
             m_err, q_err = self.errors.get_errors(N_bulk, stabilizer)
             bulk_qubits = self._stabilizer_qubits_bulk(bulk_stabs)
 
-            # Apply error to qubits
-            self.qubits[:, bulk_qubits[:, 0], bulk_qubits[:, 1]] *= q_err
-            # Measure stabilizers
-            self.measure_stabilizer(bulk_stabs, c)
-            # Error to measurements
-            self.qubits[0, bulk_stabs[0], bulk_stabs[1]] *= m_err
+            if reverse:
+                self._noisy_measurement_reversed(bulk_stabs, bulk_qubits,
+                                                 m_err, q_err, c)
+            else:
+                self._noisy_measurement_noreversed(bulk_stabs, bulk_qubits,
+                                                   m_err, q_err, c)
 
             # Now the boundaries
             for b in ["t", "b", "l", "r"]:
@@ -413,12 +436,16 @@ class SurfaceCode:
                                                       border=True)
                 bord_qubits = self._stabilizer_qubits_boundary(bord_stabs, b)
 
-                self.qubits[:, bord_qubits[:, 0], bord_qubits[:, 1]] *= q_err
+                if not reverse:
+                    self.qubits[:, bord_qubits[:, 0], bord_qubits[:, 1]] *= q_err
 
                 # Do measurement over border quibits - copied from function
                 vals = self.qubits[c, bord_qubits[:, 0], bord_qubits[:, 1]]
                 vals = np.prod(vals, axis=0)
                 self.qubits[0, bord_stabs[0], bord_stabs[1]] = vals
+
+                if reverse:
+                    self.qubits[:, bord_qubits[:, 0], bord_qubits[:, 1]] *= q_err
 
                 self.qubits[0, bord_stabs[0], bord_stabs[1]] *= m_err
 
