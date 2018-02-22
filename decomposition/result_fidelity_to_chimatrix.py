@@ -29,7 +29,7 @@ ps = 0.0075
 pm = 0.0075
 pg = 0.0075
 system_size = 4
-parity = "X"
+parity = "Z"
 
 eta = 0.0
 a0 = 0.0

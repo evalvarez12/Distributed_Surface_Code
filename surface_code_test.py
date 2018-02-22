@@ -13,18 +13,18 @@ import surface_code
 # initialize the surface code object
 # do NOT change distance, it will ruin the test cases.
 distance = 5
-surface = "toroid"
+surface = "toric"
 sc = surface_code.SurfaceCode(distance, surface)
 
 
 
 print("-------------------Testing random noise------------------------")
-sc._apply_noise_qubit(0.5, 0.5)
+sc.apply_qubit_error(0.5, 0.5)
 print(sc.qubits)
 
 print("-------------------Testing stabilizer measurements-------------")
 sc.reset()
-sc._apply_noise_qubit(.3, .3)
+sc.apply_qubit_error(.3, .3)
 sc.measure_stabilizer_type("star")
 sc.measure_stabilizer_type("plaq")
 print(sc.tags)

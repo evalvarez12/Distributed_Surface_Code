@@ -71,8 +71,6 @@ sc.select_measurement_protocol(0, [0, 0], "local")
 # Perform measurements
 for i in range(iterations):
 
-
-
     # Noisy measurements
     for t in range(cycles):
         # sc.noisy_measurement("star")

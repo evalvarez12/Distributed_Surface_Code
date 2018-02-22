@@ -25,7 +25,7 @@ class TestErrorModels(unittest.TestCase):
 
     def test_measurement_error(self):
         print("----------Test measurement error-----------")
-        p = 1
+        p = .5
         psi = qt.snot() * qt.basis(2, 0)
         rho = psi * psi.dag()
         m, rho_coll = errs.measure_single_Xbasis_random(rho, p)
