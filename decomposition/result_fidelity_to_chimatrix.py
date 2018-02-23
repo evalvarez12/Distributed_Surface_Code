@@ -29,7 +29,7 @@ ps = 0.0075
 pm = 0.0075
 pg = 0.0075
 system_size = 4
-parity = "Z"
+parity = "X"
 
 eta = 0.0
 a0 = 0.0
@@ -52,10 +52,11 @@ I_NOK_full = []
 E_full = []
 
 pgs = [0.0040, 0.0045, 0.0050, 0.0055, 0.0060, 0.0065, 0.0070, 0.0075, 0.0080, 0.0085, 0.0090]
+pgs = [0.009]
 # fs = np.linspace(.5, 1, 50)
 for pg in pgs:
     ps = pg
-    pm = pg
+    pm = pg*2/3
 
     stab.change_parameters(ps=ps, pm=pm, pg=pg)
     I_OK = []
@@ -90,9 +91,9 @@ for pg in pgs:
         file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
                               system_size, parity, protocol)
 
-        pickle_out = open(file_name, "wb")
-        pickle.dump(model.chi, pickle_out, protocol=2)
-        pickle_out.close()
+        # pickle_out = open(file_name, "wb")
+        # pickle.dump(model.chi, pickle_out, protocol=2)
+        # pickle_out.close()
 
         # print(model.chi)
         chi = model.chi
