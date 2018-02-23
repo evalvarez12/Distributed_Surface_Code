@@ -76,26 +76,6 @@ for i in range(iterations):
     # Decode and apply corrections
     lc.decode()
 
-    # Round of perfect detection to eliminate stray errors
-    # if PERFECT_LAST_ROUND:
-    #     lc.reset()
-    #     sc.measure_all_stablizers()
-    #     lc.add()
-    #     anyons_star, anyons_plaq = lc.find_anyons_all()
-    #     match_star = matching.match(distance, anyons_star, topology,
-    #                                 "star", time=0, weights=[1, 1])
-    #     match_plaq = matching.match(distance, anyons_plaq, topology,
-    #                                 "plaq", time=0, weights=[1, 1])
-    #     sc.correct_error("star", match_star, cycles)
-    #     sc.correct_error("plaq", match_plaq, cycles)
-
-    # # Check for errors in decoding and correcting
-    # sc.measure_stabilizer_type("star")
-    # sc.measure_stabilizer_type("plaq")
-    # if (sc.qubits[:, sc.tags != "Q"] == -1).any():
-    #     print("FAILURE CORRECTING")
-    #     fail_rate = -9999
-
     # Measure logical qubit
     logical = sc.measure_logical()
 

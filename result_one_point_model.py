@@ -80,8 +80,6 @@ for i in range(iterations):
 
     # Noisy measurements
     for t in range(cycles):
-        # sc.noisy_measurement("star")
-        # sc.noisy_measurement("plaq")
         sc.noisy_measurement_cycle()
         lc.add()
     sc.measure_all_stabilizers()
@@ -89,7 +87,7 @@ for i in range(iterations):
 
     # Decode and apply corrections
     lc.decode()
-    
+
     # Measure logical qubit
     logical = sc.measure_logical()
 

@@ -22,15 +22,15 @@ topology = "toric"
 weights = [1, 1]
 
 # Parameters for noisy measurement
-ps = 0.003
-pm = 0.003
-pg = 0.003
-eta = 0.01
-a0 = 12.0
-a1 = 1/80.
-protocol = "GHZ"
-theta = .24
-PERFECT_LAST_ROUND = True
+ps = 0.006
+pm = 0.006
+pg = 0.006
+eta = 0.0
+a0 = 0.0
+a1 = 0.0
+protocol = "LOCAL_TEST"
+theta = .0
+PERFECT_LAST_ROUND = False
 
 p = 0.029
 q = 0.029
@@ -41,44 +41,41 @@ cycles = 20
 fail_rate = 0
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
-# sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
+sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
-# Set time for each GHZ generation
-time = 0.30347
-lamb = lambda_env(time, 0, a1)
-print("LAMBDA: ", lamb)
+# Choose a measurement protocol
+sc.select_measurement_protocol(0, [0, 0], "single")
+
 # Perform measurements
 for i in range(iterations):
 
     # Errors and measurements
     # Random errors
-    if q != 0:
-        for t in range(cycles):
-            sc.apply_qubit_error(p, 0)
-            sc.measure_all_stablizers()
-            sc.apply_measurement_error(q)
-            lc.add()
-        # sc.measure_all_stablizers()
-        # lc.add()
-    else:
-        sc.apply_qubit_error(p, 0)
-        sc.measure_all_stablizers()
-        lc.add()
-
-    sc.plot("star")
+    # if q != 0:
+    #     for t in range(cycles):
+    #         sc.apply_qubit_error(p, 0)
+    #         sc.measure_all_stablizers()
+    #         sc.apply_measurement_error(q)
+    #         lc.add()
+    #     # sc.measure_all_stablizers()
+    #     # lc.add()
+    # else:
+    #     sc.apply_qubit_error(p, 0)
+    #     sc.measure_all_stablizers()
+    #     lc.add()
 
     # Noisy measurements
-    # for t in range(cycles):
-    #     # sc.noisy_measurement("star")
-    #     # sc.noisy_measurement("plaq")
-    #     sc.noisy_measurement_cycle(lamb)
-    #     lc.add()
+    for t in range(cycles):
+        sc.noisy_measurement_cycle()
+        lc.add()
+    sc.plot_all()
+
+    sc.measure_all_stabilizers()
+    lc.add()
 
     # Decode
     lc.decode()
 
-    sc.plot("star")
-    # sc.plot("plaq")
 
     # Round of perfect detection to eliminate stray errors
     if PERFECT_LAST_ROUND:
@@ -94,17 +91,14 @@ for i in range(iterations):
         sc.correct_error("plaq", match_plaq, cycles)
 
     # Check for errors in decoding and correcting
-    sc.measure_stabilizer_type("star")
-    sc.measure_stabilizer_type("plaq")
+    sc.measure_all_stabilizers()
     if (sc.qubits[:, sc.tags != "Q"] == -1).any():
         print("FAILURE CORRECTING")
-        fail_rate = -9999
 
     # Measure logical qubit
     logical = sc.measure_logical()
 
-    # sc.plot("star")
-    # sc.plot("plaq")
+    sc.plot_all()
     # plt.show()
 
     # Code to check when a logical error happens

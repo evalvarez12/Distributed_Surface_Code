@@ -298,7 +298,7 @@ class SurfaceCode:
         # Function to calculate the error to the enviroment for step of stabilizers
         # measurements
         x = sum(a)*t
-        p_env = (1 + np.exp(-x * t))/2.
+        p_env = (1 + np.exp(-x))/2.
         return 1 - p_env
 
     def select_measurement_protocol(self, t, a, protocol):
