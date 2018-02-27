@@ -2,11 +2,11 @@ import noise_modeling as nm
 import stabilizer as st
 
 # Initial parameters
-ps = 0.006
-pm = 0.006
-pg = 0.006
+ps = 0.000
+pm = 0.000
+pg = 0.003
 system_size = 4
-parity = "X"
+parity = "Z"
 
 # Initialize objects
 stab = st.Stabilizer(ps, pm, pg)

@@ -170,10 +170,7 @@ class NoiseModel:
         """
         Check if the total sum of the decomposition is equal to 1.
         """
-        total = 0
-        for v in self.chi.values():
-            total += v
-        return total
+        return sum(self.chi.values())
 
     def reset_chi(self):
         """
