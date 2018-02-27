@@ -104,7 +104,20 @@ class Generator:
             v = self.chi_vals[c]
             e = self.errors[c]
         e_index = np.array(np.random.choice(i, num_errors, p=v))
+        print(self.chi_keys[c][e_index])
         m_errors = e[0][e_index]
+        q_errors = e[1][:, :, e_index]
+        # Swap axes to make it manageable
+        q_errors = np.swapaxes(q_errors, 0, 1)
+        print(q_errors)
+
+        # # Shuffle qubit errors to restore the lost permutations
+        q_errors = self._shuffle_qubit_error(q_errors)
+        # np.random.shuffle(q_errors)
+
+        print("After shuffle")
+        print(q_errors)
+
         # Qubit erros format:
         # array([[[ 1., -1.],
         #         [ 1., -1.]],
@@ -117,13 +130,6 @@ class Generator:
         #
         #        [[ 1.,  1.],
         #         [ 1.,  1.]]])
-        q_errors = e[1][:, :, e_index]
-
-        # Shuffle qubit errors to restore the lost permutations
-        q_errors = self._shuffle_qubit_error(q_errors)
-
-        # Swap axes to make it manageable
-        q_errors = np.swapaxes(q_errors, 0, 1)
         return m_errors, q_errors
 
     def _shuffle_qubit_error(self, err_list):
