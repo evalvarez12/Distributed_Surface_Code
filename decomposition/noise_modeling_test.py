@@ -4,7 +4,7 @@ import stabilizer as st
 # Initial parameters
 ps = 0.000
 pm = 0.000
-pg = 0.003
+pg = 0.1
 system_size = 4
 parity = "Z"
 
@@ -17,7 +17,7 @@ superoperator_function = stab.local_stabilizer
 model.apply_superoperator(superoperator_function)
 
 # Separate basis using the parity symmetry
-model.separate_basis_parity()
+# model.separate_basis_parity()
 
 # Calculate chi matrix
 model.make_chi_matrix()

@@ -33,7 +33,7 @@ for i in range(iterations):
 
     # Errors and measurements
     sc.apply_qubit_error(p, p)
-    sc.measure_all_stablizers()
+    sc.measure_all_stabilizers()
     lc.add()
 
     # Get anyons

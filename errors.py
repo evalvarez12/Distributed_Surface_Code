@@ -119,9 +119,23 @@ class Generator:
         #         [ 1.,  1.]]])
         q_errors = e[1][:, :, e_index]
 
+        # Shuffle qubit errors to restore the lost permutations
+        q_errors = self._shuffle_qubit_error(q_errors)
+
         # Swap axes to make it manageable
         q_errors = np.swapaxes(q_errors, 0, 1)
         return m_errors, q_errors
+
+    def _shuffle_qubit_error(self, err_list):
+        # NOTE: shuffle acts on pointers so this function can be inserted in
+        # code for more efficiency
+        # Change shape to shuffle correct axis
+        err_list = err_list.transpose((1, 0, 2))
+        # Shuffle qubit errors to restore the lost permutations
+        np.random.shuffle(err_list)
+        # Recover shape
+        err_list = err_list.transpose((1, 0, 2))
+        return err_list
 
     def _symbol_to_error_list(self, symbol_list, border=False):
         # Transform the symbols in the error dictionary to lists with the
@@ -139,9 +153,6 @@ class Generator:
         # values
         for i in range(N):
             m, q = self._symbol_to_error(symbol_list[i])
-
-            # NOTE: Shuffle to take a random permutation of the error
-            np.random.shuffle(q)
 
             measurement_errs[i] *= m
             qubit_errs[:, :, i] *= q

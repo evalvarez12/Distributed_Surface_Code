@@ -25,7 +25,7 @@ surface = "toric"
 errors = errors.Generator(surface=surface, ps=ps, pm=pm, pg=pg, eta=eta,
                           a0=a0, a1=a1, theta=theta, protocol=protocol)
 
-symbol = 'IIII_OK'
+symbol = 'IXII_OK'
 print(errors._symbol_to_error(symbol))
 
 e = errors.get_errors(10, "star", False)
