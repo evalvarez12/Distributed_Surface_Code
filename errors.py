@@ -9,10 +9,10 @@ created-on: 21/08/17
 import numpy as np
 import pickle
 from os.path import dirname, realpath
-# import decomposition.generate as gen
 import decomposition.tools.names as names
 
-I, X, Y, Z = [1, 1], [-1, 1], [-1, -1], [1, -1]
+# Pauli errors on stabilizer representation
+I, X, Y, Z = [1, 1], [1, -1], [-1, -1], [-1, 1]
 
 
 class Generator:

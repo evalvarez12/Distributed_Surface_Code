@@ -111,7 +111,7 @@ class NoiseModel:
 
         # NOTE: Parity projection is not a channel
         collapsed_psi = ops.collapse_single_Xbasis_ket(full_psi, measurement,
-                                                       N, N-1, True)
+                                                       N, control, True)
         if collapsed_psi.norm() != 0:
             collapsed_psi = collapsed_psi/collapsed_psi.norm()
         return collapsed_psi
@@ -161,7 +161,8 @@ class NoiseModel:
                                      + self.ps[1] * f_odd_NOK)
             else:
                 # Decompose through all the Pauli basis
-                self.chi[k] = self._inner_prod(self.rho, v * self.psi_basis[0])
+                self.chi[k] = (self.ps[0] * self._inner_prod(self.rhos[0], v * self.psi_basis[0]) +
+                               self.ps[1] * self._inner_prod(self.rhos[1], v * self.psi_basis[0]))
         # Call function to reduce permuations
         self._chi_reduce_permutations()
 

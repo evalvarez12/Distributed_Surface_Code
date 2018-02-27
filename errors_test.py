@@ -11,9 +11,9 @@ import numpy.testing as nptest
 import errors
 
 # Initial parameters
-ps = 0.006
-pm = 0.006
-pg = 0.006
+ps = 0.009
+pm = 0.009
+pg = 0.009
 eta = 0.0
 a0 = 0.0
 a1 = 0.0

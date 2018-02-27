@@ -52,11 +52,11 @@ I_NOK_full = []
 E_full = []
 
 pgs = [0.0040, 0.0045, 0.0050, 0.0055, 0.0060, 0.0065, 0.0070, 0.0075, 0.0080, 0.0085, 0.0090]
-pgs = [0.009]
+# pgs = [0.009]
 # fs = np.linspace(.5, 1, 50)
 for pg in pgs:
     ps = pg
-    pm = pg*2/3
+    pm = pg
 
     stab.change_parameters(ps=ps, pm=pm, pg=pg)
     I_OK = []
@@ -67,12 +67,12 @@ for pg in pgs:
     for f in [1]:
         # ghz = errs.generate_noisy_ghz(f, system_size)
         # probs, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
-        probs, rhos = stab.local_stabilizer(choi, targets, parity)
-        model.set_rho(rhos, probs)
+        # probs, rhos = stab.local_stabilizer(choi, targets, parity)
+        # model.set_rho(rhos, probs)
 
         # Define function and apply superoperator
-        # superoperator_function = stab.local_stabilizer
-        # model.apply_superoperator(superoperator_function)
+        superoperator_function = stab.local_stabilizer
+        model.apply_superoperator(superoperator_function)
         model.make_chi_matrix()
 
         print("Total sum check: ", model.check_total_sum())
@@ -91,12 +91,12 @@ for pg in pgs:
         file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
                               system_size, parity, protocol)
 
-        # pickle_out = open(file_name, "wb")
-        # pickle.dump(model.chi, pickle_out, protocol=2)
-        # pickle_out.close()
+        pickle_out = open(file_name, "wb")
+        pickle.dump(model.chi, pickle_out, protocol=2)
+        pickle_out.close()
 
         # print(model.chi)
-        chi = model.chi
+        # chi = model.chi
         model.reset_chi()
 
     # I_OK_full += [I_OK]

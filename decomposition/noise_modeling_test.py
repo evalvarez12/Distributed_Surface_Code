@@ -2,9 +2,9 @@ import noise_modeling as nm
 import stabilizer as st
 
 # Initial parameters
-ps = 0.001
-pm = 0.001
-pg = 0.001
+ps = 0.006
+pm = 0.006
+pg = 0.006
 system_size = 4
 parity = "X"
 
