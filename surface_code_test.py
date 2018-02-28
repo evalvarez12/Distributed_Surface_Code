@@ -11,11 +11,11 @@ import numpy.testing as nptest
 import surface_code
 
 # initialize the surface code object
-# do NOT change distance, it will ruin the test cases.
 distance = 5
 surface = "toric"
 sc = surface_code.SurfaceCode(distance, surface)
 
+sc.select_measurement_protocol(0, [0, 0], "single")
 
 
 print("-------------------Testing random noise------------------------")
@@ -35,10 +35,6 @@ sc.reset()
 sc._stabilizer_lie("S", .5)
 sc._stabilizer_lie("P", .5)
 print(sc.qubits[0])
-
-
-
-
 
 
 

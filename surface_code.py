@@ -70,8 +70,8 @@ class SurfaceCode:
         ind2 = np.arange(0, self.side, 2)
 
         # Array with the qubits to mark erors
-        # self.qubits[0] marks the X errors
-        # self.qubits[1] marks the Z erros
+        # self.qubits[0] marks the Z errors
+        # self.qubits[1] marks the X erros
         self.qubits = np.ones((2, self.side, self.side))
 
         starsy, starsx = np.meshgrid(ind1, ind2)
@@ -98,12 +98,6 @@ class SurfaceCode:
             self.plane[:, 0] = "l"
             self.plane[:, -1] = "r"
             self.plane[self.tags == "Q"] = "-"
-
-        # Generate insterspersed stabilizer positions
-        self.stars_round1 = self.stars[:, ::2]
-        self.stars_round2 = self.stars[:, 1::2]
-        self.plaqs_round1 = self.plaqs[:, ::2]
-        self.plaqs_round2 = self.plaqs[:, 1::2]
 
         # Color map stuff for plot
         self.cmap = colors.ListedColormap(['red', 'orange', 'white', 'green'])
@@ -317,6 +311,13 @@ class SurfaceCode:
         # Select protocol function
         if protocol == "single":
             self.stab_protocol = self.measurement_protocol_single
+
+            # Generate insterspersed stabilizer positions
+            self.stars_round1 = np.array([(x, y) for x in range(0, self.side, 2) for y in range((x % 4) + 1, self.side, 4)]).transpose()
+            self.stars_round2 = np.array([(x, y) for x in range(0, self.side, 2) for y in range((x + 2) % 4 + 1, self.side, 4)]).transpose()
+            self.plaqs_round1 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x % 4) - 1, self.side, 4)]).transpose()
+            self.plaqs_round2 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x + 2) % 4 - 1, self.side, 4)]).transpose()
+
         elif protocol == "local":
             self.stab_protocol = self.measurement_protocol_local
 
@@ -504,6 +505,17 @@ class SurfaceCode:
         plt.imshow(data_p, cmap=self.cmap, norm=self.cmap_norm)
         plt.xticks([])
         plt.yticks([])
+
+    def plot_rounds(self):
+        """Plot the stabilizer sequence for the given protocol."""
+        data = self.qubits[0].copy()
+        data.fill(0)
+        data[self.stars_round1[0], self.stars_round1[1]] = 1
+        data[self.stars_round2[0], self.stars_round2[1]] = 2
+        data[self.plaqs_round1[0], self.plaqs_round1[1]] = 3
+        data[self.plaqs_round2[0], self.plaqs_round2[1]] = 4
+        plt.imshow(data)
+        plt.colorbar()
 
     def reset(self):
         """Reset surface code to default configuration."""

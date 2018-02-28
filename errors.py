@@ -106,6 +106,7 @@ class Generator:
         e_index = np.array(np.random.choice(i, num_errors, p=v))
         m_errors = e[0][e_index]
         q_errors = e[1][:, :, e_index]
+        # print(self.chi_keys[c][e_index])
 
         # Shuffle qubit errors to restore the lost permutations
         # NOTE: shuffle works on the list pointers
