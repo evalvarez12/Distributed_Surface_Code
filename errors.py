@@ -104,21 +104,18 @@ class Generator:
             v = self.chi_vals[c]
             e = self.errors[c]
         e_index = np.array(np.random.choice(i, num_errors, p=v))
-        print(self.chi_keys[c][e_index])
         m_errors = e[0][e_index]
         q_errors = e[1][:, :, e_index]
-        # Swap axes to make it manageable
-        q_errors = np.swapaxes(q_errors, 0, 1)
-        print(q_errors)
 
-        # # Shuffle qubit errors to restore the lost permutations
-        q_errors = self._shuffle_qubit_error(q_errors)
-        # np.random.shuffle(q_errors)
+        # Shuffle qubit errors to restore the lost permutations
+        # NOTE: shuffle works on the list pointers
+        for x in q_errors.transpose((2, 0, 1)):
+            np.random.shuffle(x)
 
-        print("After shuffle")
-        print(q_errors)
+        # Change axes to make it manageable
+        q_errors = q_errors.transpose((1, 0, 2))
 
-        # Qubit erros format:
+        # Qubit errors format:
         # array([[[ 1., -1.],
         #         [ 1., -1.]],
         #
@@ -131,17 +128,6 @@ class Generator:
         #        [[ 1.,  1.],
         #         [ 1.,  1.]]])
         return m_errors, q_errors
-
-    def _shuffle_qubit_error(self, err_list):
-        # NOTE: shuffle acts on pointers so this function can be inserted in
-        # code for more efficiency
-        # Change shape to shuffle correct axis
-        err_list = err_list.transpose((1, 0, 2))
-        # Shuffle qubit errors to restore the lost permutations
-        np.random.shuffle(err_list)
-        # Recover shape
-        err_list = err_list.transpose((1, 0, 2))
-        return err_list
 
     def _symbol_to_error_list(self, symbol_list, border=False):
         # Transform the symbols in the error dictionary to lists with the

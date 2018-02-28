@@ -28,7 +28,6 @@ errors = errors.Generator(surface=surface, ps=ps, pm=pm, pg=pg, eta=eta,
 # symbol = 'IXII_OK'
 # print(errors._symbol_to_error(symbol))
 
-e = errors.get_errors(10, "star", False)
-print(e)
-
-sample = np.random.randint(0, 100, (2, 4, 10))
+e = errors.get_errors(15, "star", False)
+print(e[0])
+print(e[1])
