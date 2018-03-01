@@ -70,7 +70,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(t, [0, a1], "single")
+sc.select_measurement_protocol(t, a1, "single")
 
 
 # Perform measurements
@@ -111,8 +111,10 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if comm.rank == 0:
         total = total/float(size)
-        print("size: ", size)
+        total = total/float(cycles)
+        # print("size: ", size)
         # print("id: ", rank)
+
         args_str = get_file_name(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)

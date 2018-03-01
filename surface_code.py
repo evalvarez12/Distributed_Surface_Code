@@ -291,7 +291,7 @@ class SurfaceCode:
     def _env_error_rate(self, t, a):
         # Function to calculate the error to the enviroment for step of stabilizers
         # measurements
-        x = sum(a)*t
+        x = a * t
         p_env = (1 + np.exp(-x))/2.
         return 1 - p_env
 
@@ -341,7 +341,7 @@ class SurfaceCode:
                                         reverse=True)
 
     def measurement_protocol_local(self):
-        """Noisy stabilizer measuement cicly for the monolithic arquitecture."""
+        """Noisy stabilizer measurement cycle for the monolithic arquitecture."""
         # Star measurements
         self.noisy_measurement("star")
 

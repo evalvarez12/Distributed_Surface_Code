@@ -52,11 +52,11 @@ I_NOK_full = []
 E_full = []
 
 pgs = [0.0040, 0.0045, 0.0050, 0.0055, 0.0060, 0.0065, 0.0070, 0.0075, 0.0080, 0.0085, 0.0090, 0.0095, 0.0100, 0.0105, 0.0110]
-# pgs = [0.009]
+pgs = [0.000]
 # fs = np.linspace(.5, 1, 50)
 for pg in pgs:
     ps = pg
-    pm = pg
+    pm = pg*0
 
     stab.change_parameters(ps=ps, pm=pm, pg=pg)
     I_OK = []

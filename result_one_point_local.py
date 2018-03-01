@@ -66,7 +66,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(0, [0, 0], "single")
+sc.select_measurement_protocol(0, 0, "single")
 
 # Perform measurements
 for i in range(iterations):
@@ -105,7 +105,7 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 if comm.rank == 0:
         total = total/float(size)
         total = total/float(cycles)
-        print("p=", p, " : ", round(total[0],5))
+        print("p=", p, " : ", round(total[0], 5))
 
         # print("size: ", size)
         # print("id: ", rank)
