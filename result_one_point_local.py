@@ -104,7 +104,8 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if comm.rank == 0:
         total = total/float(size)
-        print("p=", p, " : ", total[0])
+        total = total/float(cycles)
+        print("p=", p, " : ", round(total[0],5))
 
         # print("size: ", size)
         # print("id: ", rank)

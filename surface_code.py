@@ -393,6 +393,7 @@ class SurfaceCode:
 
 
     def _noisy_measurement_reversed(self, stab, stab_qubits, m_err, q_err, c):
+        # Rersed means measure stabs first, apply errors second
         # Measure stabilizers
         self._measure_stabilizer(stab, c)
         # Apply errors to measurements
