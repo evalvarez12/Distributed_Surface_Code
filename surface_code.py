@@ -313,6 +313,7 @@ class SurfaceCode:
             self.stab_protocol = self.measurement_protocol_single
 
             # Generate insterspersed stabilizer positions
+            # NOTE this only works for even d
             self.stars_round1 = np.array([(x, y) for x in range(0, self.side, 2) for y in range((x % 4) + 1, self.side, 4)]).transpose()
             self.stars_round2 = np.array([(x, y) for x in range(0, self.side, 2) for y in range((x + 2) % 4 + 1, self.side, 4)]).transpose()
             self.plaqs_round1 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x % 4) - 1, self.side, 4)]).transpose()
@@ -342,6 +343,8 @@ class SurfaceCode:
 
     def measurement_protocol_local(self):
         """Noisy stabilizer measurement cycle for the monolithic arquitecture."""
+        # NOTE: Local fails because every qubits cant be addressed twice
+        # using the numpy indexing
         # Star measurements
         self.noisy_measurement("star")
 
@@ -383,8 +386,11 @@ class SurfaceCode:
         self.noisy_measurement_specific(pos, c, stabilizer)
 
     def _noisy_measurement_noreversed(self, stab, stab_qubits, m_err, q_err, c):
+        # print("BUG HERE!")
         # Apply error to qubits
-        self.qubits[:, stab_qubits[:, 0], stab_qubits[:, 1]] *= q_err
+        for i in range(q_err.shape[1]):
+            self.qubits[:, stab_qubits[i, 0], stab_qubits[i, 1]] *= q_err[:, i]
+        # self.qubits[:, stab_qubits[:, 0], stab_qubits[:, 1]] *= q_err
 
         # Measure stabilizers
         self._measure_stabilizer(stab, c)
@@ -400,7 +406,9 @@ class SurfaceCode:
         self.qubits[0, stab[0], stab[1]] *= m_err
 
         # Apply error to qubits
-        self.qubits[:, stab_qubits[:, 0], stab_qubits[:, 1]] *= q_err
+        for i in range(q_err.shape[1]):
+            self.qubits[:, stab_qubits[i, 0], stab_qubits[i, 1]] *= q_err[:, i]
+        # self.qubits[:, stab_qubits[:, 0], stab_qubits[:, 1]] *= q_err
 
     def noisy_measurement_specific(self, pos, c, stabilizer, reverse=False):
         # Measure the given stabilizers and apply the corresponding errors
@@ -408,7 +416,12 @@ class SurfaceCode:
             N = len(pos[0])
             m_err, q_err = self.errors.get_errors(N, stabilizer)
             stab_qubits = self._stabilizer_qubits_bulk(pos)
-
+            # print(m_err)
+            # print(q_err)
+            # print("STABS ----------------------------------------------")
+            # print(pos)
+            # print("STAB QUBITS ----------------------------------------")
+            # print(stab_qubits)
             if reverse:
                 self._noisy_measurement_reversed(pos, stab_qubits,
                                                  m_err, q_err, c)
