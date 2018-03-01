@@ -22,9 +22,9 @@ topology = "toric"
 weights = [1, 1]
 
 # Parameters for noisy measurement
-ps = 0.006
-pm = 0.006
-pg = 0.006
+ps = 0.010
+pm = 0.010
+pg = 0.010
 eta = 0.0
 a0 = 0.0
 a1 = 0.0
@@ -35,7 +35,7 @@ PERFECT_LAST_ROUND = False
 p = 0.029
 q = 0.029
 iterations = 1
-cycles = 20
+cycles = 10
 
 # Initialize objects
 fail_rate = 0
@@ -133,5 +133,10 @@ for i in range(iterations):
 
 fail_rate = fail_rate/float(iterations)
 print("FAIL RATE: ", fail_rate)
+
+
+
+print(sc.errors.n_NOK)
+print(sc.errors.n_E)
 
 plt.show()
