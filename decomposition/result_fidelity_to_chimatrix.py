@@ -53,7 +53,7 @@ I_NOK_full = []
 E_full = []
 
 # pgs = [0.0040, 0.0045, 0.0050, 0.0055, 0.0060, 0.0065, 0.0070, 0.0075, 0.0080, 0.0085, 0.0090, 0.0095, 0.0100, 0.0105, 0.0110, 0.0115, 0.0120, 0.0125, 0.0130, 0.0135, 0.0140]
-pgs = [0.009]
+pgs = [0.006]
 # fs = np.linspace(.5, 1, 50)
 for pg in pgs:
     ps = pg
@@ -61,8 +61,8 @@ for pg in pgs:
     pg = pg
     pn = 0.1
 
-    stab.change_parameters(ps=ps, pm=pm, pg=pg)
-    # stab = protocols_old.Protocols(ps, pm, pg, pn)
+    # stab.change_parameters(ps=ps, pm=pm, pg=pg)
+    stab = protocols_old.Protocols(ps, pm, pg, pn)
     I_OK = []
     I_NOK = []
     E = []
@@ -75,8 +75,8 @@ for pg in pgs:
         # model.set_rho(rhos, probs)
 
         # Define function and apply superoperator
-        superoperator_function = stab.local_stabilizer
-        # superoperator_function = stab.expedient
+        # superoperator_function = stab.local_stabilizer
+        superoperator_function = stab.expedient
         model.apply_superoperator(superoperator_function)
         model.make_chi_matrix()
 

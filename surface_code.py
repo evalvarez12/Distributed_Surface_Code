@@ -343,8 +343,6 @@ class SurfaceCode:
 
     def measurement_protocol_local(self):
         """Noisy stabilizer measurement cycle for the monolithic arquitecture."""
-        # NOTE: Local fails because every qubits cant be addressed twice
-        # using the numpy indexing
         # Star measurements
         self.noisy_measurement("star")
 

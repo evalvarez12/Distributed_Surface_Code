@@ -1,5 +1,5 @@
 import qutip as qt
-import protocols_old
+import protocols_nn as pr
 import error_models as errs
 import tools.operations as ops
 import tools.p_success as ps
@@ -8,8 +8,8 @@ rho = errs.bell_pair(.4)
 rho_ideal = qt.bell_state("00")
 # print(de.fidelity(rho, rho_ideal))
 
-prot = protocols_old.Protocols(0.0, 0.0075, 0.0075, .1)
-prot_perf = protocols_old.Protocols(0., 0., 0., 0.,)
+prot = pr.Protocols(0.0, 0.0075, 0.0075, .1)
+prot_perf = pr.Protocols(0., 0., 0., 0.,)
 
 print("------------------SINGLE SELECTION-------------------")
 single = prot.single_selection(rho, [0, 1], "Z")
@@ -42,6 +42,7 @@ state = qt.rand_ket(16, dims=[[2]*4, [1]*4])
 state = state * state.dag()
 probs, rhos = prot.expedient(state, list(range(4)), "X")
 print(sum(probs))
+
 # print("-----------------LOCAL STABILIZER------------------")
 # rho_initial = qt.snot() * qt.basis(2, 0)
 # for i in range(3):

@@ -116,6 +116,38 @@ class Protocols:
                                              projections[i], "X")
         return rho
 
+    def generate_epl(self):
+        """
+        Circuit that generates a Bell pair using the EPL protocol.
+        """
+        # Define extra paramters
+        r = 1/4.
+        p_drift = 1/100.
+
+        # Generate states
+        raw1 = errs.raw_state(self.pn, r)
+        raw2 = errs.raw_state(self.pn, r)
+        raw2 = errs.drift(raw2, p_drift)
+
+        # Join state
+        rho = qt.tensor(raw1, raw2)
+
+        # Apply two qubit gates
+        controls = [0, 1]
+        targets = [2, 3]
+        rho = self.apply_two_qubit_gates(rho, 4, controls,
+                                         targets, "X")
+
+        # Collapse ancillas according to EPL
+        N = 4
+        pos = 2
+        for i in range(2):
+            rho = self.measure_single_forced(rho, N, pos,
+                                             1, "Z")
+            N = N - 1
+
+        return rho
+
     def twirl_ghz(self, ghz):
         """
         Twirl the GHZ state to disitribute error uniformly.
@@ -374,6 +406,33 @@ class Protocols:
         for p in pairs:
             rho = self.two_dots(rho, p, "Z")
             rho = self.two_dots(rho, p, "Z")
+
+        return rho
+
+    def make_ghz_basic(self, N_ghz):
+        # Calculate number of bell pairs required
+        N_pairs = np.int(N_ghz / 2)
+
+        # Phase 1
+        # Make first pair Bell state
+        rho = self.generate_epl()
+
+        # Additional Bell states purification
+        for i in range(N_pairs - 1):
+            rho = qt.tensor(rho, self.generate_epl())
+
+        N = len(rho.dims[0])
+        
+        # Append single qubit if number of qubits is not pair
+        if N_ghz % 2:
+            rho = qt.tensor(rho, self.generate_noisy_plus())
+
+        # Define pairs to form the GHZ state
+        pairs = [[i, i + 2] for i in range(N_ghz - 2)]
+        # Perform the pair operations
+        for p in pairs:
+            rho = self.one_dot(rho, p, "Z")
+            rho = self.one_dot(rho, p, "Z")
 
         return rho
 

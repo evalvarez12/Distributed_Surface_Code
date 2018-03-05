@@ -61,8 +61,8 @@ class Generator:
             self.errors_border = [self._symbol_to_error_list(self.chi_keys_border[0], True),
                                   self._symbol_to_error_list(self.chi_keys_border[1], True)]
             self.indexes_border = range(len(self.chi_keys_border[0]))
-        self.n_NOK = 0
-        self.n_E = 0
+        # self.n_NOK = 0
+        # self.n_E = 0
 
     def _generate_name(self, ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):
         """Name for CHI matrix file."""
@@ -109,16 +109,17 @@ class Generator:
         m_errors = e[0][e_index]
         q_errors = e[1][:, :, e_index]
 
-        kk = self.chi_keys[c][e_index].tolist()
-        self.n_NOK += kk.count('IIII_NOK')
-        self.n_E += num_errors - kk.count('IIII_NOK') - kk.count('IIII_OK')
+        # Debug stuff
+        # kk = self.chi_keys[c][e_index].tolist()
+        # self.n_NOK += kk.count('IIII_NOK')
+        # self.n_E += num_errors - kk.count('IIII_NOK') - kk.count('IIII_OK')
         # print("Errors ------------------------->  NOK: ", kk.count('IIII_NOK'), "E: ", num_errors - kk.count('IIII_NOK') - kk.count('IIII_OK'))
         # print(kk)
 
         # Shuffle qubit errors to restore the lost permutations
         # NOTE: shuffle works on the list pointers
-        for x in q_errors.transpose((2, 0, 1)):
-            np.random.shuffle(x)
+        # for x in q_errors.transpose((2, 0, 1)):
+        #     np.random.shuffle(x)
 
         # Change axes to make it manageable
         q_errors = q_errors.transpose((1, 0, 2))
