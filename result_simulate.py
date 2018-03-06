@@ -22,13 +22,13 @@ topology = "toric"
 weights = [1, 1]
 
 # Parameters for noisy measurement
-ps = 0.014
-pm = 0.014
-pg = 0.014
+ps = 0.008
+pm = 0.008
+pg = 0.008
 eta = 0.0
 a0 = 0.0
 a1 = 0.0
-protocol = "LOCAL_TEST"
+protocol = "STRINGENT"
 theta = .0
 PERFECT_LAST_ROUND = False
 
@@ -44,7 +44,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(0, 0, "local")
+sc.select_measurement_protocol(0, 0, "single")
 
 # Perform measurements
 for i in range(iterations):
@@ -137,23 +137,23 @@ print("FAIL RATE: ", fail_rate)
 
 
 
-print(sc.errors.n_NOK)
-print(sc.errors.n_E)
+# print(sc.errors.n_NOK)
+# print(sc.errors.n_E)
 
 plt.show()
 
 
-
-x = sc.qubits.copy()
-x.fill(1)
-s = sc.stars.copy()
-s1 = sc.stars_round1.copy()
-s2 = sc.stars_round2.copy()
-p1 = sc.plaqs_round1.copy()
-p2 = sc.plaqs_round2.copy()
-
-sq1 = sc._stabilizer_qubits_bulk(s1)
-sq = sc._stabilizer_qubits_bulk(s)
-
-e = np.ones_like(sq).transpose((1, 0, 2))*3
-x[:, sq[:, 0], sq[:, 1]] *= e
+# 
+# x = sc.qubits.copy()
+# x.fill(1)
+# s = sc.stars.copy()
+# s1 = sc.stars_round1.copy()
+# s2 = sc.stars_round2.copy()
+# p1 = sc.plaqs_round1.copy()
+# p2 = sc.plaqs_round2.copy()
+#
+# sq1 = sc._stabilizer_qubits_bulk(s1)
+# sq = sc._stabilizer_qubits_bulk(s)
+#
+# e = np.ones_like(sq).transpose((1, 0, 2))*3
+# x[:, sq[:, 0], sq[:, 1]] *= e

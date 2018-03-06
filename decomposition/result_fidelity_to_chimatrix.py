@@ -6,7 +6,7 @@ in the distributed surface code.
 import matplotlib.pyplot as plt
 import stabilizer
 import noise_modeling
-import protocols_old
+import protocols_nn
 import error_models as errs
 import tools.names as names
 import pickle
@@ -36,7 +36,7 @@ eta = 0.0
 a0 = 0.0
 a1 = 0.0
 theta = 0.0
-protocol = "LOCAL_TEST"
+protocol = "STRINGENT"
 
 # Initialize objects
 model = noise_modeling.NoiseModel(system_size, parity)
@@ -53,7 +53,8 @@ I_NOK_full = []
 E_full = []
 
 # pgs = [0.0040, 0.0045, 0.0050, 0.0055, 0.0060, 0.0065, 0.0070, 0.0075, 0.0080, 0.0085, 0.0090, 0.0095, 0.0100, 0.0105, 0.0110, 0.0115, 0.0120, 0.0125, 0.0130, 0.0135, 0.0140]
-pgs = [0.006]
+pgs = [0.00775, 0.00800, 0.00825]
+# pgs = [0.0075]
 # fs = np.linspace(.5, 1, 50)
 for pg in pgs:
     ps = pg
@@ -62,7 +63,7 @@ for pg in pgs:
     pn = 0.1
 
     # stab.change_parameters(ps=ps, pm=pm, pg=pg)
-    stab = protocols_old.Protocols(ps, pm, pg, pn)
+    stab = protocols_nn.Protocols(ps, pm, pg, pn)
     I_OK = []
     I_NOK = []
     E = []
@@ -76,7 +77,7 @@ for pg in pgs:
 
         # Define function and apply superoperator
         # superoperator_function = stab.local_stabilizer
-        superoperator_function = stab.expedient
+        superoperator_function = stab.stringent
         model.apply_superoperator(superoperator_function)
         model.make_chi_matrix()
 
@@ -96,13 +97,13 @@ for pg in pgs:
         file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
                               system_size, parity, protocol)
 
-        # pickle_out = open(file_name, "wb")
-        # pickle.dump(model.chi, pickle_out, protocol=2)
-        # pickle_out.close()
+        pickle_out = open(file_name, "wb")
+        pickle.dump(model.chi, pickle_out, protocol=2)
+        pickle_out.close()
 
         # print(model.chi)
         # chi = model.chi
-        # model.reset_chi()
+        model.reset_chi()
 
     # I_OK_full += [I_OK]
     # I_NOK_full += [I_NOK]
