@@ -414,12 +414,7 @@ class SurfaceCode:
             N = len(pos[0])
             m_err, q_err = self.errors.get_errors(N, stabilizer)
             stab_qubits = self._stabilizer_qubits_bulk(pos)
-            # print(m_err)
-            # print(q_err)
-            # print("STABS ----------------------------------------------")
-            # print(pos)
-            # print("STAB QUBITS ----------------------------------------")
-            # print(stab_qubits)
+
             if reverse:
                 self._noisy_measurement_reversed(pos, stab_qubits,
                                                  m_err, q_err, c)

@@ -118,8 +118,8 @@ class Generator:
 
         # Shuffle qubit errors to restore the lost permutations
         # NOTE: shuffle works on the list pointers
-        # for x in q_errors.transpose((2, 0, 1)):
-        #     np.random.shuffle(x)
+        for x in q_errors.transpose((2, 0, 1)):
+            np.random.shuffle(x)
 
         # Change axes to make it manageable
         q_errors = q_errors.transpose((1, 0, 2))
