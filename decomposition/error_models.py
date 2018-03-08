@@ -217,26 +217,10 @@ def bell_pair_click(eta, theta):
     s = np.sin(theta)**2
     r = ((1 - eta)*s)/(1 - eta*s)
     # TODO Check here
-    state = qt.bell_state('01') * qt.bell_state('01').dag()
+    state = qt.bell_state('10') * qt.bell_state('10').dag()
     noise = qt.tensor(qt.basis(2, 1), qt.basis(2, 1))
     noise = noise * noise.dag()
     return (1-r)*state + r*noise
-
-
-def raw_state(pn, r):
-    """
-    Raw state according to NN articles.
-    """
-    a = qt.bell_state('10') * qt.bell_state('10').dag()
-    b = (qt.bell_state('00') * qt.bell_state('00').dag() +
-         qt.bell_state('01') * qt.bell_state('01').dag() +
-         qt.bell_state('11') * qt.bell_state('11').dag())
-    state = (1-pn)*a + pn/3.*b
-
-    noise = qt.tensor(qt.basis(2, 1), qt.basis(2, 1))
-    noise = noise * noise.dag()
-    state = (1-r) * state + r * noise
-    return state
 
 def drift(state, pd):
     """

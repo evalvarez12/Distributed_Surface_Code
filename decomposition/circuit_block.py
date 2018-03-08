@@ -127,7 +127,7 @@ class Blocks:
         self.check["bell_pair"] += 1
 
         # Generate noisy bell pair
-        bell = qt.bell_state('00') * qt.bell_state('00').dag()
+        bell = qt.bell_state('10') * qt.bell_state('10').dag()
         return time, bell
 
     def _generate_noisy_plus(self):
@@ -279,8 +279,8 @@ class Blocks:
             ancillas_pos1 = ancillas_pos[:2]
             ancillas_pos2 = ancillas_pos[2:]
             p_success = ps.double_sel(rho, N,
-                                                 ancillas_pos1,
-                                                 ancillas_pos2)
+                                      ancillas_pos1,
+                                      ancillas_pos2)
         else:
             p_success = 1
 
@@ -637,12 +637,17 @@ class Blocks:
 
         # Apply two qubit gates
         controls = [N-1, N-2]
-        self._swap_pair(rho, controls)
-        rho = self._apply_two_qubit_gates(rho, controls,
-                                          operation_qubits, sigma)
+        # self._swap_pair(rho, controls)
+        # rho = self._apply_two_qubit_gates(rho, controls,
+        #                                   operation_qubits, sigma)
+        rho = self._apply_two_qubit_gates(rho, operation_qubits,
+                                          controls, sigma)
 
         # Measure ancillas in X basis
-        projections = [0] * 2
+        if sigma == "X":
+            projections = [0, 0]
+        elif sigma == "Z":
+            projections = [1, 0]
         p_success, rho = self._collapse_ancillas_X(rho,
                                                    controls,
                                                    projections,
@@ -681,10 +686,13 @@ class Blocks:
         rho = self._apply_two_qubit_gates(rho, controls2, controls1, "Z")
 
         # Measure ancillas in X basis
-        projections = [0] * 2
+        if sigma == "X":
+            projections = [0] * 2
+        elif sigma == "Z":
+            projections = [0, 1]
         p_success2, rho = self._collapse_ancillas_X(rho,
                                                     controls2,
-                                                    projections,
+                                                    [0, 1],
                                                     "single_selection")
         # Swap noise
         self._swap_pair(rho, controls1)
