@@ -40,7 +40,7 @@ def correction_ghz3(measurements, N, operation_pos):
 
 
 def correction_ghz4(measurements, N, operation_pos):
-    print("Measurements: ", measurements)
+    # print("Measurements: ", measurements)
     # There are two protocols in this case:
     #  1 or 2 ancilla bell pairs
     N_ancillas = len(measurements)

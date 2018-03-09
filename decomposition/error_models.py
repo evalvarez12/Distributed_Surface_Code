@@ -203,6 +203,24 @@ def bell_pair(p):
     return W
 
 
+def bell_pair_phi(p):
+    """
+    Return a noisy |phi+> Bell pair.
+
+    Parameters
+    -----------
+    p : (scalar) error rate
+    """
+    a = qt.bell_state('10') * qt.bell_state('10').dag()
+    b = qt.bell_state('01') * qt.bell_state('01').dag() \
+        + qt.bell_state('00') * qt.bell_state('00').dag() \
+        + qt.bell_state('11') * qt.bell_state('11').dag()
+    W = (1-p)*a + p/3.*b
+    # H = qt.snot(2, 1)
+    # return H*W*H.dag()
+    return W
+
+
 def bell_pair_click(eta, theta):
     """
     Return a Bell pair generated using the single click protocol.
@@ -217,7 +235,7 @@ def bell_pair_click(eta, theta):
     s = np.sin(theta)**2
     r = ((1 - eta)*s)/(1 - eta*s)
     # TODO Check here
-    state = qt.bell_state('10') * qt.bell_state('10').dag()
+    state = qt.bell_state('01') * qt.bell_state('01').dag()
     noise = qt.tensor(qt.basis(2, 1), qt.basis(2, 1))
     noise = noise * noise.dag()
     return (1-r)*state + r*noise

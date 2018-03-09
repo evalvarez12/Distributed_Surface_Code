@@ -127,7 +127,7 @@ class Blocks:
         self.check["bell_pair"] += 1
 
         # Generate noisy bell pair
-        bell = qt.bell_state('10') * qt.bell_state('10').dag()
+        bell = qt.bell_state('00') * qt.bell_state('00').dag()
         return time, bell
 
     def _generate_noisy_plus(self):
@@ -153,7 +153,7 @@ class Blocks:
         # NOTE: This is expensive, adjust manually as required
         # 100000 tries required for EPL
         # 1000000 for BK
-        i = np.arange(100000)
+        i = np.arange(1000000)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
 
@@ -255,7 +255,7 @@ class Blocks:
         rho = self._swap_noise(rho, pair[1])
         return rho
 
-    def _collapse_ancillas_X(self, rho, ancillas_pos, projections, mode="None"):
+    def _collapse_ancillas_X(self, rho, ancillas_pos, projections):
         # Measure the ancillas in the X basis in parallel in each node.
         # NOTE: All ancillas are collapsed in parallel, Hadamard operations
         # are used to measure on X basis
@@ -273,16 +273,6 @@ class Blocks:
         # in single selection
         N_ancillas = len(ancillas_pos)
         N = len(rho.dims[0])
-        if mode == "single_selection":
-            p_success = ps.single_sel(rho, N, ancillas_pos)
-        elif mode == "double_selection":
-            ancillas_pos1 = ancillas_pos[:2]
-            ancillas_pos2 = ancillas_pos[2:]
-            p_success = ps.double_sel(rho, N,
-                                      ancillas_pos1,
-                                      ancillas_pos2)
-        else:
-            p_success = 1
 
         # Collapse the qubits in parrallel
         # Sort list to be able to reduce dimension and keep track of positions
@@ -292,7 +282,7 @@ class Blocks:
             rho = self._collapse_single(rho, pos,
                                         projections[i], "X")
 
-        return p_success, rho
+        return 1, rho
 
     def _collapse_ancillas_EPL(self, rho, ancillas_pos):
         # For the special EPL case
@@ -643,15 +633,11 @@ class Blocks:
         rho = self._apply_two_qubit_gates(rho, operation_qubits,
                                           controls, sigma)
 
+        # Calculate the probability of success
+        p_success = ps.single_sel(rho, N, controls)
         # Measure ancillas in X basis
-        if sigma == "X":
-            projections = [0, 0]
-        elif sigma == "Z":
-            projections = [1, 0]
-        p_success, rho = self._collapse_ancillas_X(rho,
-                                                   controls,
-                                                   projections,
-                                                   "single_selection")
+        projections = [0, 0]
+        _, rho = self._collapse_ancillas_X(rho, controls, projections)
         return p_success, self.check, rho
 
     def double_selection(self, rho, operation_qubits, sigma):
@@ -685,20 +671,14 @@ class Blocks:
         self._swap_pair(rho, controls2)
         rho = self._apply_two_qubit_gates(rho, controls2, controls1, "Z")
 
+        # Success probability
+        p_success = ps.double_sel(rho, N, controls1, controls2)
+
         # Measure ancillas in X basis
-        if sigma == "X":
-            projections = [0] * 2
-        elif sigma == "Z":
-            projections = [0, 1]
-        p_success2, rho = self._collapse_ancillas_X(rho,
-                                                    controls2,
-                                                    [0, 1],
-                                                    "single_selection")
+        projections = [0] * 2
+        p_success2, rho = self._collapse_ancillas_X(rho, controls2, [0, 0])
         # Swap noise
         self._swap_pair(rho, controls1)
-        p_success1, rho = self._collapse_ancillas_X(rho,
-                                                    controls1,
-                                                    projections,
-                                                    "single_selection")
-        p_success = p_success1 * p_success2
+        p_success1, rho = self._collapse_ancillas_X(rho, controls1, projections)
+
         return p_success, self.check, rho
