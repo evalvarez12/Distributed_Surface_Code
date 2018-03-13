@@ -126,8 +126,11 @@ class Blocks:
         # Update check
         self.check["bell_pair"] += 1
 
-        # Generate noisy bell pair
-        bell = qt.bell_state('00') * qt.bell_state('00').dag()
+        # Generate Bell pair with F=1
+        bell = qt.bell_state('10') * qt.bell_state('10').dag()
+        # Apply noisy 1q X to transform state
+        bell = errs.single_qubit_gate(bell, qt.rx(np.pi, 2, 0), self.ps, 2, 0)
+
         return time, bell
 
     def _generate_noisy_plus(self):
@@ -249,10 +252,12 @@ class Blocks:
         # Apply the noise due to SWAP on two states
         # NOTE: use only two CNOTs to perform a SWAP
         self.check["two_qubit_gate"] += 2
-        self.check["time"] += self.time_lookup["two_qubit_gate"]*2
-        self.check["time1"] += self.time_lookup["two_qubit_gate"]*2
+        time = self.time_lookup["two_qubit_gate"] * 2
+        self.check["time"] += time
+        self.check["time1"] += time
         rho = self._swap_noise(rho, pair[0])
         rho = self._swap_noise(rho, pair[1])
+        rho = errs.env_error_all(rho, 0, self.a1, time)
         return rho
 
     def _collapse_ancillas_X(self, rho, ancillas_pos, projections):
@@ -470,6 +475,10 @@ class Blocks:
         # Measure ancillas in Z basis
         projections = [1] * 2
         p_success, rho = self._collapse_ancillas_EPL(rho, targets)
+
+        # Apply X to rotate state
+        rho = errs.single_qubit_gate(rho, qt.rx(np.pi, 2, 0), self.ps, 2, 0)
+
         return p_success, self.check, rho
 
     def add_bell_pair(self, rho):
@@ -624,6 +633,9 @@ class Blocks:
         # Generate raw bell pair
         rho = self._append_epl(rho)
         N = len(rho.dims[0])
+
+        H = [qt.snot(N, operation_qubits[0]), qt.snot(N, operation_qubits[1])]
+        rho = self._apply_single_qubit_gates(rho, H, operation_qubits)
 
         # Apply two qubit gates
         controls = [N-1, N-2]

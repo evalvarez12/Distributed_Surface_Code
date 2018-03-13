@@ -215,7 +215,6 @@ def tensor_single_operator(operator, N, pos):
     N : (int) total system dimension.
     pos : (int) position inside the entire system to be measured.
     """
-    # TODO use qt.rx, qt.ry, qt.rz instead for sigmas?
     if pos > N:
         raise ValueError("tensor_single_operator: N > pos")
     if N == 1:

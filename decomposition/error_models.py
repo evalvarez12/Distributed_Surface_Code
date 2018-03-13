@@ -235,7 +235,7 @@ def bell_pair_click(eta, theta):
     s = np.sin(theta)**2
     r = ((1 - eta)*s)/(1 - eta*s)
     # TODO Check here
-    state = qt.bell_state('01') * qt.bell_state('01').dag()
+    state = qt.bell_state('10') * qt.bell_state('10').dag()
     noise = qt.tensor(qt.basis(2, 1), qt.basis(2, 1))
     noise = noise * noise.dag()
     return (1-r)*state + r*noise

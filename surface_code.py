@@ -314,6 +314,9 @@ class SurfaceCode:
 
             # Generate insterspersed stabilizer positions
             # NOTE this only works for even d
+            if self.surface == "toric" and self.distance % 2 == 1:
+                raise ValueError("Single protocol only works for even distance")
+
             self.stars_round1 = np.array([(x, y) for x in range(0, self.side, 2) for y in range((x % 4) + 1, self.side, 4)]).transpose()
             self.stars_round2 = np.array([(x, y) for x in range(0, self.side, 2) for y in range((x + 2) % 4 + 1, self.side, 4)]).transpose()
             self.plaqs_round1 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x % 4) - 1, self.side, 4)]).transpose()

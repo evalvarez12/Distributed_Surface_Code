@@ -10,13 +10,13 @@ import circuit
 import numpy as np
 
 # Determine parameters
-ps = 0.005
-pm = 0.005
-pg = 0.005
-a0 = 0
-a1 = 0.
-eta = 1/10.
-theta = np.pi/4
+ps = 0.009
+pm = 0.009
+pg = 0.009
+a0 = 3.
+a1 = 1/80.
+eta = 1/100.
+theta = .24
 
 # Initialize  objects
 cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
@@ -24,37 +24,41 @@ cb_ideal = circuit_block.Blocks(0, 0, 0, 1, 0, 0, np.pi/4)
 
 print("------------------PROTOCOL 1-------------------")
 _, _, rho = cb.start_epl()
-print("Initial F", qt.fidelity(rho, qt.bell_state('10')))
+print("Initial F", qt.fidelity(rho, qt.bell_state('00')))
 
-cs = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb_ideal.single_selection,
+cs = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.single_selection,
                      operation_qubits=[0, 1],
-                     sigma="X")
+                     sigma="Z")
 rho, check = cs.run(rho)
 print("check: ", check)
-print("F: ", qt.fidelity(rho, qt.bell_state('10')))
+print("F: ", qt.fidelity(rho, qt.bell_state('00')))
 
-# print("------------------PROTOCOL 2-------------------")
-# _, _, rho = cb.start_epl()
-# cs = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.single_selection,
-#                      operation_qubits=[0, 1],
-#                      sigma="X")
+print("------------------PROTOCOL 2-------------------")
+_, _, rho = cb.start_epl()
+H = qt.snot(2, 0) * qt.snot(2, 1)
+# rho = H * rho * H.dag()
+cs = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.single_selection,
+                     operation_qubits=[0, 1],
+                     sigma="Z")
 # cs.add_circuit(circuit_block=cb.single_selection,
 #                operation_qubits=[0, 1],
-#                sigma="Z")
-# rho, check = cs.run(rho)
-# print("check: ", check)
-# print("F: ", qt.fidelity(rho, qt.bell_state('10')))
-#
-#
-# print("------------------PROTOCOL 3-------------------")
-# _, _, rho = cb.start_epl()
-# cs = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.double_selection,
-#                      operation_qubits=[0, 1],
-#                      sigma="X")
-#
+#                sigma="X")
+rho, check = cs.run(rho)
+print("check: ", check)
+print("F: ", qt.fidelity(rho, qt.bell_state('00')))
+
+
+print("------------------PROTOCOL EPL GENERATION-------------------")
+_, _, rho = cb.start_epl()
+H = qt.snot(2, 0) * qt.snot(2, 1)
+# rho = H * rho * H.dag()
+cs = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.double_selection,
+                     operation_qubits=[0, 1],
+                     sigma="X")
+
 # cs.add_circuit(circuit_block=cb.double_selection,
 #                operation_qubits=[0, 1],
-#                sigma="Z")
-# rho, check = cs.run(rho)
-# print("check: ", check)
-# print("F: ", qt.fidelity(rho, qt.bell_state('10')))
+#                sigma="X")
+rho, check = cs.run(rho)
+print("check: ", check)
+print("F: ", qt.fidelity(rho, qt.bell_state('00')))
