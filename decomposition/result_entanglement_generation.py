@@ -15,15 +15,15 @@ import matplotlib.pyplot as plt
 
 # Determine parameters
 # NOTE: Parameters as in Raja's thesis
-ps = 0.003
-pm = 0.003
-pg = 0.003
+ps = 0.006
+pm = 0.006
+pg = 0.006
 a0 = 83.33
 a1 = 1/3.
 eta = (0.1)*(0.03)*(0.8)
 theta = np.pi/4.
 
-iterations = 200
+iterations = 300
 
 # Initialize  objects
 cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
@@ -31,11 +31,11 @@ cb_ideal = circuit_block.Blocks(0, 0, 0, 1, 0, 0, np.pi/4.)
 epl = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_epl)
 
 rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
-thetas = np.linspace(0.1, np.pi/2. - 0.1, 20)
+thetas = np.linspace(0.1, np.pi/2. - 0., 20)
 
 ##################################################################
 ############### DATA IS OBTAINED HERE#############################
-#
+
 # F = []
 # T = []
 # P = []
@@ -59,10 +59,10 @@ thetas = np.linspace(0.1, np.pi/2. - 0.1, 20)
 # F = np.array(F)
 # T = np.array(T)
 # P = np.array(P)
-# #
-# np.save("F_good.npy", F)
-# np.save("T_good.npy", T)
-# np.save("P_good.npy", P)
+# # #
+# np.save("data/F_epl_params_raja.npy", F)
+# np.save("data/T_epl_params_raja.npy", T)
+# np.save("data/P_epl_params_raja.npy", P)
 
 #################################################################
 #################################################################

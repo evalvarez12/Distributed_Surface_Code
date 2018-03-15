@@ -174,13 +174,14 @@ def BK_4_simplified(ps, pm, pg, eta, a0, a1, theta):
                                circuit_block=cb.start_BK)
     start_BK.add_circuit(circuit_block=cb.swap_pair,
                          pair=[0, 1])
-
+    add_BK = circuit.Circuit(a0=a0, a1=a1,
+                             circuit_block=cb.start_BK)
     # Phase 1 - Purify Bell pair
     ghz = circuit.Circuit(a0=a0, a1=a1,
                           circuit_block=start_BK.run_parallel)
 
     # Phase 2 - Create GHZ
-    ghz.add_circuit(circuit_block=start_BK.append_circuit)
+    ghz.add_circuit(circuit_block=add_BK.append_circuit)
     ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1, 3],
                     targets=[4, 5], sigma="X")
     ghz.add_circuit(circuit_block=cb.collapse_ancillas_GHZ,

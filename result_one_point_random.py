@@ -95,16 +95,13 @@ f_rate[0] = fail_rate
 
 # Communication: root node receives results with a collective "reduce"
 comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
-
 # Root process saves the results
-if comm.rank == 0:
+if rank == 0:
         total = total/float(size)
-        print("total: ", total)
         if q != 0:
             total = total/float(cycles)
-        print("p=", p, " : ", round(total[0], 5))
-        # print("size: ", size)
-        # print("id: ", rank)
+        print("p=", p, " : ", round(total[0], 7))
+        print("size: ", size, "rank: ", rank)
         args_str = get_file_name_pq(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)

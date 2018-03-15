@@ -265,19 +265,20 @@ class Blocks:
         # NOTE: All ancillas are collapsed in parallel, Hadamard operations
         # are used to measure on X basis
         self.check["measurement"] += 1
-        self.check["single_qubit_gate"] += 1
 
-        time = (self.time_lookup["measurement"]
-                + self.time_lookup["single_qubit_gate"])
+        time = self.time_lookup["measurement"]
         self.check["time"] += time
         self.check["time1"] += time
         # Apply environmental error
         rho = errs.env_error_all(rho, 0, self.a1, time)
 
-        # Calculate probability of success using the same considerations as
-        # in single selection
         N_ancillas = len(ancillas_pos)
         N = len(rho.dims[0])
+
+        # Apply error due to the needed rotation, use I instead of real H gate
+        identity = qt.qeye([2]*N)
+        rho = self._apply_single_qubit_gates(rho, [identity, identity],
+                                             ancillas_pos)
 
         # Collapse the qubits in parrallel
         # Sort list to be able to reduce dimension and keep track of positions
@@ -477,7 +478,7 @@ class Blocks:
         p_success, rho = self._collapse_ancillas_EPL(rho, targets)
 
         # Apply X to rotate state
-        rho = errs.single_qubit_gate(rho, qt.rx(np.pi, 2, 0), self.ps, 2, 0)
+        rho = self._apply_single_qubit_gates(rho, [qt.rx(np.pi, 2, 0)], [0])
 
         return p_success, self.check, rho
 
@@ -589,6 +590,7 @@ class Blocks:
         measurements, rho_measured = self._measure_random_ancillas_Z(rho, measure_pos)
         # Transform measurements from 1 and -1 to 0 and 1
         measurements = np.array(measurements) % 3 - 1
+        print(measurements)
         N = len(rho_measured.dims[0])
         # The qubits in which the correction applies
         if ghz_size == 3:

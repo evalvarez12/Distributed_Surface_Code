@@ -48,7 +48,7 @@ print("check: ", check)
 print("F: ", qt.fidelity(rho, qt.bell_state('00')))
 
 
-print("------------------PROTOCOL EPL GENERATION-------------------")
+print("------------------PROTOCOL 3-------------------")
 _, _, rho = cb.start_epl()
 H = qt.snot(2, 0) * qt.snot(2, 1)
 # rho = H * rho * H.dag()
