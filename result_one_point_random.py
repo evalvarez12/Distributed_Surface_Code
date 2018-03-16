@@ -100,8 +100,8 @@ if rank == 0:
         total = total/float(size)
         if q != 0:
             total = total/float(cycles)
-        print("p=", p, " : ", round(total[0], 7))
-        print("size: ", size, "rank: ", rank)
+        print "p=", p, " : ", round(total[0], 7)
+        # print ("size: ", size, "rank: ", rank)
         args_str = get_file_name_pq(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)

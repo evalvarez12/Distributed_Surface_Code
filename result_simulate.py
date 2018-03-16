@@ -17,8 +17,8 @@ def lambda_env(t, a0, a1):
 
 
 # Define the parameters
-distance = 5
-topology = "toric"
+distance = 16
+topology = "planar"
 weights = [1, 1]
 
 # Parameters for noisy measurement
@@ -35,44 +35,45 @@ PERFECT_LAST_ROUND = False
 p = 0.029
 q = 0.029
 iterations = 1
-cycles = 1
+cycles = 16
 
 # Initialize objects
 fail_rate = 0
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
-sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
+# sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(0, 0, "single")
+# sc.select_measurement_protocol(0, 0, "local")
 
 # Perform measurements
 for i in range(iterations):
 
     # Errors and measurements
     # Random errors
-    # if q != 0:
-    #     for t in range(cycles):
-    #         sc.apply_qubit_error(p, 0)
-    #         sc.measure_all_stablizers()
-    #         sc.apply_measurement_error(q)
-    #         lc.add()
-    #     # sc.measure_all_stablizers()
-    #     # lc.add()
-    # else:
-    #     sc.apply_qubit_error(p, 0)
-    #     sc.measure_all_stablizers()
-    #     lc.add()
+    if q != 0:
+        for t in range(cycles):
+            sc.apply_qubit_error(p, 0)
+            sc.measure_all_stabilizers()
+            sc._stabilizer_lie("S", q)
+            lc.add()
+        sc.plot_all()
+        sc.measure_all_stabilizers()
+        lc.add()
+    else:
+        sc.apply_qubit_error(p, 0)
+        sc.measure_all_stablizers()
+        lc.add()
 
     # Noisy measurements
-    for t in range(cycles):
-        sc.noisy_measurement_cycle()
-        lc.add()
-    sc.plot_all()
-    qubits_copy = sc.qubits.copy()
-
-    sc.measure_all_stabilizers()
-    lc.add()
+    # for t in range(cycles):
+    #     sc.noisy_measurement_cycle()
+    #     lc.add()
+    # sc.plot_all()
+    # qubits_copy = sc.qubits.copy()
+    #
+    # sc.measure_all_stabilizers()
+    # lc.add()
 
     # Decode
     lc.decode()
@@ -99,7 +100,7 @@ for i in range(iterations):
     # Measure logical qubit
     logical = sc.measure_logical()
 
-    # sc.plot_all()
+    sc.plot_all()
     # plt.show()
 
     # Code to check when a logical error happens
@@ -143,7 +144,7 @@ print("FAIL RATE: ", fail_rate)
 plt.show()
 
 
-# 
+#
 # x = sc.qubits.copy()
 # x.fill(1)
 # s = sc.stars.copy()
