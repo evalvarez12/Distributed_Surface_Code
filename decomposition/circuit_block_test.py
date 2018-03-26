@@ -10,22 +10,22 @@ import circuit_block
 import numpy as np
 
 # Determine parameters
-# ps = 0.006
-# pm = 0.006
-# pg = 0.006
-# a0 = 5.
-# a1 = 1/80.
-# eta = 1/100.
-# theta = .24
-
-# NOTE: Parameters as in Raja's thesis
 ps = 0.006
 pm = 0.006
 pg = 0.006
-a0 = 83.33
-a1 = 1/3.
-eta = (0.1)*(0.03)*(0.8)
+a0 = 5.
+a1 = 1/80.
+eta = 1/100.
 theta = .24
+
+# NOTE: Parameters as in Raja's thesis
+# ps = 0.006
+# pm = 0.006
+# pg = 0.006
+# a0 = 83.33
+# a1 = 1/3.
+# eta = (0.1)*(0.03)*(0.8)
+# theta = .24
 
 
 # Initialize  objects
@@ -42,8 +42,15 @@ print("p_success: ", p)
 print("check: ", check)
 print("F: ", qt.fidelity(rho, rho_ref))
 
+print("------------------DOUBLE SELECTION2-------------------")
+p, check, rho = cb.double_selection22("Z")
+print("p_success: ", p)
+print("check: ", check)
+print("F: ", qt.fidelity(rho, rho_ref))
+
 print("------------------DOUBLE SELECTION-------------------")
 _, _, rho = cb.start_epl()
+print("F initial: ", qt.fidelity(rho, rho_ref))
 p, check, rho = cb.double_selection(rho, [0, 1], "X")
 print("p_success: ", p)
 print("check: ", check)

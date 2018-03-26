@@ -491,6 +491,14 @@ class SurfaceCode:
         # return data, self.cmap, self.cmap_norm
         plt.figure()
         plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
+        plt.tick_params(axis='both',          # changes apply to the x-axis
+                        which='both',      # both major and minor ticks are affected
+                        bottom='off',      # ticks along the bottom edge are off
+                        top='off',         # ticks along the top edge are off
+                        labelbottom='off',
+                        left='off',
+                        right='off',
+                        labelleft='off')
 
     def plot_all(self):
         """Plot the surface code stabilizers."""

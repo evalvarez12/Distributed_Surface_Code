@@ -17,8 +17,8 @@ def lambda_env(t, a0, a1):
 
 
 # Define the parameters
-distance = 16
-topology = "planar"
+distance = 12
+topology = "toric"
 weights = [1, 1]
 
 # Parameters for noisy measurement
@@ -32,10 +32,10 @@ protocol = "STRINGENT"
 theta = .0
 PERFECT_LAST_ROUND = False
 
-p = 0.029
-q = 0.029
+p = 0.12
+q = 0.12
 iterations = 1
-cycles = 16
+cycles = 1
 
 # Initialize objects
 fail_rate = 0
@@ -57,7 +57,8 @@ for i in range(iterations):
             sc.measure_all_stabilizers()
             sc._stabilizer_lie("S", q)
             lc.add()
-        sc.plot_all()
+        sc.plot("star")
+        plt.savefig('sc.pdf', format='pdf', dpi=300)
         sc.measure_all_stabilizers()
         lc.add()
     else:
@@ -100,8 +101,10 @@ for i in range(iterations):
     # Measure logical qubit
     logical = sc.measure_logical()
 
-    sc.plot_all()
+    # sc.plot_all()
+    sc.plot("star")
     # plt.show()
+    plt.savefig('sc_corrected.pdf', format='pdf', dpi=300)
 
     # Code to check when a logical error happens
     print(logical)

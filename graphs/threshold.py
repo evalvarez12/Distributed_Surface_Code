@@ -23,6 +23,27 @@ d16 = [0.0084203, 0.0097656, 0.0106703, 0.0128609, 0.0144922,
        0.0306531, 0.0326547]
 
 
+# PQ TEST planar topology
+# pq = [0.026, 0.0265, 0.027, 0.0275, 0.028, 0.0285, 0.029, 0.0295, 0.03, 0.0305,
+#       0.031, 0.0315, 0.032]
+#
+# d8 = [0.0092458, 0.0100453, 0.0106766, 0.0116203, 0.0126844, 0.0137844,
+#       0.0141406, 0.0153156, 0.0164438, 0.0170594, 0.0183859, 0.0195109,
+#       0.0202813]
+#
+# d10 = [0.00814, 0.008925, 0.0098638, 0.0106175, 0.0117562, 0.0125588,
+#        0.0136525, 0.0148325, 0.015835, 0.016705, 0.0178, 0.0189713, 0.0205463]
+#
+# d12 = [0.0073944, 0.0083042, 0.0091708, 0.0103167, 0.0113833, 0.0121271, 0.0131896,
+#        0.0145542, 0.0154104, 0.0164187, 0.018025, 0.0192167, 0.0204208]
+#
+# d14 = [0.0068333, 0.0076982, 0.0087714, 0.0098929, 0.0110732, 0.0121679,
+#        0.0134946, 0.014675, 0.0160054, 0.016625, 0.0184357, 0.0196179, 0.0207125]
+#
+# d16 = [0.0066875, 0.0076734, 0.0087562, 0.0097859, 0.0108766, 0.0121094,
+#        0.0134984, 0.0149484, 0.0160281, 0.0171891, 0.0187953, 0.0199812, 0.0210406]
+
+
 # Transform to arrays
 pq = np.array(pq)
 # d6 = np.array(d6)
@@ -54,7 +75,7 @@ pqs = np.concatenate((pq, pq, pq, pq, pq))
 ds = np.concatenate((o*8, o*10, o*12, o*14, o*16))
 
 vals, pconv = curve_fit(threshold, (pqs, ds), pl, (0.5, 0.5, 0.5, 0.1, .2))
-perr = np.sqrt(np.diag(pcov))
+perr = np.sqrt(np.diag(pconv))
 # plt.plot(pq, 1-d6, 'ro', label=r"$d=6$")
 plt.plot(pq, 1-d8, 'gv', label=r"$d=8$")
 plt.plot(pq, 1-d10, 'b*', label=r"$d=10$")
@@ -74,7 +95,11 @@ plt.plot(pq, 1-threshold((pq, 16), vals[0], vals[1], vals[2], vals[3], vals[4]),
 
 # plt.ylim([0.4, 1])
 # plt.title("EXPEDIENT")
-plt.ylabel(r"Success rate", fontsize=13)
-plt.xlabel(r"Error rate", fontsize=13)
-plt.legend(fontsize=13)
+plt.ylabel(r"Success rate", fontsize=17)
+plt.xlabel(r"Error rate", fontsize=17)
+plt.xticks(fontsize=15)
+plt.yticks(fontsize=15)
+plt.legend(fontsize=17)
+plt.tight_layout()
+plt.savefig('sc.pdf', format='pdf', dpi=300)
 plt.show()

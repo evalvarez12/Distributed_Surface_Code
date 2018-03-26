@@ -696,3 +696,65 @@ class Blocks:
         p_success1, rho = self._collapse_ancillas_X(rho, controls1, projections)
 
         return p_success, self.check, rho
+
+
+    def double_selection22(self, sigma):
+        """
+        Double selection round. Uses 4 ancilla qubits.
+
+        Parameters
+        ----------
+        rho : (densmat) density matrix
+        operation_pos : (list) list with the positions of the qubits to be purified
+                        by the protocol
+        sigma : (string) X or Z parity used in the purification
+        """
+        # Reset number of steps counter
+        self._reset_check()
+
+        # Generate raw bell pair
+        _, _, rho = self.start_epl()
+        rho = self._append_epl(rho)
+        N = len(rho.dims[0])
+        operation_qubits = [0, 1]
+
+        H = [qt.snot(N, operation_qubits[0]), qt.snot(N, operation_qubits[1])]
+        rho = self._apply_single_qubit_gates(rho, H, operation_qubits)
+
+        # Apply two qubit gates
+        controls = [N-1, N-2]
+        # self._swap_pair(rho, controls)
+        # rho = self._apply_two_qubit_gates(rho, controls,
+        #                                   operation_qubits, sigma)
+        rho = self._apply_two_qubit_gates(rho, operation_qubits,
+                                          controls, "Z")
+
+        # Calculate the probability of success
+        p_success1 = ps.single_sel(rho, N, controls)
+        # Measure ancillas in X basis
+        projections = [0, 0]
+        _, rho = self._collapse_ancillas_X(rho, controls, projections)
+
+        rho = self._append_epl(rho)
+        N = len(rho.dims[0])
+
+        H = [qt.snot(N, operation_qubits[0]), qt.snot(N, operation_qubits[1])]
+        rho = self._apply_single_qubit_gates(rho, H, operation_qubits)
+
+        # Apply two qubit gates
+        controls = [N-1, N-2]
+        # self._swap_pair(rho, controls)
+        # rho = self._apply_two_qubit_gates(rho, controls,
+        #                                   operation_qubits, sigma)
+        rho = self._apply_two_qubit_gates(rho, operation_qubits,
+                                          controls, sigma)
+
+        # Calculate the probability of success
+        p_success2 = ps.single_sel(rho, N, controls)
+        # Measure ancillas in X basis
+        projections = [0, 0]
+        _, rho = self._collapse_ancillas_X(rho, controls, projections)
+
+        p_success = p_success1 * p_success2
+
+        return p_success, self.check, rho
