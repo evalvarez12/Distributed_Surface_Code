@@ -97,13 +97,27 @@ for pg in pgs:
         file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
                               system_size, parity, protocol)
 
-        pickle_out = open(file_name, "wb")
-        pickle.dump(model.chi, pickle_out, protocol=2)
-        pickle_out.close()
+        # pickle_out = open(file_name, "wb")
+        # pickle.dump(model.chi, pickle_out, protocol=2)
+        # pickle_out.close()
 
         # print(model.chi)
-        # chi = model.chi
+        chi = model.chi
         model.reset_chi()
+
+        # Remove the 3 qubit errors part
+        for i in list(chi.keys()):
+            if i.count('I') < 2:
+                chi[i] = 0
+
+        rest = 1 - sum(chi.values())
+        chi['IIII_OK'] += rest
+
+        pickle_out = open(file_name, "wb")
+        pickle.dump(chi, pickle_out, protocol=2)
+        pickle_out.close()
+
+
 
     # I_OK_full += [I_OK]
     # I_NOK_full += [I_NOK]

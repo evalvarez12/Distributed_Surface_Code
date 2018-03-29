@@ -102,15 +102,15 @@ f_rate[0] = fail_rate
 comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 
 # Root process saves the results
-if comm.rank == 0:
+if rank == 0:
         total = total/float(size)
-        total = total/float(cycles)
-        print("p=", p, " : ", round(total[0], 5))
+        # total = total/float(cycles)
+        print size, "p=", p, " : ", round(total[0], 7)
 
         # print("size: ", size)
         # print("id: ", rank)
         args_str = get_file_name(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)
-        np.save(file_name, total)
+        # np.save(file_name, total)
         # print("TOTAL FAIL RATE: ", total)

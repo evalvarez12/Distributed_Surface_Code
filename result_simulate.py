@@ -57,8 +57,8 @@ for i in range(iterations):
             sc.measure_all_stabilizers()
             sc._stabilizer_lie("S", q)
             lc.add()
-        sc.plot("star")
-        plt.savefig('sc.pdf', format='pdf', dpi=300)
+        # sc.plot("star")
+        # plt.savefig('sc.pdf', format='pdf', dpi=300)
         sc.measure_all_stabilizers()
         lc.add()
     else:
@@ -102,9 +102,9 @@ for i in range(iterations):
     logical = sc.measure_logical()
 
     # sc.plot_all()
-    sc.plot("star")
+    # sc.plot("star")
     # plt.show()
-    plt.savefig('sc_corrected.pdf', format='pdf', dpi=300)
+    # plt.savefig('sc_corrected.pdf', format='pdf', dpi=300)
 
     # Code to check when a logical error happens
     print(logical)
@@ -144,7 +144,7 @@ print("FAIL RATE: ", fail_rate)
 # print(sc.errors.n_NOK)
 # print(sc.errors.n_E)
 
-plt.show()
+# plt.show()
 
 
 #
