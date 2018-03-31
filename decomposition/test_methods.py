@@ -8,9 +8,8 @@ created-on: 21/11/17
 import numpy as np
 import qutip as qt
 import stabilizer
-import circuit_block
-import circuit
 import matplotlib.pyplot as plt
+import protocols
 
 # Determine parameters
 # NOTE: Realistic paramters
@@ -23,7 +22,7 @@ eta = (0.1)*(0.03)*(0.8)
 theta = 0.63
 
 # Number of iterations for a average
-iterations = 1000
+iterations = 1
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -33,30 +32,15 @@ ghz_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 stab = stabilizer.Stabilizer(0, 0, 0)
 
-
-cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
-
 # Lists to save results
 FIDELITY = []
 TIMES = []
 
-
-# Initialize the circuit block object
-cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
-
-single_sel_simple = circuit.Circuit(a0=a0, a1=a1,
-                                    circuit_block=cb.start_epl)
-
-# single_sel_simple.add_circuit(circuit_block=cb.swap_pair,
-#                               pair=[0, 1])
-#
-# single_sel_simple.add_circuit(circuit_block=cb.single_selection,
-#                               operation_qubits=[0, 1],
-#                               sigma="Z")
-
-
 for s in [0]:
     print("------> Var=", a0)
+
+    circuit = protocols.pair_single_sel(ps, pm, pg, eta, a0, a1, theta)
+
     # Get average number of steps
     fidelity = []
     times = []
@@ -65,7 +49,7 @@ for s in [0]:
     # check = collections.Counter({})
     for i in range(iterations):
         # print(i)
-        r, c = single_sel_simple.run(None)
+        r, c = circuit.runMC()
         times += [c["time"]]
         fidelity += [qt.fidelity(r, rho_ref)]
 
@@ -93,7 +77,5 @@ indices_sorted = np.argsort(times)
 
 plt.plot(times[indices_sorted], 'bo')
 plt.plot(fidelity[indices_sorted], 'ro')
-
-
 
 plt.show()

@@ -85,7 +85,7 @@ class Circuit:
         # should be used instead
         return 1, check, rho
 
-    def runMC(self, rho):
+    def runMC(self):
         """
         Main function to run circuits recurively.
 
@@ -94,24 +94,24 @@ class Circuit:
         rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
-        check, rho = self._runMC(rho)
+        check, rho = self._runMC()
         return rho, check
 
 
-    def _runMC(self, rho, check_parent=collections.Counter({})):
-
-        # First run self circuit keeping track of the time
+    def _runMC(self):
         check = self._empty_check()
+        rho = None
+        # Now check if it has a subcircuit
+        if self.subcircuit:
+            c, rho = self.subcircuit._runMC()
+            check += c
+
+        # Run self circuit keeping track of the time
         p_success = 0
         while np.random.rand() > p_success:
             p_success, c, rho = self.circuit(rho, **self.circuit_kwargs)
             check += c
             # print(check)
-        # If this circuit dependends on the parent take their check
-        check += check_parent
-        # Now check if it has a subcircuit
-        if self.subcircuit:
-                check, rho = self.subcircuit._runMC(rho, check)
 
         return check, rho
 
@@ -142,6 +142,33 @@ class Circuit:
         rho = qt.tensor(rho1, rho2)
         return 1, check, rho
 
+    def run_parallelMC(self, rho=None):
+        """
+        Run circuit two times in parallel, tensoring the resulting states,
+        and dephasing the one that was generated first accordingly.
+        Cicuits must be self contained events to be able to run in parallel.
+
+        Parameters
+        -----------
+        rho : (densmat) density matrix involved in the circuit, can be None depending
+              on the circuit block
+        """
+        check1, rho1 = self._runMC()
+        check2, rho2 = self._runMC()
+
+        # Only take the check with the longest time
+        diff_time = np.abs(check1["time"] - check2["time"])
+        if check1["time"] > check2["time"]:
+            rho2 = errs.env_error_all(rho2, 0,
+                                      self.a1, diff_time)
+            check = check1
+        else:
+            rho1 = errs.env_error_all(rho1, 0,
+                                      self.a1, diff_time)
+            check = check2
+        rho = qt.tensor(rho1, rho2)
+        return 1, check, rho
+
     def append_circuit(self, rho):
         """
         Appended circuit, and depolarize accordingly.
@@ -153,6 +180,27 @@ class Circuit:
               on the circuit block
         """
         _, check, rho_app = self._run(None)
+        time0 = check["time0"]
+        rho = errs.env_error_all(rho, self.a0,
+                                 self.a1, time0)
+        time1 = check["time1"]
+        rho = errs.env_error_all(rho, 0,
+                                 self.a1, time1)
+
+        rho = qt.tensor(rho, rho_app)
+        return 1, check, rho
+
+    def append_circuitMC(self, rho=None):
+        """
+        Appended circuit, and depolarize accordingly.
+        Must be self contained event
+
+        Parameters
+        -----------
+        rho : (densmat) density matrix involved in the circuit, can be None depending
+              on the circuit block
+        """
+        check, rho_app = self._runMC()
         time0 = check["time0"]
         rho = errs.env_error_all(rho, self.a0,
                                  self.a1, time0)

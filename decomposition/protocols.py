@@ -12,6 +12,28 @@ import circuit_block
 import circuit
 
 
+def pair_EPL(ps, pm, pg, eta, a0, a1, theta):
+    cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+    epl = circuit.Circuit(a0=a0, a1=a1,
+                          circuit_block=cb.start_epl)
+    return epl
+
+
+def pair_single_sel(ps, pm, pg, eta, a0, a1, theta):
+    cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+    epl = pair_EPL(ps, pm, pg, eta, a0, a1, theta)
+
+    single_sel = circuit.Circuit(a0=a0, a1=a1,
+                                 circuit_block=cb.single_selection_ops,
+                                 targets=[0, 1], ancillas=[2, 3], sigma="Z")
+    single_sel.add_circuit(circuit_block=epl.append_circuitMC)
+    single_sel.add_circuit(circuit_block=cb.swap_pair,
+                           pair=[0, 1])
+    single_sel.add_circuit(circuit_block=cb.start_epl)
+
+    return single_sel
+
+
 def EPL_4(ps, pm, pg, eta, a0, a1, theta):
     """
     GHZ state of weigth 4 created using 4 Bell pairs

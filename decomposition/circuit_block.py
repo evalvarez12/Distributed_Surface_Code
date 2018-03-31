@@ -670,6 +670,39 @@ class Blocks:
         _, rho = self._collapse_ancillas_X(rho, controls, projections)
         return p_success, self.check, rho
 
+    def single_selection_ops(self, rho, targets, ancillas, sigma):
+        """
+        Single selection round. Uses 2 ancilla qubits.
+
+        Parameters
+        ----------
+        rho : (densmat) density matrix
+        targets : (list) list with the positions of the qubits to be purified
+                        by the protocol
+        ancillas : (list) list with the positions of the ancilla qubits
+        sigma : (string) X or Z parity used in the purification
+        """
+        # Reset number of steps counter
+        self._reset_check()
+
+        N = len(rho.dims[0])
+
+        H = [qt.snot(N, targets[0]), qt.snot(N, targets[1])]
+        rho = self._apply_single_qubit_gates(rho, H, targets)
+
+        # Apply two qubit gates
+        controls = ancillas
+        print(targets, ancillas, N)
+        rho = self._apply_two_qubit_gates(rho, targets,
+                                          controls, sigma)
+
+        # Calculate the probability of success
+        p_success = ps.single_sel(rho, N, controls)
+        # Measure ancillas in X basis
+        projections = [0, 0]
+        _, rho = self._collapse_ancillas_X(rho, controls, projections)
+        return p_success, self.check, rho
+
     def double_selection(self, rho, operation_qubits, sigma):
         """
         Double selection round. Uses 4 ancilla qubits.
