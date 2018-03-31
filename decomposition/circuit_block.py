@@ -692,7 +692,7 @@ class Blocks:
 
         # Apply two qubit gates
         controls = ancillas
-        print(targets, ancillas, N)
+        print("N: ", N)
         rho = self._apply_two_qubit_gates(rho, targets,
                                           controls, sigma)
 
@@ -747,6 +747,42 @@ class Blocks:
 
         return p_success, self.check, rho
 
+def double_selection_ops(self, rho, targets, ancillas1, ancillas2, sigma):
+    """
+    Double selection round. Uses 4 ancilla qubits.
+
+    Parameters
+    ----------
+    rho : (densmat) density matrix
+    operation_pos : (list) list with the positions of the qubits to be purified
+                    by the protocol
+    sigma : (string) X or Z parity used in the purification
+    """
+    # Reset number of steps counter
+    self._reset_check()
+    N = len(rho.dims[0])
+
+
+    # Apply first two qubit gates
+    rho = self._apply_two_qubit_gates(rho, ancillas1,
+                                      targets, sigma)
+
+    # Apply second set of gates
+    # Swap noise
+    self._swap_pair(rho, ancillas2)
+    rho = self._apply_two_qubit_gates(rho, ancillas2, ancillas1, "Z")
+
+    # Success probability
+    p_success = ps.double_sel(rho, N, ancillas1, ancillas2)
+
+    # Measure ancillas in X basis
+    projections = [0] * 2
+    p_success2, rho = self._collapse_ancillas_X(rho, ancillas2, [0, 0])
+    # Swap pairs
+    self._swap_pair(rho, ancillas1)
+    p_success1, rho = self._collapse_ancillas_X(rho, ancillas1, projections)
+
+    return p_success, self.check, rho
 
     def double_selection22(self, sigma):
         """

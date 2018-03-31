@@ -101,14 +101,14 @@ class Circuit:
     def _runMC(self):
         check = self._empty_check()
         rho = None
-        # Now check if it has a subcircuit
-        if self.subcircuit:
-            c, rho = self.subcircuit._runMC()
-            check += c
-
-        # Run self circuit keeping track of the time
         p_success = 0
         while np.random.rand() > p_success:
+            # Check if it has a subcircuit
+            if self.subcircuit:
+                c, rho = self.subcircuit._runMC()
+                check += c
+
+            # Run self circuit keeping track of the time
             p_success, c, rho = self.circuit(rho, **self.circuit_kwargs)
             check += c
             # print(check)

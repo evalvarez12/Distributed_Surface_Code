@@ -33,6 +33,30 @@ def pair_single_sel(ps, pm, pg, eta, a0, a1, theta):
 
     return single_sel
 
+def pair_double_sel(ps, pm, pg, eta, a0, a1, theta):
+    cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+    epl = pair_EPL(ps, pm, pg, eta, a0, a1, theta)
+
+    double_sel = circuit.Circuit(a0=a0, a1=a1,
+                                 circuit_block=cb.double_selection_ops,
+                                 targets=[0, 1], ancillas1=[2, 3],
+                                 ancillas2=[4, 5], sigma="Z")
+    double_sel.add_circuit(circuit_block=epl.append_circuitMC)
+    double_sel.add_circuit(circuit_block=cb.swap_pair,
+                           pair=[0, 1])
+    double_sel.add_circuit(circuit_block=epl.append_circuitMC)
+    double_sel.add_circuit(circuit_block=cb.swap_pair,
+                           pair=[0, 1])
+    double_sel.add_circuit(circuit_block=cb.start_epl)
+
+    return double_sel
+
+
+
+
+
+
+###################################################### OLD functions
 
 def EPL_4(ps, pm, pg, eta, a0, a1, theta):
     """
