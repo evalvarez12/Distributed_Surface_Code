@@ -8,8 +8,8 @@ created-on: 21/11/17
 import numpy as np
 import qutip as qt
 import stabilizer
-import protocols
-import tools.names as names
+import circuit_block
+import circuit
 import matplotlib.pyplot as plt
 
 # Determine parameters
@@ -20,7 +20,7 @@ pg = 0.006
 a0 = 83.33
 a1 = 1/3.
 eta = (0.1)*(0.03)*(0.8)
-theta = np.pi/4.
+theta = 0.63
 
 # Number of iterations for a average
 iterations = 1000
@@ -33,34 +33,47 @@ ghz_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 stab = stabilizer.Stabilizer(0, 0, 0)
 
+
+cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+
 # Lists to save results
 FIDELITY = []
 TIMES = []
 
-# for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
-# for a0 in [40., 30., 20., 10., 5., 2.]:
-# for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
-# for a0 in [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0]:
+
+# Initialize the circuit block object
+cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+
+single_sel_simple = circuit.Circuit(a0=a0, a1=a1,
+                                    circuit_block=cb.start_epl)
+
+# single_sel_simple.add_circuit(circuit_block=cb.swap_pair,
+#                               pair=[0, 1])
+#
+# single_sel_simple.add_circuit(circuit_block=cb.single_selection,
+#                               operation_qubits=[0, 1],
+#                               sigma="Z")
+
+
 for s in [0]:
     print("------> Var=", a0)
-    ghz = protocols.EPL_4(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
-    rho = ghz_ref*0
+    ps = []
+    rho = rho_ref*0
     # check = collections.Counter({})
     for i in range(iterations):
         # print(i)
-        r, c = ghz.run(None)
+        r, c = single_sel_simple.run(None)
         times += [c["time"]]
-
-        r = stab.twirl_ghz(r)
-        fidelity += [qt.fidelity(r, ghz_ref)]
+        fidelity += [qt.fidelity(r, rho_ref)]
 
         rho += r
     rho = rho/iterations
     times = np.array(times)
     fidelity = np.array(fidelity)
+    ps = np.array(ps)
 
     favg = np.average(fidelity)
     fstd = np.std(fidelity)
@@ -80,5 +93,7 @@ indices_sorted = np.argsort(times)
 
 plt.plot(times[indices_sorted], 'bo')
 plt.plot(fidelity[indices_sorted], 'ro')
+
+
 
 plt.show()

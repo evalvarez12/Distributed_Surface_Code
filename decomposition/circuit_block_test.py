@@ -33,6 +33,11 @@ cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 cb_ideal = circuit_block.Blocks(0, 0, 0, 1, 0, 0, np.pi/4.)
 rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
 
+print("------------------TEST SWAP--------------------------")
+_, _, rho = cb.start_epl()
+print("F initial: ", qt.fidelity(rho, rho_ref))
+rho = cb._swap_pair(rho, [0, 1])
+print("F: ", qt.fidelity(rho, rho_ref))
 
 print("------------------SINGLE SELECTION-------------------")
 _, _, rho = cb.start_epl()

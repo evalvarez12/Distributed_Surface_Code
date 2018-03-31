@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 
 # Determine parameters
-# NOTE: Parameters as in Raja's thesis
+# NOTE: Realistic paramters
 ps = 0.006
 pm = 0.006
 pg = 0.006
@@ -23,7 +23,17 @@ a1 = 1/3.
 eta = (0.1)*(0.03)*(0.8)
 theta = np.pi/4.
 
-iterations = 300
+# Improoved parameters
+# ps = 0.003
+# pm = 0.003
+# pg = 0.003
+# a0 = 5
+# a1 = 1/80.
+# eta = 1/100
+# theta = .24
+
+
+iterations = 100
 
 # Initialize  objects
 cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
@@ -97,7 +107,7 @@ def single_selection(F1, F2):
 F = np.load("data/F_epl_params_raja.npy")
 T = np.load("data/T_epl_params_raja.npy")
 P = np.load("data/P_epl_params_raja.npy")
-#
+
 plt.figure()
 plt.ylabel(r"$F$", fontsize=17)
 plt.xlabel(r"$\theta$", fontsize=17)

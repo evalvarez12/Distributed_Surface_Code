@@ -34,8 +34,8 @@ PERFECT_LAST_ROUND = False
 
 p = 0.12
 q = 0.12
-iterations = 1
-cycles = 1
+iterations = 50
+cycles = 12
 
 # Initialize objects
 fail_rate = 0

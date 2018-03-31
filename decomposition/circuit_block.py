@@ -156,7 +156,7 @@ class Blocks:
         # NOTE: This is expensive, adjust manually as required
         # 100000 tries required for EPL
         # 1000000 for BK
-        i = np.arange(1000000)
+        i = np.arange(100000)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
 
@@ -241,18 +241,32 @@ class Blocks:
         # NOTE: use only two CNOTs to perform a SWAP
         # Swap noise is only single qubit gate because one of the states
         # because a one way Swap gate is used
+        ancilla = qt.basis(2, 0) * qt.basis(2, 0).dag()
+        ancilla = errs.env_error_all(ancilla, self.a0, self.a1,
+                                     self.check["time0"])
+        rho = qt.tensor(rho, ancilla)
         N = len(rho.dims[0])
 
-        # Apply noise
-        for i in range(2):
-            rho = errs.single_qubit_gate_noise(rho, self.pg, N, pos)
+        # Define ideal gates
+        CNOT1 = qt.cnot(N, N-1, pos)
+        CNOT2 = qt.cnot(N, pos, N-1)
+
+        # Apply 3 CNOTS to get a swap
+        rho = errs.two_qubit_gate(rho, CNOT1, self.pg, N, pos, N-1)
+        rho = errs.two_qubit_gate(rho, CNOT2, self.pg, N, pos, N-1)
+        rho = errs.two_qubit_gate(rho, CNOT1, self.pg, N, pos, N-1)
+
+        # Measure the ancilla to reduce the dimension
+        # m, rho =  ops.random_measure_single_Zbasis(rho, N, pos, True)
+        # print("M:", m)
+        rho = ops.collapse_single_Zbasis(rho, 0, N, pos, True)
         return rho
 
     def _swap_pair(self, rho, pair):
         # Apply the noise due to SWAP on two states
         # NOTE: use only two CNOTs to perform a SWAP
-        self.check["two_qubit_gate"] += 2
-        time = self.time_lookup["two_qubit_gate"] * 2
+        self.check["two_qubit_gate"] += 3
+        time = self.time_lookup["two_qubit_gate"] * 3
         self.check["time"] += time
         self.check["time1"] += time
         rho = self._swap_noise(rho, pair[0])
@@ -452,8 +466,11 @@ class Blocks:
         how 'circuit.py' is constructed.
         """
         self._reset_check()
-        # Generate two raw Bell pairs
+        # Generate Bell pairs
+        # First pair with swap
         time1, bell1 = self._generate_bell_single_click()
+        bell1 = self._swap_pair(bell1, [0, 1])
+        # Second pair
         time2, bell2 = self._generate_bell_single_click()
         self.check["time"] += time1 + time2
         self.check["time0"] += time1 + time2
@@ -461,7 +478,6 @@ class Blocks:
 
         # Dephase pair 1
         rho = errs.env_error_all(bell1, self.a0, self.a1, time2)
-        rho = self._swap_pair(rho, [0, 1])
 
         # Join state
         rho = qt.tensor(rho, bell2)
@@ -590,7 +606,7 @@ class Blocks:
         measurements, rho_measured = self._measure_random_ancillas_Z(rho, measure_pos)
         # Transform measurements from 1 and -1 to 0 and 1
         measurements = np.array(measurements) % 3 - 1
-        print(measurements)
+        # print(measurements)
         N = len(rho_measured.dims[0])
         # The qubits in which the correction applies
         if ghz_size == 3:
@@ -668,14 +684,15 @@ class Blocks:
         # Reset number of steps counter
         self._reset_check()
 
-        # Generate two bell pairs
-        rho = self._append_epl(rho)
+        # Generate two bell pairs with a SWAP in between them
         rho = self._append_epl(rho)
         N = len(rho.dims[0])
+        self._swap_pair(rho, [N-1, N-2])
+        rho = self._append_epl(rho)
+        N += 2
 
         # Apply first two qubit gates
         controls1 = [N-3, N-4]
-        self._swap_pair(rho, controls1)
         rho = self._apply_two_qubit_gates(rho, controls1,
                                           operation_qubits, sigma)
 

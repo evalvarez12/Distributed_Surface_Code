@@ -85,6 +85,36 @@ class Circuit:
         # should be used instead
         return 1, check, rho
 
+    def runMC(self, rho):
+        """
+        Main function to run circuits recurively.
+
+        Parameters
+        -----------
+        rho : (densmat) density matrix involved in the circuit, can be None depending
+              on the circuit block
+        """
+        check, rho = self._runMC(rho)
+        return rho, check
+
+
+    def _runMC(self, rho, check_parent=collections.Counter({})):
+
+        # First run self circuit keeping track of the time
+        check = self._empty_check()
+        p_success = 0
+        while np.random.rand() > p_success:
+            p_success, c, rho = self.circuit(rho, **self.circuit_kwargs)
+            check += c
+            # print(check)
+        # If this circuit dependends on the parent take their check
+        check += check_parent
+        # Now check if it has a subcircuit
+        if self.subcircuit:
+                check, rho = self.subcircuit._runMC(rho, check)
+
+        return check, rho
+
     def run_parallel(self, rho=None):
         """
         Run circuit two times in parallel, tensoring the resulting states,
@@ -180,3 +210,12 @@ class Circuit:
         # Distribution for the probability in the number of tries of
         # each event
         return p*(1-p)**n
+
+    def _empty_check(self):
+        return collections.Counter({"bell_pair": 0,
+                                    "two_qubit_gate": 0,
+                                    "single_qubit_gate": 0,
+                                    "measurement": 0,
+                                    "time0": 0,
+                                    "time1": 0,
+                                    "time": 0})

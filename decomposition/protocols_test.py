@@ -27,7 +27,7 @@ theta = .24
 # eta = (0.1)*(0.03)*(0.8)
 # theta = .24
 
-iterations = 100
+iterations = 30
 
 # Initialize objects
 rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
@@ -37,16 +37,16 @@ F = []
 T = []
 print("-------------------PROTOCOL TEST------------------")
 for i in range(iterations):
-    circuit = protocols.BK_4_simplified(ps, pm, pg, eta, a0, a1, theta)
+    circuit = protocols.EPL_4(ps, pm, pg, eta, a0, a1, theta)
     rho, operations = circuit.run(None)
     fidelity = qt.fidelity(rho, ghz_ref)
-    print("F: ", fidelity)
-    print("T: ", operations["time"])
-    print(operations)
+    # print("F: ", fidelity)
+    # print("T: ", operations["time"])
+    # print(operations)
     # print(operations)
     F += [fidelity]
     T += [operations["time"]]
-    print("------------------------")
+    # print("------------------------")
 
 print("AVERAGE: ", np.average(F))
 print("TIME: ", np.average(T))
