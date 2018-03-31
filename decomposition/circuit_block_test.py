@@ -8,7 +8,7 @@ created-on: 20/11/17
 import qutip as qt
 import circuit_block
 import numpy as np
-
+import error_models as errs
 # Determine parameters
 ps = 0.006
 pm = 0.006
@@ -40,33 +40,36 @@ rho = cb._swap_pair(rho, [0, 1])
 print("F: ", qt.fidelity(rho, rho_ref))
 
 print("------------------SINGLE SELECTION-------------------")
-_, _, rho = cb.start_epl()
+rho = errs.bell_pair(0.1)
 print("F initial: ", qt.fidelity(rho, rho_ref))
-p, check, rho = cb.single_selection(rho, [0, 1], "Z")
-print("p_success: ", p)
-print("check: ", check)
-print("F: ", qt.fidelity(rho, rho_ref))
-
-print("------------------DOUBLE SELECTION2-------------------")
-p, check, rho = cb.double_selection22("Z")
+rho = qt.tensor(rho, rho)
+p, check, rho = cb_ideal.single_selection_ops(rho, [0, 1], [2, 3],  "Z")
 print("p_success: ", p)
 print("check: ", check)
 print("F: ", qt.fidelity(rho, rho_ref))
 
 print("------------------DOUBLE SELECTION-------------------")
-_, _, rho = cb.start_epl()
+rho = errs.bell_pair(0.1)
 print("F initial: ", qt.fidelity(rho, rho_ref))
-p, check, rho = cb.double_selection(rho, [0, 1], "X")
+rho = qt.tensor(rho, rho, rho)
+p, check, rho = cb_ideal.double_selection_ops(rho, [0, 1], [2, 3], [4, 5], "X")
 print("p_success: ", p)
 print("check: ", check)
 print("F: ", qt.fidelity(rho, rho_ref))
 
-print("------------------EPL protocol-------------------")
-p, check, rho = cb.start_epl()
-# p, check, rho = cb.double_selection(rho, [0, 1], "X")
-print("p_success: ", p)
-print("check: ", check)
-print("F: ", qt.fidelity(rho, rho_ref))
+# print("------------------DOUBLE SELECTION2-------------------")
+# p, check, rho = cb.double_selection22("Z")
+# print("p_success: ", p)
+# print("check: ", check)
+# print("F: ", qt.fidelity(rho, rho_ref))
+#
+#
+# print("------------------EPL protocol-------------------")
+# p, check, rho = cb.start_epl()
+# # p, check, rho = cb.double_selection(rho, [0, 1], "X")
+# print("p_success: ", p)
+# print("check: ", check)
+# print("F: ", qt.fidelity(rho, rho_ref))
 
 # print("------------------NOISY BELL GENERATOR-------------------")
 # p, check, rho = cb.start_bell_pair()

@@ -16,7 +16,7 @@ pg = 0.003
 a0 = 5
 a1 = 1/80.
 eta = 1/100
-theta = .24
+theta = .63
 
 # NOTE: Parameters as in Raja's thesis
 # ps = 0.006
@@ -37,11 +37,12 @@ F = []
 T = []
 print("-------------------PROTOCOL TEST------------------")
 for i in range(iterations):
-    circuit = protocols.EPL_4(ps, pm, pg, eta, a0, a1, theta)
+    
+    circuit = protocols.pair_single_sel(ps, pm, pg, eta, a0, a1, theta)
     rho, operations = circuit.run(None)
     fidelity = qt.fidelity(rho, ghz_ref)
-    # print("F: ", fidelity)
-    # print("T: ", operations["time"])
+    print("F: ", fidelity)
+    print("T: ", operations["time"])
     # print(operations)
     # print(operations)
     F += [fidelity]

@@ -46,46 +46,7 @@ class Circuit:
         self.a0 = a0
         self.a1 = a1
 
-    def run(self, rho):
-        """
-        Main function to run circuits recurively.
-
-        Parameters
-        -----------
-        rho : (densmat) density matrix involved in the circuit, can be None depending
-              on the circuit block
-        """
-        p, check, rho = self._run(rho)
-        return rho, check
-
-    def _run(self, rho, p_parent=1, check_parent=collections.Counter({})):
-        # First run self circuit
-        p_success, check, rho = self.circuit(rho, **self.circuit_kwargs)
-
-        # If this circuit dependends on the parent, take their probability of
-        # success
-        p_success *= p_parent
-        check += check_parent
-
-        # Now check if it has a subcircuit
-        if self.subcircuit:
-                _, check, rho = self.subcircuit._run(rho, p_success, check)
-        else:
-            # If this is the end of the dependency calculate success event
-            # starts from 0, where 0 means success on the first try
-            n_extra_attempts = self._number_of_attempts(p_success)
-
-            if n_extra_attempts != 0:
-                for k in check:
-                    check[k] *= n_extra_attempts
-
-                # steps += n_extra_attempts * (steps + steps_parent)
-
-        # NOTE: No dephasing here. it circuit append and run parallel
-        # should be used instead
-        return 1, check, rho
-
-    def runMC(self):
+    def run(self):
         """
         Main function to run circuits recurively.
 
@@ -97,8 +58,7 @@ class Circuit:
         check, rho = self._runMC()
         return rho, check
 
-
-    def _runMC(self):
+    def _run(self):
         check = self._empty_check()
         rho = None
         p_success = 0
@@ -126,8 +86,8 @@ class Circuit:
         rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
-        _, check1, rho1 = self._run(rho)
-        _, check2, rho2 = self._run(rho)
+        check1, rho1 = self._run()
+        check2, rho2 = self._run()
 
         # Only take the check with the longest time
         diff_time = np.abs(check1["time"] - check2["time"])
@@ -142,34 +102,7 @@ class Circuit:
         rho = qt.tensor(rho1, rho2)
         return 1, check, rho
 
-    def run_parallelMC(self, rho=None):
-        """
-        Run circuit two times in parallel, tensoring the resulting states,
-        and dephasing the one that was generated first accordingly.
-        Cicuits must be self contained events to be able to run in parallel.
-
-        Parameters
-        -----------
-        rho : (densmat) density matrix involved in the circuit, can be None depending
-              on the circuit block
-        """
-        check1, rho1 = self._runMC()
-        check2, rho2 = self._runMC()
-
-        # Only take the check with the longest time
-        diff_time = np.abs(check1["time"] - check2["time"])
-        if check1["time"] > check2["time"]:
-            rho2 = errs.env_error_all(rho2, 0,
-                                      self.a1, diff_time)
-            check = check1
-        else:
-            rho1 = errs.env_error_all(rho1, 0,
-                                      self.a1, diff_time)
-            check = check2
-        rho = qt.tensor(rho1, rho2)
-        return 1, check, rho
-
-    def append_circuit(self, rho):
+    def append_circuit(self, rho=None):
         """
         Appended circuit, and depolarize accordingly.
         Must be self contained event
@@ -179,53 +112,13 @@ class Circuit:
         rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
-        _, check, rho_app = self._run(None)
+        check, rho_app = self._run()
         time0 = check["time0"]
         rho = errs.env_error_all(rho, self.a0,
                                  self.a1, time0)
         time1 = check["time1"]
         rho = errs.env_error_all(rho, 0,
                                  self.a1, time1)
-
-        rho = qt.tensor(rho, rho_app)
-        return 1, check, rho
-
-    def append_circuitMC(self, rho=None):
-        """
-        Appended circuit, and depolarize accordingly.
-        Must be self contained event
-
-        Parameters
-        -----------
-        rho : (densmat) density matrix involved in the circuit, can be None depending
-              on the circuit block
-        """
-        check, rho_app = self._runMC()
-        time0 = check["time0"]
-        rho = errs.env_error_all(rho, self.a0,
-                                 self.a1, time0)
-        time1 = check["time1"]
-        rho = errs.env_error_all(rho, 0,
-                                 self.a1, time1)
-
-        rho = qt.tensor(rho, rho_app)
-        return 1, check, rho
-
-    def append_circuit_diff_node(self, rho):
-        """
-        Appended circuit, and dephase considering the appended ciruit is
-        executed entirely in different nodes.
-        Must be self contained event.
-
-        Parameters
-        -----------
-        rho : (densmat) density matrix involved in the circuit, can be None depending
-              on the circuit block
-        """
-        _, check, rho_app = self._run(None)
-        time = check["time"]
-        rho = errs.env_error_all(rho, 0,
-                                 self.a1, time)
 
         rho = qt.tensor(rho, rho_app)
         return 1, check, rho
@@ -244,20 +137,6 @@ class Circuit:
             self.subcircuit = Circuit(self.a0, self.a1, circuit_block, **kwargs)
         else:
             self.subcircuit.add_circuit(circuit_block, **kwargs)
-
-    def _number_of_attempts(self, p_success):
-        # Draw a number of attempts according to the Distribution
-
-        # Up to 1000 tries for success
-        i = np.arange(1000)
-        d = self._distribution(p_success, i)
-        return np.random.choice(i, 1, p=d)[0]
-        # return 0
-
-    def _distribution(self, p, n):
-        # Distribution for the probability in the number of tries of
-        # each event
-        return p*(1-p)**n
 
     def _empty_check(self):
         return collections.Counter({"bell_pair": 0,
