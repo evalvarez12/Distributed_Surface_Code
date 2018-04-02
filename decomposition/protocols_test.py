@@ -37,12 +37,12 @@ F = []
 T = []
 print("-------------------PROTOCOL TEST------------------")
 for i in range(iterations):
-    
-    circuit = protocols.pair_single_sel(ps, pm, pg, eta, a0, a1, theta)
-    rho, operations = circuit.run(None)
+
+    circuit = protocols.ghz4_single(ps, pm, pg, eta, a0, a1, theta)
+    rho, operations = circuit.run()
     fidelity = qt.fidelity(rho, ghz_ref)
-    print("F: ", fidelity)
-    print("T: ", operations["time"])
+    # print("F: ", fidelity)
+    # print("T: ", operations["time"])
     # print(operations)
     # print(operations)
     F += [fidelity]

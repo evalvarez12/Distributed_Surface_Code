@@ -692,7 +692,6 @@ class Blocks:
 
         # Apply two qubit gates
         controls = ancillas
-        print("N: ", N)
         rho = self._apply_two_qubit_gates(rho, targets,
                                           controls, sigma)
 

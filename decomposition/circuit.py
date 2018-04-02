@@ -55,7 +55,7 @@ class Circuit:
         rho : (densmat) density matrix involved in the circuit, can be None depending
               on the circuit block
         """
-        check, rho = self._runMC()
+        check, rho = self._run()
         return rho, check
 
     def _run(self):
@@ -65,7 +65,7 @@ class Circuit:
         while np.random.rand() > p_success:
             # Check if it has a subcircuit
             if self.subcircuit:
-                c, rho = self.subcircuit._runMC()
+                c, rho = self.subcircuit._run()
                 check += c
 
             # Run self circuit keeping track of the time

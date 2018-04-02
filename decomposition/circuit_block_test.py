@@ -9,6 +9,14 @@ import qutip as qt
 import circuit_block
 import numpy as np
 import error_models as errs
+
+
+def p_ref(f): return (f**2 +2*f*(1-f)/3 + 5*((1-f)/3)**2)
+def single_selection(F1, F2):
+    F = F1*F2 + (1 - F1)*(1 - F2)/9
+    F = F/(F1*F2 + F1*(1 - F2)/3 + F2*(1 - F1)/3 + 5*(1 - F1)*(1 - F2)/9)
+    return F
+
 # Determine parameters
 ps = 0.006
 pm = 0.006
@@ -44,9 +52,9 @@ rho = errs.bell_pair(0.1)
 print("F initial: ", qt.fidelity(rho, rho_ref))
 rho = qt.tensor(rho, rho)
 p, check, rho = cb_ideal.single_selection_ops(rho, [0, 1], [2, 3],  "Z")
-print("p_success: ", p)
+print("p_success: ", p, p_ref(0.9))
 print("check: ", check)
-print("F: ", qt.fidelity(rho, rho_ref))
+print("F: ", qt.fidelity(rho, rho_ref), single_selection(.9, .9))
 
 print("------------------DOUBLE SELECTION-------------------")
 rho = errs.bell_pair(0.1)
