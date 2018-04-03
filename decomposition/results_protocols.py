@@ -43,13 +43,14 @@ TIMES = []
 # for a0 in [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0]:
 # for s in [0]:
 print("------> Var=", a0)
-ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
+ghz = protocols.ghz4_epl_simple(ps, pm, pg, eta, a0, a1, theta)
 # Get average number of steps
 fidelity = []
 times = []
 rho = ghz_ref*0
 # check = collections.Counter({})
 for i in range(iterations):
+    print(i)
     # print(i)
     r, c = ghz.run()
     times += [c["time"]]
@@ -96,11 +97,10 @@ print("TIME_MAX:", t_max)
 # np.save("TIME_DEMO_a0.npy", TIMES)
 
 
-plt.plot(times[indices_sorted], 'bo')
-plt.plot(fidelity[indices_sorted], 'ro')
+plt.plot(times[indices_sorted], fidelity[indices_sorted], 'bo')
 if ignore_number != 0:
-    vline = np.linspace(min(times), max(fidelity))
-    o = np.ones_like(vline)*(len(times) - ignore_number)
+    vline = np.linspace(min(fidelity), max(fidelity))
+    o = np.ones_like(vline)*(t_max)
     plt.plot(o, vline, 'r--')
 
 
