@@ -33,12 +33,12 @@ theta = np.pi/4.
 # theta = .24
 
 
-iterations = 100
+iterations = 500
 
 # Initialize  objects
 cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
 cb_ideal = circuit_block.Blocks(0, 0, 0, 1, 0, 0, np.pi/4.)
-epl = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_epl)
+
 
 rho_ref = qt.bell_state('00') * qt.bell_state('00').dag()
 thetas = np.linspace(0.1, np.pi/2. - 0., 20)
@@ -46,33 +46,32 @@ thetas = np.linspace(0.1, np.pi/2. - 0., 20)
 ##################################################################
 ############### DATA IS OBTAINED HERE#############################
 
-# F = []
-# T = []
-# P = []
-# for theta in thetas:
-#     print(theta)
-#     cb.change_parameters(ps, pm, pg, eta, a0, a1, theta)
-#     f = []
-#     t = []
-#     p = []
-#     for i in range(iterations):
-#         # p_success, check, rho = epl.run(None)
-#         p_success, check, rho = cb.start_epl(None)
-#
-#         p += [p_success]
-#         f += [qt.fidelity(rho, rho_ref)]
-#         t += [check["time"]]
-#     T += [(np.average(t), np.std(t))]
-#     F += [(np.average(f), np.std(f))]
-#     P += [(np.average(p), np.std(p))]
-#
-# F = np.array(F)
-# T = np.array(T)
-# P = np.array(P)
-# # #
-# np.save("data/F_epl_params_raja.npy", F)
-# np.save("data/T_epl_params_raja.npy", T)
-# np.save("data/P_epl_params_raja.npy", P)
+F = []
+T = []
+P = []
+for theta in thetas:
+    print(theta)
+    cb.change_parameters(ps, pm, pg, eta, a0, a1, theta)
+    f = []
+    t = []
+    p = []
+    for i in range(iterations):
+        p_success, check, rho = cb.start_epl(None)
+
+        p += [p_success]
+        f += [qt.fidelity(rho, rho_ref)]
+        t += [check["time"]]
+    T += [(np.average(t), np.std(t))]
+    F += [(np.average(f), np.std(f))]
+    P += [(np.average(p), np.std(p))]
+
+F = np.array(F)
+T = np.array(T)
+P = np.array(P)
+# #
+np.save("data/F_epl_params_raja.npy", F)
+np.save("data/T_epl_params_raja.npy", T)
+np.save("data/P_epl_params_raja.npy", P)
 
 #################################################################
 #################################################################
@@ -104,9 +103,9 @@ def single_selection(F1, F2):
     return F
 
 ################### PLOT THE RESULTS ######################
-F = np.load("data/F_epl_params_raja.npy")
-T = np.load("data/T_epl_params_raja.npy")
-P = np.load("data/P_epl_params_raja.npy")
+# F = np.load("data/F_epl_params_raja.npy")
+# T = np.load("data/T_epl_params_raja.npy")
+# P = np.load("data/P_epl_params_raja.npy")
 
 plt.figure()
 plt.ylabel(r"$F$", fontsize=17)

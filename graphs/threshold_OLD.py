@@ -183,14 +183,18 @@ d16= [0.0206, 0.0604, 0.1320, 0.2499, 0.3927, 0.5176, 0.6273]
 # d16= [0.00793, 0.00868, 0.00909]
 
 # # STRINGENT
-# pq = [0.00775, 0.00800, 0.00825]
+pq = [0.00775, 0.00800, 0.00825]
 # d8 = [0.00884, 0.00905, 0.00918]
 # d12= [0.00882, 0.00906, 0.00921]
 # d16= [0.00876, 0.00909, 0.00923]
 
+d8 = [0.88505, 0.904625, 0.91435]
+d12= [0.8749, 0.903225, 0.92165]
+d16= [0.881475, 0.913525, 0.926275]
 
-
-
+d8 = [0.89405, 0.913525, 0.92165]
+d12= [0.8749, 0.903225, 0.91735]
+d16= [0.881475, 0.909625, 0.926275]
 #### Understatiding WTF
 # #### d = 8 cycles = [d, 2d, 3d, 4d, 5d] resuls non divided by cycles
 # cycles = [8, 16, 24, 32, 40, 48]
@@ -214,15 +218,18 @@ d16= [0.0206, 0.0604, 0.1320, 0.2499, 0.3927, 0.5176, 0.6273]
 # fact=.61
 pq = np.array(pq)
 # d4 = np.array(d4)
-d8 = np.array(d8)*10/8.
+d8 = np.array(d8)*.7/100.
 # d10 = np.array(d10)
-d12 = np.array(d12)*10/12.
+d12 = np.array(d12)*.7/100.
 # d14 = np.array(d14)
-d16 = np.array(d16)*10/16.
+d16 = np.array(d16)*.7/100.
 # d8 = np.array(d82)/16
 # d12 = np.array(d122)/16
 # d16 = np.array(d162)/16
 
+
+# d8 = np.array([158.23, 156.8,  155.8])
+# d12= []
 
 # # plt.plot(pq, 1/d14, 'o-', label=r"$d=14$")
 # plt.plot(pq*100, 1/d8, 'o-', label=r"$d=8$")
@@ -234,27 +241,27 @@ d16 = np.array(d16)*10/16.
 
 
 
-def threshold(X, A, B, C, pth, v):
-    p, d = X
-    pl = A + B*(p - pth)*(d**(1/v)) + C*((p - pth)*(d**(1/v)))**2
-    return pl
+# def threshold(X, A, B, C, pth, v):
+#     p, d = X
+#     pl = A + B*(p - pth)*(d**(1/v)) + C*((p - pth)*(d**(1/v)))**2
+#     return pl
+#
+# o = np.ones_like(d8)
+# pl = np.concatenate((d8, d12, d16))
+# pqs = np.concatenate((pq, pq, pq))
+# ds = np.concatenate((o*8, o*12, o*16))
+#
+# vals, errors = curve_fit(threshold, (pqs, ds), pl, (0.5, 0.5, 0.5, 0.1, .2))
 
-o = np.ones_like(d8)
-pl = np.concatenate((d8, d12, d16))
-pqs = np.concatenate((pq, pq, pq))
-ds = np.concatenate((o*8, o*12, o*16))
-
-vals, errors = curve_fit(threshold, (pqs, ds), pl, (0.5, 0.5, 0.5, 0.1, .2))
-
-plt.plot(pq, 1-d8, 'o', label=r"$d=8$")
-plt.plot(pq, 1-d12, 'o', label=r"$d=12$")
+plt.plot(pq, 1/d8, 'o-', label=r"$d=8$")
+plt.plot(pq, 1/d12, 'o-', label=r"$d=12$")
 # plt.plot(pq, 1-d14, 'o-', label=r"$d=14$")
-plt.plot(pq, 1-d16, 'o', label=r"$d=16$")
-
-plt.plot(pq, 1- threshold((pq, 8), vals[0], vals[1], vals[2], vals[3], vals[4]))
-plt.plot(pq, 1- threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]))
-plt.plot(pq, 1-threshold((pq, 16), vals[0], vals[1], vals[2], vals[3], vals[4]))
-
+plt.plot(pq, 1/d16, 'o-', label=r"$d=16$")
+#
+# plt.plot(pq, 1- threshold((pq, 8), vals[0], vals[1], vals[2], vals[3], vals[4]))
+# plt.plot(pq, 1- threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]))
+# plt.plot(pq, 1-threshold((pq, 16), vals[0], vals[1], vals[2], vals[3], vals[4]))
+#
 
 
 

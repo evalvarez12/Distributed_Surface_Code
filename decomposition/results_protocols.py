@@ -20,10 +20,10 @@ pg = 0.006
 a0 = 83.33
 a1 = 1/3.
 eta = (0.1)*(0.03)*(0.8)
-theta = np.pi/4.
+theta = .63
 
 # Number of iterations for a average
-iterations = 1000
+iterations = 300
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -41,44 +41,67 @@ TIMES = []
 # for a0 in [40., 30., 20., 10., 5., 2.]:
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
 # for a0 in [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0]:
-for s in [0]:
-    print("------> Var=", a0)
-    ghz = protocols.EPL_4(ps, pm, pg, eta, a0, a1, theta)
-    # Get average number of steps
-    fidelity = []
-    times = []
-    rho = ghz_ref*0
-    # check = collections.Counter({})
-    for i in range(iterations):
-        # print(i)
-        r, c = ghz.run(None)
-        times += [c["time"]]
+# for s in [0]:
+print("------> Var=", a0)
+ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
+# Get average number of steps
+fidelity = []
+times = []
+rho = ghz_ref*0
+# check = collections.Counter({})
+for i in range(iterations):
+    # print(i)
+    r, c = ghz.run()
+    times += [c["time"]]
 
-        r = stab.twirl_ghz(r)
-        fidelity += [qt.fidelity(r, ghz_ref)]
+    r = stab.twirl_ghz(r)
+    fidelity += [qt.fidelity(r, ghz_ref)]
 
-        rho += r
-    rho = rho/iterations
-    times = np.array(times)
-    fidelity = np.array(fidelity)
+    rho += r
+rho = rho/iterations
+times = np.array(times)
+fidelity = np.array(fidelity)
 
+
+
+# FIDELITY += [(np.average(fidelity), np.std(fidelity))]
+# TIMES += [(np.average(times), np.std(times))]
+# name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, "DEMO")
+# qt.qsave(rho, name)
+
+
+
+indices_sorted = np.argsort(times)
+t_sorted = times[indices_sorted]
+
+if ignore_number != 0:
+    t_max = t_sorted[:-ignore_number][-1]
+    favg = np.average(fidelity[indices_sorted][:-ignore_number])
+    fstd = np.std(fidelity[indices_sorted][:-ignore_number])
+    tavg = np.average(times[indices_sorted][:-ignore_number])
+    tstd = np.std(times[indices_sorted][:-ignore_number])
+else:
+    t_max = t_sorted[-1]
     favg = np.average(fidelity)
     fstd = np.std(fidelity)
     tavg = np.average(times)
     tstd = np.std(times)
 
-    print("F: ", favg, fstd)
-    print("TIMES:", tavg, tstd)
-    # FIDELITY += [(np.average(fidelity), np.std(fidelity))]
-    # TIMES += [(np.average(times), np.std(times))]
-    # name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, "DEMO")
-    # qt.qsave(rho, name)
+print("F: ", favg, fstd)
+print("T: ", tavg, tstd)
+print("TIME_MAX:", t_max)
+
 
 # np.save("FIDELITY_DEMO_a0.npy", FIDELITY)
 # np.save("TIME_DEMO_a0.npy", TIMES)
-indices_sorted = np.argsort(times)
+
 
 plt.plot(times[indices_sorted], 'bo')
 plt.plot(fidelity[indices_sorted], 'ro')
+if ignore_number != 0:
+    vline = np.linspace(min(times), max(fidelity))
+    o = np.ones_like(vline)*(len(times) - ignore_number)
+    plt.plot(o, vline, 'r--')
+
 
 plt.show()

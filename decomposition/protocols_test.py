@@ -13,8 +13,8 @@ import protocols
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 5
-a1 = 1/80.
+a0 = 8
+a1 = 1/30.
 eta = 1/100
 theta = .63
 
@@ -38,7 +38,7 @@ T = []
 print("-------------------PROTOCOL TEST------------------")
 for i in range(iterations):
 
-    circuit = protocols.ghz4_single(ps, pm, pg, eta, a0, a1, theta)
+    circuit = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
     rho, operations = circuit.run()
     fidelity = qt.fidelity(rho, ghz_ref)
     # print("F: ", fidelity)

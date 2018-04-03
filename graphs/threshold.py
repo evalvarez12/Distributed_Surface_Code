@@ -47,11 +47,11 @@ d16 = [0.0084203, 0.0097656, 0.0106703, 0.0128609, 0.0144922,
 # Transform to arrays
 pq = np.array(pq)
 # d6 = np.array(d6)
-d8 = np.array(d8)
-d10 = np.array(d10)
-d12 = np.array(d12)
-d14 = np.array(d14)
-d16 = np.array(d16)
+d8 = np.array(d8)*8/4
+d10 = np.array(d10)*10/5
+d12 = np.array(d12)*12/6
+d14 = np.array(d14)*14/7
+d16 = np.array(d16)*16/8
 
 
 # # plt.plot(pq, 1/d14, 'o-', label=r"$d=14$")
@@ -101,5 +101,5 @@ plt.xticks(fontsize=15)
 plt.yticks(fontsize=15)
 plt.legend(fontsize=17)
 plt.tight_layout()
-plt.savefig('sc.pdf', format='pdf', dpi=300)
+# plt.savefig('sc.pdf', format='pdf', dpi=300)
 plt.show()
