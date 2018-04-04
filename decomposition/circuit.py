@@ -125,6 +125,19 @@ class Circuit:
         rho = qt.tensor(rho, rho_app)
         return 1, check, rho
 
+    def start(self, rho=None):
+        """
+        Star the first element of the circuit.
+        Must be self contained event
+
+        Parameters
+        -----------
+        rho : (densmat) density matrix involved in the circuit, can be None depending
+              on the circuit block
+        """
+        check, rho = self._run()
+        return 1, check, rho
+
     def add_circuit(self, circuit_block, **kwargs):
         """
         Add a circuit to the current circuit chain.

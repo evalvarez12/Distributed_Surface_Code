@@ -2,6 +2,9 @@
 Simple simulation to test the surface code simulation is working
 without looking at plots.
 
+Run this code using mpi4py:
+mpiexec python result_one_point_model.py topology=toric distance=10 iterations=50 cycles=10 protocol=GHZ a0=0 a1=0 eta=0 time=0
+
 created-on: 09/12/17
 @author: eduardo
 """
@@ -44,12 +47,6 @@ size = comm.Get_size()
 pythonfile = sys.argv[0]
 args = dict(arg.split('=') for arg in sys.argv[1:])
 
-# Parameters for noisy measurement
-ps = 0.003
-pm = 0.003
-pg = 0.003
-theta = .24
-
 # Set parameters
 distance = int(args["distance"])
 topology = args["topology"]
@@ -60,6 +57,19 @@ cycles = int(args["cycles"])
 eta = float(args["eta"])
 protocol = args["protocol"]
 t = float(args["time"])
+
+# Improved parameters
+# Threshold over a0
+ps = 0.003
+pm = 0.003
+pg = 0.003
+a0 = 3.0
+a1 = 1/30.
+eta = 1/100.
+theta = .63
+
+protocol = "thres_a0_simpleGHZ"
+t = 0.080014 * (3/4) * 0
 
 # Initialize fail rate
 fail_rate = 0
@@ -75,8 +85,6 @@ sc.select_measurement_protocol(t, a1, "single")
 
 # Perform measurements
 for i in range(iterations):
-
-
 
     # Noisy measurements
     for t in range(cycles):
@@ -118,6 +126,6 @@ if comm.rank == 0:
         args_str = get_file_name(args)
         script_path = dirname(realpath(__file__))
         file_name = (script_path + "/results/" + args_str)
-        print(file_name)
-        print("TOTAL FAIL RATE: ", total)
-        np.save(file_name, total)
+        print size, "rate :", round(total[0], 7)
+        print "rate :", round(total[0], 7)*cycles
+        # np.save(file_name, total)

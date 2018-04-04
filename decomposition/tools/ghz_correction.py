@@ -23,7 +23,7 @@ def correction(measurements, ghz_size, N, operation_pos):
     if ghz_size == 4:
         return correction_ghz4(measurements, N, operation_pos)
     elif ghz_size == 3:
-        return correction_ghz3(measurements, N, operation_pos)
+        return correction_ghz3(measurements, N, operation_pos[0])
 
 def correction_ghz3(measurements, N, operation_pos):
     """

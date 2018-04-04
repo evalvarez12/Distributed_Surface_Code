@@ -524,3 +524,83 @@ def ghz3_bk(ps, pm, pg, eta, a0, a1, theta):
     ghz.add_circuit(circuit_block=cb.start_BK)
 
     return ghz
+
+
+def ghz3_single(ps, pm, pg, eta, a0, a1, theta):
+    """
+    GHZ state of weigth 3 created using 2 Bell pairs
+    generated using the EPL protocol.
+
+    Parameters
+    ----------
+    ps : (scalar) single qubit gate error rate.
+    pm : (scalar) measurement error rate.
+    pg : (scalar) two qubit gate error rate.
+    eta : (scalar) detection efficiency.
+    a0 : (scalar) extra environmental error when electron spin is being operated.
+    a1 : (scalar) default environmental error.
+    theta : (scalar) determines how the states are initialized when generating remote
+            entanglement.
+    """
+    # Circuits are assemebled in reversed order
+    cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+    pair = pair_single_sel(ps, pm, pg, eta, a0, a1, theta)
+
+
+    # Phase 3 - Create GHZ
+    # Perform the measurements
+    ghz = circuit.Circuit(a0=a0, a1=a1,
+                          circuit_block=cb.collapse_ancillas_GHZ,
+                          ghz_size=3,
+                          measure_pos=[2])
+    # Apply two qubit gates in the nodes
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1],
+                    targets=[2], sigma="X")
+
+    # Phase 2 Create second pair
+    ghz.add_circuit(circuit_block=pair.append_circuit)
+
+    # Phase 1 Create initial pair
+    ghz.add_circuit(circuit_block=pair.start)
+
+    return ghz
+
+
+def ghz3_double(ps, pm, pg, eta, a0, a1, theta):
+    """
+    GHZ state of weigth 3 created using 2 Bell pairs
+    generated using the EPL protocol.
+
+    Parameters
+    ----------
+    ps : (scalar) single qubit gate error rate.
+    pm : (scalar) measurement error rate.
+    pg : (scalar) two qubit gate error rate.
+    eta : (scalar) detection efficiency.
+    a0 : (scalar) extra environmental error when electron spin is being operated.
+    a1 : (scalar) default environmental error.
+    theta : (scalar) determines how the states are initialized when generating remote
+            entanglement.
+    """
+    # Circuits are assemebled in reversed order
+    cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+    pair = pair_double_sel(ps, pm, pg, eta, a0, a1, theta)
+
+
+    # Phase 3 - Create GHZ
+    # Perform the measurements
+    ghz = circuit.Circuit(a0=a0, a1=a1,
+                          circuit_block=cb.collapse_ancillas_GHZ,
+                          ghz_size=3,
+                          measure_pos=[2])
+    # Apply two qubit gates in the nodes
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1],
+                    targets=[2], sigma="X")
+
+    # Phase 2 Create second pair
+    ghz.add_circuit(circuit_block=pair.append_circuit)
+
+    # Phase 1 Create initial pair
+    ghz.add_circuit(circuit_block=pair.start)
+
+    return ghz

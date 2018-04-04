@@ -613,7 +613,7 @@ class Blocks:
         # The qubits in which the correction applies
         if ghz_size == 3:
             # The last qubit if GHZ3
-            operation_pos = N - 1
+            operation_pos = [N - 1]
         elif ghz_size == 4:
             # The last two if GHZ4
             operation_pos = [N - 1, N - 2]
