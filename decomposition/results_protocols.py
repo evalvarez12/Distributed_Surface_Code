@@ -31,6 +31,9 @@ a1 = 1/30.
 eta = 1/100
 theta = .63
 
+# Protocol name to save state
+protocol_name = "thres_a0"
+
 def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers
     # measurements
@@ -39,7 +42,7 @@ def env_error_rate(t, a):
     return 1 - p_env
 
 # Number of iterations for a average
-iterations = 300
+iterations = 1
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -65,82 +68,86 @@ targets = list(range(stab_size))
 FIDELITY = []
 TIMES = []
 
+
+
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
 # for a0 in [40., 30., 20., 10., 5., 2.]:
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
-# for a0 in [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0]:
 # for s in [0]:
-print("------> Var=", a0)
-ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
-# Get average number of steps
-fidelity = []
-times = []
-rho = ghz_ref*0
-# check = collections.Counter({})
-for i in range(iterations):
-    print(i)
-    # print(i)
-    r, c = ghz.run()
-    times += [c["time"]]
+for a0 in [3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]:
+    print("------> Var=", a0)
+    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
+    # Get average number of steps
+    fidelity = []
+    times = []
+    rho = ghz_ref*0
+    # check = collections.Counter({})
+    for i in range(iterations):
+        print(i)
+        # print(i)
+        r, c = ghz.run()
+        times += [c["time"]]
 
-    r = stab.twirl_ghz(r)
-    fidelity += [qt.fidelity(r, ghz_ref)]
+        r = stab.twirl_ghz(r)
+        fidelity += [qt.fidelity(r, ghz_ref)]
 
-    rho += r
-rho = rho/iterations
-times = np.array(times)
-fidelity = np.array(fidelity)
-
-
-# FIDELITY += [(np.average(fidelity), np.std(fidelity))]
-# TIMES += [(np.average(times), np.std(times))]
-# name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, "DEMO")
-# qt.qsave(rho, name)
+        rho += r
+    rho = rho/iterations
+    times = np.array(times)
+    fidelity = np.array(fidelity)
 
 
-
-indices_sorted = np.argsort(times)
-t_sorted = times[indices_sorted]
-
-if ignore_number != 0:
-    t_max = t_sorted[:-ignore_number][-1]
-    favg = np.average(fidelity[indices_sorted][:-ignore_number])
-    fstd = np.std(fidelity[indices_sorted][:-ignore_number])
-    tavg = np.average(times[indices_sorted][:-ignore_number])
-    tstd = np.std(times[indices_sorted][:-ignore_number])
-else:
-    t_max = t_sorted[-1]
-    favg = np.average(fidelity)
-    fstd = np.std(fidelity)
-    tavg = np.average(times)
-    tstd = np.std(times)
-
-print("F: ", favg, fstd)
-print("T: ", tavg, tstd)
-print("TIME_MAX:", t_max)
+    # FIDELITY += [(np.average(fidelity), np.std(fidelity))]
+    # TIMES += [(np.average(times), np.std(times))]
+    name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, protocol_name)
+    print(name)
+    qt.qsave(rho, name)
 
 
-#############################################
-#################### NOISE MODELING #########
-p_res, rhos = stab.measure_ghz_stabilizer(choi, rho, targets, parity)
-# Set channel output and make chi matrix
-model.set_rho(rhos, p_res)
-model.make_chi_matrix()
 
-print("Total sum check: ", model.check_total_sum())
-I_OK = model.chi["IIII_OK"]
-I_NOK = model.chi["IIII_NOK"]
-# The sum of all physical errors
-E = (1 - model.chi["IIII_OK"] - model.chi["IIII_NOK"])/4.
-print("Errors:")
-print("OK: ", I_OK)
-print("NOK: ", I_NOK)
-print("E: ", E)
-print("Env E: ", env_error_rate(t_max, a1)*4)
-print("-------------")
+    indices_sorted = np.argsort(times)
+    t_sorted = times[indices_sorted]
 
-############################################
-############################################
+    if ignore_number != 0:
+        t_max = t_sorted[:-ignore_number][-1]
+        favg = np.average(fidelity[indices_sorted][:-ignore_number])
+        fstd = np.std(fidelity[indices_sorted][:-ignore_number])
+        tavg = np.average(times[indices_sorted][:-ignore_number])
+        tstd = np.std(times[indices_sorted][:-ignore_number])
+    else:
+        t_max = t_sorted[-1]
+        favg = np.average(fidelity)
+        fstd = np.std(fidelity)
+        tavg = np.average(times)
+        tstd = np.std(times)
+
+    print("F: ", favg, fstd, "-", qt.fidelity(rho, ghz_ref))
+    print("T: ", tavg, tstd)
+    print("TIME_MAX:", t_max)
+
+
+    #############################################
+    #################### NOISE MODELING #########
+    p_res, rhos = stab.measure_ghz_stabilizer(choi, rho, targets, parity)
+    # Set channel output and make chi matrix
+    model.set_rho(rhos, p_res)
+    model.make_chi_matrix()
+
+    print("Total sum check: ", model.check_total_sum())
+    I_OK = model.chi["IIII_OK"]
+    I_NOK = model.chi["IIII_NOK"]
+    # The sum of all physical errors
+    E = (1 - model.chi["IIII_OK"] - model.chi["IIII_NOK"])/4.
+    print("Errors:")
+    print("OK: ", I_OK)
+    print("NOK: ", I_NOK)
+    print("E: ", E)
+    print("Env E: ", env_error_rate(t_max, a1))
+    print("TOTAL E: ", env_error_rate(t_max, a1) + E + I_NOK )
+    print("-------------")
+
+    ############################################
+    ############################################
 
 # np.save("FIDELITY_DEMO_a0.npy", FIDELITY)
 # np.save("TIME_DEMO_a0.npy", TIMES)
