@@ -62,7 +62,8 @@ class Circuit:
         check = self._empty_check()
         rho = None
         p_success = 0
-        while np.random.rand() > p_success:
+        r = np.random.rand()
+        while  r > p_success:
             # Check if it has a subcircuit
             if self.subcircuit:
                 c, rho = self.subcircuit._run()
@@ -72,6 +73,7 @@ class Circuit:
             p_success, c, rho = self.circuit(rho, **self.circuit_kwargs)
             check += c
             # print(check)
+            r = np.random.rand()
 
         return check, rho
 

@@ -71,7 +71,7 @@ TIMES = []
 # for a0 in [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0]:
 # for s in [0]:
 print("------> Var=", a0)
-ghz = protocols.ghz4_single_simple(ps, pm, pg, eta, a0, a1, theta)
+ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
 # Get average number of steps
 fidelity = []
 times = []

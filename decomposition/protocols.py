@@ -484,10 +484,10 @@ def ghz3_epl(ps, pm, pg, eta, a0, a1, theta):
 
     return ghz
 
-def ghz3_epl(ps, pm, pg, eta, a0, a1, theta):
+def ghz3_bk(ps, pm, pg, eta, a0, a1, theta):
     """
     GHZ state of weigth 3 created using 2 Bell pairs
-    generated using the EPL protocol.
+    generated using the Barret-Kok protocol.
 
     Parameters
     ----------
@@ -502,7 +502,6 @@ def ghz3_epl(ps, pm, pg, eta, a0, a1, theta):
     """
     # Circuits are assemebled in reversed order
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
-    epl = pair_EPL(ps, pm, pg, eta, a0, a1, theta)
 
 
     # Phase 3 - Create GHZ

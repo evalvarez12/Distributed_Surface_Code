@@ -156,7 +156,7 @@ class Blocks:
         # NOTE: This is expensive, adjust manually as required
         # 100000 tries required for EPL
         # 1000000 for BK
-        i = np.arange(100000)
+        i = np.arange(10000)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
 
@@ -606,7 +606,9 @@ class Blocks:
         measurements, rho_measured = self._measure_random_ancillas_Z(rho, measure_pos)
         # Transform measurements from 1 and -1 to 0 and 1
         measurements = np.array(measurements) % 3 - 1
-        # print(measurements)
+        # print("P_success: ", p_success)
+        # print("Measurements: ", measurements)
+
         N = len(rho_measured.dims[0])
         # The qubits in which the correction applies
         if ghz_size == 3:
@@ -630,8 +632,6 @@ class Blocks:
         if len(correction) != 0:
             rho = self._apply_single_qubit_gates(rho, correction, operation_pos)
 
-        # print(p_success)
-        # print(measurements)
         return p_success, self.check, rho
 
     def single_selection(self, rho, operation_qubits, sigma):
