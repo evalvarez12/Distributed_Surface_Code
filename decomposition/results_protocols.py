@@ -46,7 +46,7 @@ def env_error_rate(t, a):
     return 1 - p_env
 
 # Number of iterations for a average
-iterations = 100
+iterations = 10
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -84,7 +84,7 @@ for a0 in [3.0]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", a0)
-    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz4_double_simple(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -150,12 +150,12 @@ for a0 in [3.0]:
     ############################################
 
     ##################### SAVE DATA ############
-    name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, protocol_name)
-    print(name)
-    qt.qsave(rho, name)
-
-    np.save("FIDELITY_EPL" + str(a0) + ".npy", FIDELITY)
-    np.save("TIME_EPL" + str(a0) + ".npy", TIMES)
+    # name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, protocol_name)
+    # print(name)
+    # qt.qsave(rho, name)
+    #
+    # np.save("FIDELITY_EPL" + str(a0) + ".npy", FIDELITY)
+    # np.save("TIME_EPL" + str(a0) + ".npy", TIMES)
     ############################################
 
 plt.plot(times[indices_sorted], fidelity[indices_sorted], 'bo')

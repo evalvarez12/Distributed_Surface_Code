@@ -24,7 +24,7 @@ theta = .63
 # GHZ info
 ghz_size = 4
 stab_size = 4
-protocol = "thres_a0_simpleGHZ"
+protocol = "thres_a0"
 
 
 

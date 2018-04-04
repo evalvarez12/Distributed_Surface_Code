@@ -68,8 +68,8 @@ a1 = 1/30.
 eta = 1/100.
 theta = .63
 
-protocol = "thres_a0_simpleGHZ"
-t = 0.080014 * (3/4) * 0
+protocol = "thres_a0"
+t = 0.113044
 
 # Initialize fail rate
 fail_rate = 0
