@@ -77,6 +77,20 @@ class Circuit:
 
         return check, rho
 
+    def run_as_block(self, rho=None):
+        """
+        Run circuit as a block.
+        This function is used to wrap circuits and run them as blocks
+        in order to append them to another circuit.
+
+        Parameters
+        -----------
+        rho : (densmat) density matrix involved in the circuit, can be None depending
+              on the circuit block
+        """
+        check, rho = self._run()
+        return 1, check, rho
+
     def run_parallel(self, rho=None):
         """
         Run circuit two times in parallel, tensoring the resulting states,

@@ -56,9 +56,9 @@ def pair_single_sel(ps, pm, pg, eta, a0, a1, theta):
     single_sel = circuit.Circuit(a0=a0, a1=a1,
                                  circuit_block=cb.single_selection_ops,
                                  targets=[0, 1], ancillas=[2, 3], sigma="Z")
-    single_sel.add_circuit(circuit_block=epl.append_circuit)
     single_sel.add_circuit(circuit_block=cb.swap_pair,
                            pair=[0, 1])
+    single_sel.add_circuit(circuit_block=epl.append_circuit)
     single_sel.add_circuit(circuit_block=cb.start_epl)
 
     return single_sel
@@ -87,12 +87,10 @@ def pair_double_sel(ps, pm, pg, eta, a0, a1, theta):
                                  circuit_block=cb.double_selection_ops,
                                  targets=[0, 1], ancillas1=[2, 3],
                                  ancillas2=[4, 5], sigma="Z")
-    double_sel.add_circuit(circuit_block=epl.append_circuit)
     double_sel.add_circuit(circuit_block=cb.swap_pair,
                            pair=[0, 1])
     double_sel.add_circuit(circuit_block=epl.append_circuit)
-    double_sel.add_circuit(circuit_block=cb.swap_pair,
-                           pair=[0, 1])
+    double_sel.add_circuit(circuit_block=epl.append_circuit)
     double_sel.add_circuit(circuit_block=cb.start_epl)
 
     return double_sel
@@ -130,17 +128,17 @@ def ghz4_epl(ps, pm, pg, eta, a0, a1, theta):
                     targets=[4, 5, 6, 7], sigma="X")
 
     # Phase 2 Create last two pairs
+    pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                           pair=[0, 1])
+    pair.add_circuit(circuit_block=cb.start_epl)
     wrap_EPL_parallel = circuit.Circuit(a0=a0, a1=a1,
-                                        circuit_block=epl.run_parallel)
+                                        circuit_block=pair.run_parallel)
 
     ghz.add_circuit(circuit_block=wrap_EPL_parallel.append_circuit)
 
     # Phase 1 Create initial two pairs
-    start_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
-                                 pair=[0, 1])
-    start_pair.add_circuit(circuit_block=cb.start_epl)
 
-    ghz.add_circuit(circuit_block=start_pair.run_parallel)
+    ghz.add_circuit(circuit_block=epl.run_parallel)
 
     return ghz
 
@@ -179,14 +177,14 @@ def ghz4_epl_simple(ps, pm, pg, eta, a0, a1, theta):
                     targets=[4, 5], sigma="X")
 
     # Phase 2 Create last two pairs
-    ghz.add_circuit(circuit_block=epl.append_circuit)
+    pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                           pair=[0, 1])
+    pair.add_circuit(circuit_block=cb.start_epl)
+    ghz.add_circuit(circuit_block=pair.append_circuit)
 
     # Phase 1 Create initial two pairs
-    start_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
-                                 pair=[0, 1])
-    start_pair.add_circuit(circuit_block=cb.start_epl)
 
-    ghz.add_circuit(circuit_block=start_pair.run_parallel)
+    ghz.add_circuit(circuit_block=epl.run_parallel)
 
     return ghz
 
@@ -221,18 +219,17 @@ def ghz4_bk(ps, pm, pg, eta, a0, a1, theta):
                     targets=[4, 5, 6, 7], sigma="X")
 
     # Phase 2 Create last two pairs
-    bk = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_BK)
+    pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                           pair=[0, 1])
+    pair.add_circuit(circuit_block=cb.start_BK)
     wrap_EPL_parallel = circuit.Circuit(a0=a0, a1=a1,
-                                        circuit_block=bk.run_parallel)
+                                        circuit_block=pair.run_parallel)
 
     ghz.add_circuit(circuit_block=wrap_EPL_parallel.append_circuit)
 
     # Phase 1 Create initial two pairs
-    start_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
-                                 pair=[0, 1])
-    start_pair.add_circuit(circuit_block=cb.start_BK)
-
-    ghz.add_circuit(circuit_block=start_pair.run_parallel)
+    bk = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_BK)
+    ghz.add_circuit(circuit_block=bk.run_parallel)
 
     return ghz
 
@@ -267,15 +264,15 @@ def ghz4_bk_simple(ps, pm, pg, eta, a0, a1, theta):
                     targets=[4, 5], sigma="X")
 
     # Phase 2 Create last two pairs
-    bk = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_BK)
-    ghz.add_circuit(circuit_block=bk.append_circuit)
+    pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                           pair=[0, 1])
+    pair.add_circuit(circuit_block=cb.start_BK)
+    ghz.add_circuit(circuit_block=pair.append_circuit)
 
     # Phase 1 Create initial two pairs
-    start_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
-                                 pair=[0, 1])
-    start_pair.add_circuit(circuit_block=cb.start_BK)
 
-    ghz.add_circuit(circuit_block=start_pair.run_parallel)
+    bk = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_BK)
+    ghz.add_circuit(circuit_block=bk.run_parallel)
 
     return ghz
 
@@ -311,8 +308,11 @@ def ghz4_single(ps, pm, pg, eta, a0, a1, theta):
                     targets=[4, 5, 6, 7], sigma="X")
 
     # Phase 2 Create last two pairs
+    swaped_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                                  pair=[0, 1])
+    swaped_pair.add_circuit(circuit_block=pair.run_as_block)
     wrap_pair_parallel = circuit.Circuit(a0=a0, a1=a1,
-                                         circuit_block=pair.run_parallel)
+                                         circuit_block=swaped_pair.run_parallel)
     ghz.add_circuit(circuit_block=wrap_pair_parallel.append_circuit)
 
     # Phase 1 Create initial two pairs
@@ -353,7 +353,10 @@ def ghz4_single_simple(ps, pm, pg, eta, a0, a1, theta):
                     targets=[4, 5], sigma="X")
 
     # Phase 2 Create last two pairs
-    ghz.add_circuit(circuit_block=pair.append_circuit)
+    swaped_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                                  pair=[0, 1])
+    swaped_pair.add_circuit(circuit_block=pair.run_as_block)
+    ghz.add_circuit(circuit_block=swaped_pair.append_circuit)
 
     # Phase 1 Create initial two pairs
     ghz.add_circuit(circuit_block=pair.run_parallel)
@@ -393,8 +396,11 @@ def ghz4_double(ps, pm, pg, eta, a0, a1, theta):
                     targets=[4, 5, 6, 7], sigma="X")
 
     # Phase 2 Create last two pairs
+    swaped_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                                  pair=[0, 1])
+    swaped_pair.add_circuit(circuit_block=pair.run_as_block)
     wrap_pair_parallel = circuit.Circuit(a0=a0, a1=a1,
-                                         circuit_block=pair.run_parallel)
+                                         circuit_block=swaped_pair.run_parallel)
     ghz.add_circuit(circuit_block=wrap_pair_parallel.append_circuit)
 
     # Phase 1 Create initial two pairs
@@ -435,7 +441,10 @@ def ghz4_double_simple(ps, pm, pg, eta, a0, a1, theta):
                     targets=[4, 5], sigma="X")
 
     # Phase 2 Create last two pairs
-    ghz.add_circuit(circuit_block=pair.append_circuit)
+    swaped_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                                  pair=[0, 1])
+    swaped_pair.add_circuit(circuit_block=pair.run_as_block)
+    ghz.add_circuit(circuit_block=swaped_pair.append_circuit)
 
     # Phase 1 Create initial two pairs
     ghz.add_circuit(circuit_block=pair.run_parallel)
@@ -475,11 +484,11 @@ def ghz3_epl_simple(ps, pm, pg, eta, a0, a1, theta):
                     targets=[2], sigma="X")
 
     # Phase 2 Create second pair
+    ghz.add_circuit(circuit_block=cb.swap_pair,
+                    pair=[0, 1])
     ghz.add_circuit(circuit_block=epl.append_circuit)
 
     # Phase 1 Create initial pair
-    ghz.add_circuit(circuit_block=cb.swap_pair,
-                    pair=[0, 1])
     ghz.add_circuit(circuit_block=cb.start_epl)
 
     return ghz
@@ -555,12 +564,12 @@ def ghz3_bk_simple(ps, pm, pg, eta, a0, a1, theta):
                     targets=[2], sigma="X")
 
     # Phase 2 Create second pair
+    ghz.add_circuit(circuit_block=cb.swap_pair,
+                    pair=[0, 1])
     bk = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.start_BK)
     ghz.add_circuit(circuit_block=bk.append_circuit)
 
     # Phase 1 Create initial pair
-    ghz.add_circuit(circuit_block=cb.swap_pair,
-                    pair=[0, 1])
     ghz.add_circuit(circuit_block=cb.start_BK)
 
     return ghz
@@ -636,6 +645,8 @@ def ghz3_single_simple(ps, pm, pg, eta, a0, a1, theta):
                     targets=[2], sigma="X")
 
     # Phase 2 Create second pair
+    ghz.add_circuit(circuit_block=cb.swap_pair,
+                    pair=[0, 1])
     ghz.add_circuit(circuit_block=pair.append_circuit)
 
     # Phase 1 Create initial pair
@@ -662,6 +673,7 @@ def ghz3_single(ps, pm, pg, eta, a0, a1, theta):
     """
     # Circuits are assemebled in reversed order
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+    pair = pair_single_sel(ps, pm, pg, eta, a0, a1, theta)
 
     # Phase 3 - Create GHZ
     # Perform the measurements
@@ -674,8 +686,10 @@ def ghz3_single(ps, pm, pg, eta, a0, a1, theta):
                     targets=[1, 3, 5], sigma="X")
 
     # Phase 1 Create initial pair
-    start_pair = pair_single_sel(ps, pm, pg, eta, a0, a1, theta)
-    ghz.add_circuit(circuit_block=start_pair.run_parallel3)
+    swaped_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                                  pair=[0, 1])
+    swaped_pair.add_circuit(circuit_block=pair.run_as_block)
+    ghz.add_circuit(circuit_block=swaped_pair.run_parallel3)
 
     return ghz
 
@@ -710,6 +724,8 @@ def ghz3_double_simple(ps, pm, pg, eta, a0, a1, theta):
                     targets=[2], sigma="X")
 
     # Phase 2 Create second pair
+    ghz.add_circuit(circuit_block=cb.swap_pair,
+                    pair=[0, 1])
     ghz.add_circuit(circuit_block=pair.append_circuit)
 
     # Phase 1 Create initial pair
@@ -736,6 +752,7 @@ def ghz3_double(ps, pm, pg, eta, a0, a1, theta):
     """
     # Circuits are assemebled in reversed order
     cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+    pair = pair_double_sel(ps, pm, pg, eta, a0, a1, theta)
 
     # Phase 3 - Create GHZ
     # Perform the measurements
@@ -748,7 +765,9 @@ def ghz3_double(ps, pm, pg, eta, a0, a1, theta):
                     targets=[3, 4, 5], sigma="X")
 
     # Phase 1 Create initial pair
-    start_pair = pair_double_sel(ps, pm, pg, eta, a0, a1, theta)
-    ghz.add_circuit(circuit_block=start_pair.run_parallel3)
+    swaped_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                                  pair=[0, 1])
+    swaped_pair.add_circuit(circuit_block=pair.run_as_block)
+    ghz.add_circuit(circuit_block=swaped_pair.run_parallel3)
 
     return ghz
