@@ -55,7 +55,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz4_ref
+rho_ref = bell_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -84,8 +84,8 @@ for s in [0]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", a0)
-    print("SINGLE")
-    ghz = protocols.ghz4_single(ps, pm, pg, eta, a0, a1, theta)
+    print("BK 2")
+    ghz = protocols.ghz2_bk(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -129,7 +129,7 @@ for s in [0]:
 
     #############################################
     #################### NOISE MODELING #########
-    p_res, rhos = stab.measure_ghz_stabilizer(choi, rho, targets, parity)
+    p_res, rhos = stab.measure_ghz_stabilizer_2on4(choi, rho, targets, parity)
     # Set channel output and make chi matrix
     model.set_rho(rhos, p_res)
     model.make_chi_matrix()
@@ -159,11 +159,11 @@ for s in [0]:
     # np.save("TIME_EPL" + str(a0) + ".npy", TIMES)
     ############################################
 
-plt.plot(times[indices_sorted], fidelity[indices_sorted], 'bo')
-if ignore_number != 0:
-    vline = np.linspace(min(fidelity), max(fidelity))
-    o = np.ones_like(vline)*(t_max)
-    plt.plot(o, vline, 'r--')
-
-
-plt.show()
+# plt.plot(times[indices_sorted], fidelity[indices_sorted], 'bo')
+# if ignore_number != 0:
+#     vline = np.linspace(min(fidelity), max(fidelity))
+#     o = np.ones_like(vline)*(t_max)
+#     plt.plot(o, vline, 'r--')
+#
+#
+# plt.show()

@@ -227,6 +227,40 @@ class Stabilizer:
         p_even, p_odd = self._get_probabilities_measurement(rho, N_ghz)
         return [p_even, p_odd], [rho_even, rho_odd]
 
+    def measure_ghz_stabilizer_2on4(self, rho, ghz, parity_targets, stabilizer):
+        """
+        Measure a stabilizer through a GHZ state for the case when the size
+        of the GHZ is one less than the number of qubits measured.
+
+        Parameters
+        -----------
+        rho : (densmat) state to be measured by the stabilizer
+        ghz : (densmat) GHZ state to be used in the stabilizer measurement
+        parity_targets : (list) positions of the qubits to be measured
+        stabilizer : (string) star or plaquette
+        """
+        # Apply two qubit gates
+        N_ghz = len(ghz.dims[0])
+        rho = qt.tensor(rho, ghz)
+        N = len(rho.dims[0])
+        if N_ghz != 2:
+            raise ValueError("Measure stabilizer 3on4 dimension error")
+
+        # Controls are the last qubits in rho
+        controls = list(range(N - N_ghz, N)) + [N - 1, N - 1]
+        rho = self.apply_two_qubit_gates(rho, N, controls,
+                                         parity_targets, stabilizer)
+        projections_even = [0] * N_ghz
+        rho_even = self.collapse_ancillas_forced(rho, N, N_ghz,
+                                                 projections_even)
+        projections_odd = [0] * N_ghz
+        projections_odd[-1] = 1
+        rho_odd = self.collapse_ancillas_forced(rho, N, N_ghz,
+                                                projections_odd)
+        # Get probabilites for each outcome
+        p_even, p_odd = self._get_probabilities_measurement(rho, N_ghz)
+        return [p_even, p_odd], [rho_even, rho_odd]
+
     def local_stabilizer(self, rho, parity_targets, stabilizer):
         """
         Perform a local stabilizer measurement.
