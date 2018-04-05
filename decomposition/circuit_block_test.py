@@ -24,7 +24,7 @@ pg = 0.006
 a0 = 5.
 a1 = 1/80.
 eta = 1/50.
-theta = .24
+theta = .63
 
 # NOTE: Parameters as in Raja's thesis
 # ps = 0.006
@@ -56,14 +56,14 @@ print("p_success: ", p, p_ref(0.9))
 print("check: ", check)
 print("F: ", qt.fidelity(rho, rho_ref)**2, single_selection(.9, .9))
 
-# print("------------------DOUBLE SELECTION-------------------")
-# rho = errs.bell_pair(0.1)
-# print("F initial: ", qt.fidelity(rho, rho_ref)**2)
-# rho = qt.tensor(rho, rho, rho)
-# p, check, rho = cb_ideal.double_selection_ops(rho, [0, 1], [2, 3], [4, 5], "Z")
-# print("p_success: ", p)
-# print("check: ", check)
-# print("F: ", qt.fidelity(rho, rho_ref)**2)
+print("------------------DOUBLE SELECTION-------------------")
+rho = errs.bell_pair(0.1)
+print("F initial: ", qt.fidelity(rho, rho_ref)**2)
+rho = qt.tensor(rho, rho, rho)
+p, check, rho = cb_ideal.double_selection_ops(rho, [0, 1], [2, 3], [4, 5], "Z")
+print("p_success: ", p)
+print("check: ", check)
+print("F: ", qt.fidelity(rho, rho_ref)**2)
 
 # print("------------------DOUBLE SELECTION2-------------------")
 # p, check, rho = cb.double_selection22("Z")
