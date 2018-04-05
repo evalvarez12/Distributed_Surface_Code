@@ -607,8 +607,8 @@ class Blocks:
         measurements, rho_measured = self._measure_random_ancillas_Z(rho, measure_pos)
         # Transform measurements from 1 and -1 to 0 and 1
         measurements = np.array(measurements) % 3 - 1
-        print("P_success: ", p_success)
-        print("Measurements: ", measurements)
+        # print("P_success: ", p_success)
+        # print("Measurements: ", measurements)
 
         N = len(rho_measured.dims[0])
         # The qubits in which the correction applies

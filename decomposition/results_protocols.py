@@ -27,8 +27,8 @@ import noise_modeling
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 1
-a1 = 1/100.
+a0 = 8
+a1 = 1/30.
 eta = 1/100
 theta = .63
 
@@ -46,7 +46,7 @@ def env_error_rate(t, a):
     return 1 - p_env
 
 # Number of iterations for a average
-iterations = 4
+iterations = 20
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -55,7 +55,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz3_ref
+rho_ref = ghz4_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -84,8 +84,8 @@ for s in [0]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", a0)
-    print("EPL")
-    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
+    print("SINGLE")
+    ghz = protocols.ghz4_single(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -129,7 +129,7 @@ for s in [0]:
 
     #############################################
     #################### NOISE MODELING #########
-    p_res, rhos = stab.measure_ghz_stabilizer_3on4(choi, rho, targets, parity)
+    p_res, rhos = stab.measure_ghz_stabilizer(choi, rho, targets, parity)
     # Set channel output and make chi matrix
     model.set_rho(rhos, p_res)
     model.make_chi_matrix()
