@@ -58,9 +58,9 @@ class Blocks:
 
         # Lookup tables for the time it takes to make each operaation
         self.time_lookup = {"bell_pair": 6e-6,
-                            "two_qubit_gate": 200e-6,
-                            "single_qubit_gate": 200e-6,
-                            "measurement": 200e-6}
+                            "two_qubit_gate": 2e-4,
+                            "single_qubit_gate": 1e-7,
+                            "measurement": 2e-4}
 
     def change_parameters(self, ps, pm, pg, eta, a0, a1, theta):
         """
