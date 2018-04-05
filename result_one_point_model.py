@@ -63,13 +63,14 @@ t = float(args["time"])
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 3.0
-a1 = 1/30.
-eta = 1/100.
+a0 = 2.0
+a1 = 1/80.
+eta = 1/300.
 theta = .63
 
 protocol = "thres_a0"
-t = 0.113044
+t = 0.148764
+
 
 # Initialize fail rate
 fail_rate = 0

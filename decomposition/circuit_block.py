@@ -601,13 +601,14 @@ class Blocks:
         # Special case: Success probability for the GHZ4 case with 4 pairs.
         if ghz_size == 4 and len(measure_pos) == 4:
             p_success = ps.ghz_4(rho)
-
+        elif ghz_size == 3 and len(measure_pos) == 3:
+            p_success = ps.ghz_3(rho)
         # Get random measuements outcomes
         measurements, rho_measured = self._measure_random_ancillas_Z(rho, measure_pos)
         # Transform measurements from 1 and -1 to 0 and 1
         measurements = np.array(measurements) % 3 - 1
-        # print("P_success: ", p_success)
-        # print("Measurements: ", measurements)
+        print("P_success: ", p_success)
+        print("Measurements: ", measurements)
 
         N = len(rho_measured.dims[0])
         # The qubits in which the correction applies

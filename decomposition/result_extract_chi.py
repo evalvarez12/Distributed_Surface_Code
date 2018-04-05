@@ -16,13 +16,13 @@ import tools.names as names
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 3.0
-a1 = 1/30.
-eta = 1/100.
+a0 = 2.0
+a1 = 1/80.
+eta = 1/300.
 theta = .63
 
 # GHZ info
-ghz_size = 4
+ghz_size = 3
 stab_size = 4
 protocol = "thres_a0"
 
@@ -51,7 +51,7 @@ for n in [0]:
         extra_name = ""
         if stab_size == 4 and ghz_size == 3:
             p_res, rhos = stab.measure_ghz_stabilizer_3on4(choi, ghz, targets, parity)
-            extra_name = "3on4"
+            extra_name = ""
         else:
             p_res, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
 
@@ -76,6 +76,7 @@ for n in [0]:
         file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
                               stab_size, parity, protocol + extra_name)
 
+        print(file_name)
         pickle_out = open(file_name, "wb")
         pickle.dump(model.chi, pickle_out, protocol=2)
         pickle_out.close()

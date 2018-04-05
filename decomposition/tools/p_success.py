@@ -101,3 +101,23 @@ def ghz_4(rho):
     # Compute probability
     p = (P * rho * P.dag()).tr()
     return p
+
+def ghz_3(rho):
+    """
+    Compute the probability of success for the special case when creating
+    a GHZ state from 4 bell pairs.
+    Requires that ancillas are on the last part of the entire state rho.
+
+    Parameters
+    ----------
+    rho : (densmat) density matrix.
+    """
+    # Get a list of all even projectors for the 4 ancillas
+    N = len(rho.dims[0])
+    P_even = prj.even_projectors(3)
+    rest = N - 3
+    # Add an identity before the projector
+    P = qt.tensor(qt.qeye([2]*rest), P_even)
+    # Compute probability
+    p = (P * rho * P.dag()).tr()
+    return p

@@ -30,14 +30,26 @@ def correction_ghz3(measurements, N, operation_pos):
     Correction opertions for the GHZ state of size 3.
     On the case when 3 bell pairs are collapsed into the GHZ.
     """
+    N_ancillas = len(measurements)
 
-    # Only one qubit in the Bell states are used is measured
-    # Result 0 requires no correction, result 1 requires to apply a Pauli X
-    if measurements == [0]:
-        return []
-    elif measurements == [1]:
-        return [qt.rx(np.pi, N, operation_pos)]
+    if N_ancillas == 1:
+        # Only one qubit in the Bell states are used is measured
+        # Result 0 requires no correction, result 1 requires to apply a Pauli X
+        if measurements == [0]:
+            return []
+        elif measurements == [1]:
+            return [qt.rx(np.pi, N, operation_pos)]
 
+    elif N_ancillas == 3:
+        if sum(measurements) % 2 == 1:
+            return None
+
+        no_correction_list = [0, 3]
+        m_bin = int(''.join(map(str, measurements)), 2)
+        if m_bin in no_correction_list:
+            return []
+        else:
+            return [qt.rx(np.pi, N, operation_pos)]
 
 def correction_ghz4(measurements, N, operation_pos):
     # print("Measurements: ", measurements)

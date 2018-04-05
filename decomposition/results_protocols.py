@@ -27,8 +27,8 @@ import noise_modeling
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 8
-a1 = 1/30.
+a0 = 1
+a1 = 1/100.
 eta = 1/100
 theta = .63
 
@@ -46,16 +46,16 @@ def env_error_rate(t, a):
     return 1 - p_env
 
 # Number of iterations for a average
-iterations = 10
+iterations = 4
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
 bell_ref = qt.bell_state('00') * qt.bell_state('00').dag()
 bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
-ghz_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
+ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz_ref
+rho_ref = ghz3_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -77,14 +77,15 @@ targets = list(range(stab_size))
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
 # for a0 in [40., 30., 20., 10., 5., 2.]:
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
-# for s in [0]:
+for s in [0]:
 # for a0 in [3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]:
-for a0 in [3.0]:
+# for a0 in [3.0]:
 # for eta in [0.01, 0.009, 0.008, 0.007, 0.006, 0.005, 0.0040, 0.0030]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", a0)
-    ghz = protocols.ghz4_double_simple(ps, pm, pg, eta, a0, a1, theta)
+    print("EPL")
+    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -128,7 +129,7 @@ for a0 in [3.0]:
 
     #############################################
     #################### NOISE MODELING #########
-    p_res, rhos = stab.measure_ghz_stabilizer(choi, rho, targets, parity)
+    p_res, rhos = stab.measure_ghz_stabilizer_3on4(choi, rho, targets, parity)
     # Set channel output and make chi matrix
     model.set_rho(rhos, p_res)
     model.make_chi_matrix()
@@ -143,14 +144,14 @@ for a0 in [3.0]:
     print("NOK: ", I_NOK)
     print("E: ", E)
     print("Env E: ", env_error_rate(t_max, a1))
-    print("TOTAL E: ", env_error_rate(t_max, a1) + E + I_NOK )
+    print("TOTAL E: ", env_error_rate(t_max, a1) + E)
     print("-------------")
 
     ############################################
     ############################################
 
     ##################### SAVE DATA ############
-    # name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, protocol_name)
+    # name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 3, protocol_name)
     # print(name)
     # qt.qsave(rho, name)
     #

@@ -104,6 +104,52 @@ class Circuit:
         rho = qt.tensor(rho1, rho2)
         return 1, check, rho
 
+    def run_parallel3(self, rho=None):
+        """
+        Run circuit three times in parallel, tensoring the resulting states,
+        and dephasing the one that was generated first accordingly.
+        Cicuits must be self contained events to be able to run in parallel.
+
+        Parameters
+        -----------
+        rho : (densmat) density matrix involved in the circuit, can be None depending
+              on the circuit block
+        """
+        check1, rho1 = self._run()
+        check2, rho2 = self._run()
+        check3, rho3 = self._run()
+
+        time1 = check1["time"]
+        time2 = check1["time"]
+        time3 = check1["time"]
+        times = [time1, time2, time3]
+        # Only take the check with the longest time
+        diff_time = np.abs(check1["time"] - check2["time"])
+        if time1 == max(times):
+            rho2 = errs.env_error_all(rho2, 0,
+                                      self.a1, np.abs(time1 - time2))
+
+            rho3 = errs.env_error_all(rho3, 0,
+                                      self.a1, np.abs(time1 - time3))
+            check = check1
+        elif time2 == max(times):
+            rho1 = errs.env_error_all(rho1, 0,
+                                      self.a1, np.abs(time1 - time2))
+
+            rho3 = errs.env_error_all(rho3, 0,
+                                      self.a1, np.abs(time2 - time3))
+            check = check3
+        else:
+            rho1 = errs.env_error_all(rho1, 0,
+                                      self.a1, np.abs(time1 - time3))
+
+            rho2 = errs.env_error_all(rho2, 0,
+                                      self.a1, np.abs(time2 - time3))
+            check = check3
+
+        rho = qt.tensor(rho1, rho2, rho3)
+        return 1, check, rho
+
     def append_circuit(self, rho=None):
         """
         Appended circuit, and depolarize accordingly.
