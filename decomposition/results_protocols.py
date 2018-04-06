@@ -46,7 +46,7 @@ def env_error_rate(t, a):
     return 1 - p_env
 
 # Number of iterations for a average
-iterations = 20
+iterations = 2000
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -55,7 +55,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = bell_ref
+rho_ref = ghz4_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -84,15 +84,15 @@ for s in [0]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", a0)
-    print("BK 2")
-    ghz = protocols.ghz2_bk(ps, pm, pg, eta, a0, a1, theta)
+    print("EPL")
+    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
     rho = rho_ref*0
     # check = collections.Counter({})
     for i in range(iterations):
-        # print(i)
+        print(i)
         r, c = ghz.run()
         times += [c["time"]]
 
@@ -129,7 +129,7 @@ for s in [0]:
 
     #############################################
     #################### NOISE MODELING #########
-    p_res, rhos = stab.measure_ghz_stabilizer_2on4(choi, rho, targets, parity)
+    p_res, rhos = stab.measure_ghz_stabilizer(choi, rho, targets, parity)
     # Set channel output and make chi matrix
     model.set_rho(rhos, p_res)
     model.make_chi_matrix()
@@ -155,15 +155,19 @@ for s in [0]:
     # print(name)
     # qt.qsave(rho, name)
     #
-    # np.save("FIDELITY_EPL" + str(a0) + ".npy", FIDELITY)
-    # np.save("TIME_EPL" + str(a0) + ".npy", TIMES)
+    np.save("FIDELITY_EPL" + str(a0) + ".npy", fidelity)
+    np.save("TIME_EPL" + str(a0) + ".npy", times)
     ############################################
 
-# plt.plot(times[indices_sorted], fidelity[indices_sorted], 'bo')
-# if ignore_number != 0:
-#     vline = np.linspace(min(fidelity), max(fidelity))
-#     o = np.ones_like(vline)*(t_max)
-#     plt.plot(o, vline, 'r--')
-#
-#
-# plt.show()
+plt.plot(times[indices_sorted], fidelity[indices_sorted], "k.")
+if ignore_number != 0:
+    vline = np.linspace(min(fidelity), max(fidelity))
+    o = np.ones_like(vline)*(t_max)
+    plt.plot(o, vline, 'r--')
+
+plt.ylabel(r"Fidelity", fontsize=17)
+plt.xlabel(r"Time (seg)", fontsize=17)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+
+plt.show()

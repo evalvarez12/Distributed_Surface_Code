@@ -7,11 +7,23 @@ created-on: 05/06/17
 import unittest
 import qutip as qt
 import error_models as errs
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Define variables for tests
 psi_test = qt.bell_state("00")
 rho_test = psi_test * psi_test.dag()
 
+
+t = np.linspace(0, 1.5)
+ket = qt.rand_ket(2)
+rho = ket * ket.dag()
+f = []
+for i in t:
+    rho_out = errs.env_error_single(rho, 8, 1/30, i)
+    f += [qt.fidelity(rho, rho_out)**2]
+plt.plot(t, f)
+plt.show()
 
 class TestErrorModels(unittest.TestCase):
 

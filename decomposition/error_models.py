@@ -51,9 +51,12 @@ def env_error_single(rho, a0, a1, t, N=1, pos=0):
     Y = qt.ry(np.pi, N, pos)
     Z = qt.rz(np.pi, N, pos)
     # ss = sigma_z * rho * sigma_z.dag()
-    lamb = (1 + np.exp(-a * t))/2.
+    lamb = np.exp(-a * t)
+    print(lamb)
+    c1 = (3*lamb + 1)/4
+    c2 = (1 - lamb)/4
     # print("T: ", t, "lamb: ", lamb)
-    rho = (lamb * rho + (1 - lamb) / 3. * (Z * rho * Z.dag() + X * rho * X.dag()
+    rho = (c1 * rho + c2 * (Z * rho * Z.dag() + X * rho * X.dag()
            + Y * rho * Y.dag()))
     return rho
 
