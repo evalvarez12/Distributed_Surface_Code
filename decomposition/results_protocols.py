@@ -46,7 +46,7 @@ def env_error_rate(t, a):
     return 1 - p_env
 
 # Number of iterations for a average
-iterations = 2000
+iterations = 20
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -155,8 +155,8 @@ for s in [0]:
     # print(name)
     # qt.qsave(rho, name)
     #
-    np.save("FIDELITY_EPL" + str(a0) + ".npy", fidelity)
-    np.save("TIME_EPL" + str(a0) + ".npy", times)
+    # np.save("FIDELITY_EPL" + str(a0) + ".npy", fidelity)
+    # np.save("TIME_EPL" + str(a0) + ".npy", times)
     ############################################
 
 plt.plot(times[indices_sorted], fidelity[indices_sorted], "k.")

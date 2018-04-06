@@ -91,7 +91,7 @@ class Circuit:
         check, rho = self._run()
         return 1, check, rho
 
-    def run_parallel(self, rho=None):
+    def run_parallel2(self, rho=None):
         """
         Run circuit two times in parallel, tensoring the resulting states,
         and dephasing the one that was generated first accordingly.
@@ -134,8 +134,8 @@ class Circuit:
         check3, rho3 = self._run()
 
         time1 = check1["time"]
-        time2 = check1["time"]
-        time3 = check1["time"]
+        time2 = check2["time"]
+        time3 = check3["time"]
         times = [time1, time2, time3]
         # Only take the check with the longest time
         diff_time = np.abs(check1["time"] - check2["time"])
@@ -162,6 +162,50 @@ class Circuit:
             check = check3
 
         rho = qt.tensor(rho1, rho2, rho3)
+        return 1, check, rho
+
+    def run_parallel(self, rho=None, parallel=2):
+        """
+        Run circuit three times in parallel, tensoring the resulting states,
+        and dephasing the one that was generated first accordingly.
+        Cicuits must be self contained events to be able to run in parallel.
+
+        Parameters
+        -----------
+        rho : (densmat) density matrix involved in the circuit, can be None depending
+              on the circuit block
+        parallel : (int) number of executions in parallel of the circuit
+        """
+        # Get all the states, operations
+        checks = []
+        rhos = []
+        times = []
+        for i in range(parallel):
+            c, r = self._run()
+            checks += [c]
+            rhos += [r]
+            times += [c["time"]]
+
+        checks = np.array(checks)
+        rhos = np.array(rhos)
+        times = np.array(times)
+        time_max = max(times)
+        mask = [1]*parallel
+        max_index = np.where(times == time_max)[0][0]
+        mask[max_index] = 0
+        print(max_index)
+        print(mask)
+
+        rho = np.array(rhos)[max_index]
+        check = np.array(checks)[max_index]
+        times = times[mask]
+        times = np.abs(times - time_max)
+        rhos = rhos[mask]
+        for i in range(parallel):
+            rho_app = errs.env_error_all(rhos[i], 0, self.a1,
+                                         times[i])
+            rho = qt.tensor(rho, rho_app)
+
         return 1, check, rho
 
     def append_circuit(self, rho=None):
