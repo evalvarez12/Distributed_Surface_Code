@@ -98,9 +98,10 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if rank == 0:
         total = total/float(size)
-        # if q != 0:
-            # total = total/float(cycles)
+        if q != 0:
+            total = total/float(cycles)
         print size, "p=", p, " : ", round(total[0], 7)
+        print "total=", total[0]*cycles
         # print ("size: ", size, "rank: ", rank)
         args_str = get_file_name_pq(args)
         script_path = dirname(realpath(__file__))

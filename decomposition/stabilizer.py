@@ -10,6 +10,7 @@ import numpy as np
 import itertools
 import error_models as errs
 import tools.projectors as proj
+import tools.operations as ops
 
 
 class Stabilizer:
@@ -125,6 +126,32 @@ class Stabilizer:
                                              projections[i], "X")
         return rho
 
+    def _swap_pair(self, rho, pair):
+        N = len(rho.dims[0])
+        CNOT1 = qt.cnot(N, pair[0], pair[1])
+        CNOT2 = qt.cnot(N, pair[1], pair[0])
+
+        gates = [CNOT1, CNOT2, CNOT1]
+        for g in gates:
+            rho = errs.two_qubit_gate(rho, g, self.pg, N, pair[0],
+                                      pair[1])
+        return rho
+
+    def _swap_ghz(self, ghz):
+        N = len(ghz.dims[0])
+        pairs = zip(range(N), range(N, 2*N))
+        ancillas = [qt.basis(2, 0) * qt.basis(2, 0).dag()]
+        ancillas = qt.tensor(ancillas*N)
+
+        ghz = qt.tensor(ghz, ancillas)
+        for p in list(pairs):
+            ghz = self._swap_pair(ghz, p)
+
+        # print(ghz)
+        for i in range(N):
+            ghz = errs.measure_single_Zbasis_forced(ghz, self.pm, 0, 2*N - i, 0)
+        return ghz
+
     def twirl_ghz(self, ghz):
         """
         Twirl the GHZ state to disitribute error uniformly.
@@ -175,10 +202,18 @@ class Stabilizer:
         """
         # Apply two qubit gates
         N_ghz = len(ghz.dims[0])
+
+        # Apply SWAP to GHZ
+        ghz = self._swap_ghz(ghz)
+
         rho = qt.tensor(rho, ghz)
         N = len(rho.dims[0])
         # Controls are the last qubits in rho
         controls = list(range(N - N_ghz, N))
+        # If lower weigth GHZ last qubit makes the extra gates
+        if N_ghz < 4:
+            controls += [N-1] * (4 - N_ghz)
+
         rho = self.apply_two_qubit_gates(rho, N, controls,
                                          parity_targets, stabilizer)
         projections_even = [0] * N_ghz
@@ -189,74 +224,6 @@ class Stabilizer:
         rho_odd = self.collapse_ancillas_forced(rho, N, N_ghz,
                                                 projections_odd)
 
-        # Get probabilites for each outcome
-        p_even, p_odd = self._get_probabilities_measurement(rho, N_ghz)
-        return [p_even, p_odd], [rho_even, rho_odd]
-
-    def measure_ghz_stabilizer_3on4(self, rho, ghz, parity_targets, stabilizer):
-        """
-        Measure a stabilizer through a GHZ state for the case when the size
-        of the GHZ is one less than the number of qubits measured.
-
-        Parameters
-        -----------
-        rho : (densmat) state to be measured by the stabilizer
-        ghz : (densmat) GHZ state to be used in the stabilizer measurement
-        parity_targets : (list) positions of the qubits to be measured
-        stabilizer : (string) star or plaquette
-        """
-        # Apply two qubit gates
-        N_ghz = len(ghz.dims[0])
-        rho = qt.tensor(rho, ghz)
-        N = len(rho.dims[0])
-        if N_ghz != 3:
-            raise ValueError("Measure stabilizer 3on4 dimension error")
-
-        # Controls are the last qubits in rho
-        controls = list(range(N - N_ghz, N)) + [N - 1]
-        rho = self.apply_two_qubit_gates(rho, N, controls,
-                                         parity_targets, stabilizer)
-        projections_even = [0] * N_ghz
-        rho_even = self.collapse_ancillas_forced(rho, N, N_ghz,
-                                                 projections_even)
-        projections_odd = [0] * N_ghz
-        projections_odd[-1] = 1
-        rho_odd = self.collapse_ancillas_forced(rho, N, N_ghz,
-                                                projections_odd)
-        # Get probabilites for each outcome
-        p_even, p_odd = self._get_probabilities_measurement(rho, N_ghz)
-        return [p_even, p_odd], [rho_even, rho_odd]
-
-    def measure_ghz_stabilizer_2on4(self, rho, ghz, parity_targets, stabilizer):
-        """
-        Measure a stabilizer through a GHZ state for the case when the size
-        of the GHZ is one less than the number of qubits measured.
-
-        Parameters
-        -----------
-        rho : (densmat) state to be measured by the stabilizer
-        ghz : (densmat) GHZ state to be used in the stabilizer measurement
-        parity_targets : (list) positions of the qubits to be measured
-        stabilizer : (string) star or plaquette
-        """
-        # Apply two qubit gates
-        N_ghz = len(ghz.dims[0])
-        rho = qt.tensor(rho, ghz)
-        N = len(rho.dims[0])
-        if N_ghz != 2:
-            raise ValueError("Measure stabilizer 3on4 dimension error")
-
-        # Controls are the last qubits in rho
-        controls = list(range(N - N_ghz, N)) + [N - 1, N - 1]
-        rho = self.apply_two_qubit_gates(rho, N, controls,
-                                         parity_targets, stabilizer)
-        projections_even = [0] * N_ghz
-        rho_even = self.collapse_ancillas_forced(rho, N, N_ghz,
-                                                 projections_even)
-        projections_odd = [0] * N_ghz
-        projections_odd[-1] = 1
-        rho_odd = self.collapse_ancillas_forced(rho, N, N_ghz,
-                                                projections_odd)
         # Get probabilites for each outcome
         p_even, p_odd = self._get_probabilities_measurement(rho, N_ghz)
         return [p_even, p_odd], [rho_even, rho_odd]

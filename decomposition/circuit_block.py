@@ -257,9 +257,7 @@ class Blocks:
         rho = errs.two_qubit_gate(rho, CNOT1, self.pg, N, pos, N-1)
 
         # Measure the ancilla to reduce the dimension
-        # m, rho =  ops.random_measure_single_Zbasis(rho, N, pos, True)
-        # print("M:", m)
-        rho = ops.collapse_single_Zbasis(rho, 0, N, pos, True)
+        rho = errs.measure_single_Zbasis_forced(rho, self.pm, 0, N, pos)
         return rho
 
     def _swap_pair(self, rho, pair):

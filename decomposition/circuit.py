@@ -186,24 +186,22 @@ class Circuit:
             rhos += [r]
             times += [c["time"]]
 
-        checks = np.array(checks)
-        rhos = np.array(rhos)
-        times = np.array(times)
+        # Get max time and find its index
         time_max = max(times)
-        mask = [1]*parallel
         max_index = np.where(times == time_max)[0][0]
-        mask[max_index] = 0
-        print(max_index)
-        print(mask)
 
-        rho = np.array(rhos)[max_index]
-        check = np.array(checks)[max_index]
-        times = times[mask]
-        times = np.abs(times - time_max)
-        rhos = rhos[mask]
-        for i in range(parallel):
+        # Get state and check of max
+        rho = rhos[max_index]
+        check = checks[max_index]
+
+        # Remove the max from the lists
+        del times[max_index]
+        del check[max_index]
+        del rhos[max_index]
+
+        for i in range(parallel-1):
             rho_app = errs.env_error_all(rhos[i], 0, self.a1,
-                                         times[i])
+                                         np.abs(times[i] - time_max))
             rho = qt.tensor(rho, rho_app)
 
         return 1, check, rho

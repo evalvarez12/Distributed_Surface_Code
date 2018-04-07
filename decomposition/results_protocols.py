@@ -27,9 +27,9 @@ import noise_modeling
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 8
+a0 = 4
 a1 = 1/30.
-eta = 1/100
+eta = 1/100.
 theta = .63
 
 # Threshold over eta
@@ -55,7 +55,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz4_ref
+rho_ref = ghz3_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -70,9 +70,6 @@ choi = model._choi_state_ket(stab_size)
 choi = choi * choi.dag()
 targets = list(range(stab_size))
 
-# Lists to save results
-
-
 
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
 # for a0 in [40., 30., 20., 10., 5., 2.]:
@@ -85,7 +82,7 @@ for s in [0]:
     TIMES = []
     print("------> Var=", a0)
     print("EPL")
-    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
