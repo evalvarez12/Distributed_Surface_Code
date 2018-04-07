@@ -24,11 +24,11 @@ import noise_modeling
 
 # Improved parameters
 # Threshold over a0
-ps = 0.003
-pm = 0.003
-pg = 0.003
-a0 = 4
-a1 = 1/30.
+ps = 0.004
+pm = 0.004
+pg = 0.004
+a0 = 50.0
+a1 = 1/10.
 eta = 1/100.
 theta = .63
 
@@ -46,7 +46,7 @@ def env_error_rate(t, a):
     return 1 - p_env
 
 # Number of iterations for a average
-iterations = 20
+iterations = 1000
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -55,7 +55,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz3_ref
+rho_ref = ghz4_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -74,22 +74,21 @@ targets = list(range(stab_size))
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
 # for a0 in [40., 30., 20., 10., 5., 2.]:
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
-for s in [0]:
-# for a0 in [3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]:
+# for s in [0]:
+for a0 in [30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]:
 # for a0 in [3.0]:
 # for eta in [0.01, 0.009, 0.008, 0.007, 0.006, 0.005, 0.0040, 0.0030]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", a0)
     print("EPL")
-    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
     rho = rho_ref*0
     # check = collections.Counter({})
     for i in range(iterations):
-        print(i)
         r, c = ghz.run()
         times += [c["time"]]
 
@@ -148,23 +147,23 @@ for s in [0]:
     ############################################
 
     ##################### SAVE DATA ############
-    # name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 3, protocol_name)
-    # print(name)
-    # qt.qsave(rho, name)
+    name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, protocol_name)
+    print(name)
+    qt.qsave(rho, name)
     #
     # np.save("FIDELITY_EPL" + str(a0) + ".npy", fidelity)
     # np.save("TIME_EPL" + str(a0) + ".npy", times)
     ############################################
 
-plt.plot(times[indices_sorted], fidelity[indices_sorted], "k.")
-if ignore_number != 0:
-    vline = np.linspace(min(fidelity), max(fidelity))
-    o = np.ones_like(vline)*(t_max)
-    plt.plot(o, vline, 'r--')
-
-plt.ylabel(r"Fidelity", fontsize=17)
-plt.xlabel(r"Time (seg)", fontsize=17)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-
-plt.show()
+# plt.plot(times[indices_sorted], fidelity[indices_sorted], "k.")
+# if ignore_number != 0:
+#     vline = np.linspace(min(fidelity), max(fidelity))
+#     o = np.ones_like(vline)*(t_max)
+#     plt.plot(o, vline, 'r--')
+#
+# plt.ylabel(r"Fidelity", fontsize=17)
+# plt.xlabel(r"Time (seg)", fontsize=17)
+# plt.xticks(fontsize=14)
+# plt.yticks(fontsize=14)
+#
+# plt.show()
