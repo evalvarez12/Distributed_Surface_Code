@@ -119,8 +119,10 @@ class Stabilizer:
         N_ancillas : (int) number of ancillas to be measured
         projections : (list) list with the projections in which every ancilla collapses
         """
-        # The secuencial probabilities of finding the forced state
-        probabilities = []
+        # Apply the noise due to the required Hadamard
+        for pos in range(N - N_ancillas, N):
+            rho = errs.single_qubit_gate_noise(rho, self.ps, N, pos)
+
         for i in range(N_ancillas):
             rho = self.measure_single_forced(rho, N - i, N - i - 1,
                                              projections[i], "X")

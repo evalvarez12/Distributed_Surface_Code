@@ -12,12 +12,11 @@ import noise_modeling
 import pickle
 import tools.names as names
 # Improved parameters
-# Threshold over a0
-ps = 0.004
-pm = 0.004
-pg = 0.004
-a0 = 50.0
-a1 = 1/10.
+ps = 0.003
+pm = 0.003
+pg = 0.003
+a0 = 100.0
+a1 = 1/30.
 eta = 1/100.
 theta = .63
 
@@ -29,8 +28,8 @@ protocol = "thres_a0"
 
 
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
-# for a0 in [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0]:
-for n in [0]:
+for a0 in [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]:
+# for n in [0]:
     for parity in ["X", "Z"]:
         # Initialize objects
         model = noise_modeling.NoiseModel(stab_size, parity)

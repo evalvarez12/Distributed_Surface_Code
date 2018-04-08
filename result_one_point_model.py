@@ -60,16 +60,16 @@ t = float(args["time"])
 
 # Improved parameters
 # Threshold over a0
-ps = 0.004
-pm = 0.004
-pg = 0.004
-a0 = 50.0
-a1 = 1/10.
+ps = 0.003
+pm = 0.003
+pg = 0.003
+a0 = 100.0
+a1 = 1/30.
 eta = 1/100.
 theta = .63
 
 protocol = "thres_a0"
-t =  0.0733808
+t = 0.1113244
 
 
 # Initialize fail rate

@@ -24,11 +24,11 @@ import noise_modeling
 
 # Improved parameters
 # Threshold over a0
-ps = 0.004
-pm = 0.004
-pg = 0.004
-a0 = 50.0
-a1 = 1/10.
+ps = 0.003
+pm = 0.003
+pg = 0.003
+a0 = 10.0
+a1 = 1/30.
 eta = 1/100.
 theta = .63
 
@@ -46,7 +46,7 @@ def env_error_rate(t, a):
     return 1 - p_env
 
 # Number of iterations for a average
-iterations = 1000
+iterations = 10
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -75,14 +75,14 @@ targets = list(range(stab_size))
 # for a0 in [40., 30., 20., 10., 5., 2.]:
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
 # for s in [0]:
-for a0 in [30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]:
+for a0 in [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]:
 # for a0 in [3.0]:
 # for eta in [0.01, 0.009, 0.008, 0.007, 0.006, 0.005, 0.0040, 0.0030]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", a0)
     print("EPL")
-    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz4_single(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -149,10 +149,10 @@ for a0 in [30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]:
     ##################### SAVE DATA ############
     name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, protocol_name)
     print(name)
-    qt.qsave(rho, name)
-    #
+    # qt.qsave(rho, name)
+
     # np.save("FIDELITY_EPL" + str(a0) + ".npy", fidelity)
-    # np.save("TIME_EPL" + str(a0) + ".npy", times)
+    # np.save("TIME_EPL2" + str(a0) + ".npy", TIMES)
     ############################################
 
 # plt.plot(times[indices_sorted], fidelity[indices_sorted], "k.")
