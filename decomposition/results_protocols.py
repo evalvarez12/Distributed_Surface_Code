@@ -46,7 +46,7 @@ def env_error_rate(t, a):
     return 1 - p_env
 
 # Number of iterations for a average
-iterations = 5
+iterations = 30
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -55,7 +55,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz4_ref
+rho_ref = ghz3_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -82,7 +82,7 @@ for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.
     TIMES = []
     print("------> Var=", a0)
     print("EPL")
-    ghz = protocols.ghz4_epl_parallel(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
