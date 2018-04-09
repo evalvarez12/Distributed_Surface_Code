@@ -15,7 +15,7 @@ import tools.names as names
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 100.0
+a0 = 2000.0
 a1 = 1/30.
 eta = 1/100.
 theta = .63
@@ -23,13 +23,13 @@ theta = .63
 # GHZ info
 ghz_size = 4
 stab_size = 4
-protocol = "thres_a0"
+protocol = "thres_a0_parallel"
 
 
 
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
-for a0 in [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]:
-# for n in [0]:
+# for a0 in [200.0, 220.0, 240.0, 260.0, 280.0, 300.0, 320.0, 340.0, 360.0, 380.0]:
+for nothing in [0]:
     for parity in ["X", "Z"]:
         # Initialize objects
         model = noise_modeling.NoiseModel(stab_size, parity)

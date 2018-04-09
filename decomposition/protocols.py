@@ -359,6 +359,50 @@ def ghz4_single(ps, pm, pg, eta, a0, a1, theta):
     return ghz
 
 
+def ghz4_single_parallel(ps, pm, pg, eta, a0, a1, theta):
+    """
+    GHZ state of weigth 4 created using using the single selection
+    protocol (see documentation).
+
+    Parameters
+    ----------
+    ps : (scalar) single qubit gate error rate.
+    pm : (scalar) measurement error rate.
+    pg : (scalar) two qubit gate error rate.
+    eta : (scalar) detection efficiency.
+    a0 : (scalar) extra environmental error when electron spin is being operated.
+    a1 : (scalar) default environmental error.
+    theta : (scalar) determines how the states are initialized when generating remote
+            entanglement.
+    """
+    # Circuits are assemebled in reversed order
+    cb = circuit_block.Blocks(ps, pm, pg, eta, a0, a1, theta)
+    pair = pair_single_sel(ps, pm, pg, eta, a0, a1, theta)
+
+    # Phase 3 - Create GHZ
+    # Perform the measurements
+    ghz = circuit.Circuit(a0=a0, a1=a1,
+                          circuit_block=cb.collapse_ancillas_GHZ,
+                          ghz_size=4,
+                          measure_pos=[4, 5, 6, 7])
+    # Apply two qubit gates in the nodes
+    ghz.add_circuit(circuit_block=cb.two_qubit_gates, controls=[1, 3, 0, 2],
+                    targets=[4, 5, 6, 7], sigma="X")
+
+    # Phase 2 Create last two pairs
+    swaped_pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
+                                  pair=[0, 1])
+    swaped_pair.add_circuit(circuit_block=pair.run_as_block)
+    wrap_pair_parallel = circuit.Circuit(a0=a0, a1=a1,
+                                         circuit_block=swaped_pair.run_parallel)
+    ghz.add_circuit(circuit_block=wrap_pair_parallel.append_circuit)
+
+    # Phase 1 Create initial two pairs
+    ghz.add_circuit(circuit_block=pair.run_parallel)
+
+    return ghz
+
+
 def ghz4_single_simple(ps, pm, pg, eta, a0, a1, theta):
     """
     GHZ state of weigth 4 created using 3 pairs
