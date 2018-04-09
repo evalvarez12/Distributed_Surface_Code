@@ -132,7 +132,7 @@ def ghz4_epl(ps, pm, pg, eta, a0, a1, theta):
                            pair=[0, 1])
     pair.add_circuit(circuit_block=cb.start_epl)
     wrap_EPL_parallel = circuit.Circuit(a0=a0, a1=a1,
-                                        circuit_block=pair.run_parallel2)
+                                        circuit_block=pair.run_parallel)
 
     ghz.add_circuit(circuit_block=wrap_EPL_parallel.append_circuit)
 
@@ -176,7 +176,7 @@ def ghz4_epl_parallel(ps, pm, pg, eta, a0, a1, theta):
     pair = circuit.Circuit(a0=a0, a1=a1, circuit_block=cb.swap_pair,
                            pair=[0, 1])
     pair.add_circuit(circuit_block=cb.start_epl)
-    
+
     ghz.add_circuit(circuit_block=pair.run_parallel, parallel=4)
     return ghz
 
