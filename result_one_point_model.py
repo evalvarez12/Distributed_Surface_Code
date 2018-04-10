@@ -64,13 +64,13 @@ t = float(args["time"])
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 90.0
+a0 = 6000.0
 a1 = 1/30.
 eta = 1/100.
 theta = .63
 
-protocol = "thres_a0"
-t = 0.11593492000000001
+protocol = "thres_a0_parallel"
+t = 0.084483
 
 
 

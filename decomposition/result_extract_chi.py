@@ -23,12 +23,12 @@ theta = .63
 # GHZ info
 ghz_size = 4
 stab_size = 4
-protocol = "thres_a0"
+protocol = "thres_a0_parallel"
 
 
 
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
-for a0 in [110.0, 120.0, 130.0, 140.0, 150.0]:
+for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]:
 # for nothing in [0]:
     for parity in ["X", "Z"]:
         # Initialize objects
