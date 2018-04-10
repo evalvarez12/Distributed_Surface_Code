@@ -364,13 +364,13 @@ class SurfaceCode:
         """
         # Star measurements
         self.environmental_noise(self.p_env)
-        stars = self._incomplete_measuerement(self.stars)
-        self.noisy_measurement_specific(stars, 0, "star")
+        stars1 = self._incomplete_measuerement(self.stars)
+        self.noisy_measurement_specific(stars1, 0, "star")
 
         # Plaq measurements
         self.environmental_noise(self.p_env)
-        plaqs = self._incomplete_measuerement(self.plaqs)
-        self.noisy_measurement_specific(plaqs, 1, "plaq")
+        plaqs1 = self._incomplete_measuerement(self.plaqs)
+        self.noisy_measurement_specific(plaqs1, 1, "plaq")
 
     def measurement_protocol_single_rounds(self):
         """
