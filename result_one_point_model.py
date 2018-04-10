@@ -63,10 +63,10 @@ measurement = args["measurement"]
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 6000.0
+a1 = 1/30.
 theta = .63
 
-# a1 = 1/30.
+# a0 = 6000.0
 # eta = 1/100.
 #
 # protocol = "thres_a0_parallel"
@@ -128,9 +128,9 @@ if comm.rank == 0:
         # print("size: ", size)
         # print("id: ", rank)
 
-        args_str = get_file_name(args)
-        script_path = dirname(realpath(__file__))
-        file_name = (script_path + "/results/" + args_str)
+        # args_str = get_file_name(args)
+        # script_path = dirname(realpath(__file__))
+        # file_name = (script_path + "/results/" + args_str)
         print size, protocol, a0, "rate :", round(total[0], 7)
         # print "rate :", round(total[0], 7)*cycles
         # np.save(file_name, total)
