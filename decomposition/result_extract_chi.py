@@ -17,19 +17,19 @@ pm = 0.003
 pg = 0.003
 a0 = 30.0
 a1 = 1/30.
-eta = 0.0030
+eta = 1/100.
 theta = .63
 
 # GHZ info
 ghz_size = 4
 stab_size = 4
-protocol = "thres_a0_parallel"
+protocol = "thres_a0"
 
 
 
 # for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
-# for a0 in [200.0, 220.0, 240.0, 260.0, 280.0, 300.0, 320.0, 340.0, 360.0, 380.0]:
-for nothing in [0]:
+for a0 in [110.0, 120.0, 130.0, 140.0, 150.0]:
+# for nothing in [0]:
     for parity in ["X", "Z"]:
         # Initialize objects
         model = noise_modeling.NoiseModel(stab_size, parity)

@@ -16,6 +16,7 @@ import surface_code
 import layers
 import matching
 
+np.random.seed(4567890)
 
 def lambda_env(t, a0, a1):
     a = (a0 + a1)*t
@@ -63,13 +64,13 @@ t = float(args["time"])
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 30.0
+a0 = 90.0
 a1 = 1/30.
-eta = 0.0030
+eta = 1/100.
 theta = .63
 
-protocol = "thres_eta_parallel"
-t = 0.1835328
+protocol = "thres_a0"
+t = 0.11593492000000001
 
 
 
@@ -84,7 +85,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(t, a1, "single")
+sc.select_measurement_protocol(t, a1, "single_rounds")
 
 
 # Perform measurements
