@@ -15,9 +15,9 @@ import tools.names as names
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 2000.0
+a0 = 30.0
 a1 = 1/30.
-eta = 1/100.
+eta = 0.0030
 theta = .63
 
 # GHZ info
