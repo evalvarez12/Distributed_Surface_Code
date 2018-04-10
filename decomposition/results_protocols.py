@@ -27,7 +27,7 @@ import noise_modeling
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 2000.0
+a0 = 30.0
 a1 = 1/30.
 eta = 1/100.
 theta = .63
@@ -46,7 +46,7 @@ def env_error_rate(t, a):
     return 1 - p_env
 
 # Number of iterations for a average
-iterations = 30
+iterations = 1000
 ignore_number = int(iterations/100)
 
 # Initialize objects and define references
@@ -55,7 +55,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz3_ref
+rho_ref = ghz4_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -75,14 +75,14 @@ targets = list(range(stab_size))
 # for a0 in [40., 30., 20., 10., 5., 2.]:
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
 # for s in [0]:
-for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]:
+for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]:
 # for a0 in [3.0]:
-# for eta in [0.01, 0.009, 0.008, 0.007, 0.006, 0.005, 0.0040, 0.0030]:
+# for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", a0)
-    print("EPL")
-    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
+    print("EPL PARALLEL")
+    ghz = protocols.ghz4_epl_parallel(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -93,7 +93,7 @@ for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.
         times += [c["time"]]
 
         r = stab.twirl_ghz(r)
-        fidelity += [qt.fidelity(r, rho_ref)]
+        fidelity += [qt.fidelity(r, rho_ref)**2]
 
         rhos += [r]
     times = np.array(times)
@@ -120,7 +120,7 @@ for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.
 
     rho = rho/iterations
 
-    print("F: ", favg, fstd, "-", qt.fidelity(rho, rho_ref))
+    print("F: ", favg, fstd, "-", qt.fidelity(rho, rho_ref)**2)
     print("T: ", tavg, tstd)
     print("TIME_MAX:", t_max)
 
@@ -151,7 +151,7 @@ for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.
     ############################################
 
     ##################### SAVE DATA ############
-    name = names.ghz(ps, pm, pg, eta, a0, a1, theta, 4, protocol_name)
+    name = names.ghz(ps, pm, pg, eta, a0, a1, theta, len(rho.dims[0]), protocol_name)
     print(name)
     qt.qsave(rho, name)
 
