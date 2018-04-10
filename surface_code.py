@@ -99,6 +99,9 @@ class SurfaceCode:
             self.plane[:, -1] = "r"
             self.plane[self.tags == "Q"] = "-"
 
+        # Set probability of missing a stabilizer
+        self.p_not_complete = 0
+
         # Color map stuff for plot
         # self.cmap = colors.ListedColormap(['red', 'orange', 'white', 'green'])
         # bounds = [-2.5, -1.5, 0, 1.5, 2.5]
@@ -152,9 +155,9 @@ class SurfaceCode:
             pos = self.plaqs
             c = 1
 
-        self._measure_stabilizer(pos, c, p_not_complete)
+        self._measure_stabilizer(pos, c)
 
-    def _measure_stabilizer(self, pos, c, p_not_complete=0):
+    def _measure_stabilizer(self, pos, c):
         """
         Measure stabilizers on the given position.
 
@@ -169,8 +172,6 @@ class SurfaceCode:
             Probaility to not complete stabilizer measurement.
         """
 
-        if p_not_complete != 0:
-            pos = self._incomplete_measuerement(pos, p_not_complete)
         if self.surface == "toric":
             self._measure_stabilizer_bulk(pos, c)
         elif self.surface == "planar":
@@ -248,10 +249,10 @@ class SurfaceCode:
         stab_qubits = np.stack((a, b, c), 0)
         return stab_qubits
 
-    def _incomplete_measuerement(self, pos, p_not_complete):
+    def _incomplete_measuerement(self, pos):
         """Find stabilizers that are able to do a complete measurement."""
         # Calculate stabilizers that dont complete the measurement
-        incomplete = (np.random.rand(len(pos)) < p_not_complete)
+        incomplete = (np.random.rand(len(pos)) < self.p_not_complete)
         # Remove them from the positions list
         new_pos = np.delete(pos, np.where(incomplete), 1)
         return new_pos
@@ -291,9 +292,9 @@ class SurfaceCode:
     def _env_error_rate(self, t, a):
         # Function to calculate the error to the enviroment for step of stabilizers
         # measurements
-        x = a * t
-        p_env = (1 + np.exp(-x))/2.
-        return 1 - p_env
+        p_env = (1 - np.exp(-a * t))/4.
+
+        return p_env
 
     def select_measurement_protocol(self, t, a, protocol):
         """
@@ -308,10 +309,24 @@ class SurfaceCode:
         """
         # Set memory error rate
         self.p_env = self._env_error_rate(t, a)
+
         # Select protocol function
         if protocol == "single":
+            # Set protocol
             self.stab_protocol = self.measurement_protocol_single
 
+            # Probaility of missing a stabilizer
+            self.p_not_complete = 0.01
+
+            # Errors reduced flag for additional error objects
+            self.errors_reduced = True
+
+        elif protocol == "single_rounds":
+            # Set protocol
+            self.stab_protocol = self.measurement_protocol_single_rounds
+
+            # Probaility of missing a stabilizer
+            self.p_not_complete = 0.01
             # Generate insterspersed stabilizer positions
             # NOTE this only works for even d
             if self.surface == "toric" and self.distance % 2 == 1:
@@ -322,27 +337,76 @@ class SurfaceCode:
             self.plaqs_round1 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x % 4) - 1, self.side, 4)]).transpose()
             self.plaqs_round2 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x + 2) % 4 - 1, self.side, 4)]).transpose()
 
+            # Errors reduced flag for additional error objects
+            self.errors_reduced = False
+
+        elif protocol == "hybrid":
+            # Set protocol
+            self.stab_protocol = self.measurement_protocol_hybrid
+
+            # Probaility of missing a stabilizer
+            self.p_not_complete = 0.01
+            # Generate insterspersed stabilizer positions
+            # NOTE this only works for d multiple of 3
+            if self.surface == "toric" and self.distance % 3 != 0:
+                raise ValueError("Single protocol only works for even distance")
+
         elif protocol == "local":
             self.stab_protocol = self.measurement_protocol_local
 
+            # Errors reduced flag for additional error objects
+            self.errors_reduced = True
+
     def measurement_protocol_single(self):
         """
-        Noisy stabilizer measuement cylce following the insterspersed
-        protocol for a distributed surface code.
+        Noisy stabilizer measuement cylce following with maximum parallelization
+        for a distributed surface code.
         """
         # Star measurements
         self.environmental_noise(self.p_env)
-        self.noisy_measurement_specific(self.stars_round1, 0, "star")
-        self.environmental_noise(self.p_env)
-        self.noisy_measurement_specific(self.stars_round2, 0, "star",
-                                        reverse=True)
+        stars1 = self._incomplete_measuerement(self.stars)
+        self.noisy_measurement_specific(stars1, 0, "star")
 
         # Plaq measurements
         self.environmental_noise(self.p_env)
-        self.noisy_measurement_specific(self.plaqs_round1, 1, "plaq")
+        plaqs1 = self._incomplete_measuerement(self.plaqs)
+        self.noisy_measurement_specific(plaqs1, 1, "plaq")
+
+    def measurement_protocol_single_rounds(self):
+        """
+        Noisy stabilizer measuement cylce following the insterspersed stabilizer
+        rounds protocol for a distributed surface code.
+        """
+        # Star measurements
         self.environmental_noise(self.p_env)
-        self.noisy_measurement_specific(self.plaqs_round2, 1, "plaq",
-                                        reverse=True)
+        stars1 = self._incomplete_measuerement(self.stars_round1)
+        self.noisy_measurement_specific(stars1, 0, "star")
+        self.environmental_noise(self.p_env)
+        stars2 = self._incomplete_measuerement(self.stars_round2)
+        self.noisy_measurement_specific(stars2, 0, "star")
+
+        # Plaq measurements
+        self.environmental_noise(self.p_env)
+        plaqs1 = self._incomplete_measuerement(self.plaqs_round1)
+        self.noisy_measurement_specific(plaqs1, 1, "plaq")
+        self.environmental_noise(self.p_env)
+        plaqs2 = self._incomplete_measuerement(self.plaqs_round2)
+        self.noisy_measurement_specific(plaqs2, 1, "plaq")
+
+    def measurement_protocol_hybrid(self):
+        """
+        Noisy stabilizer measuement cylce following with maximum parallelization
+        for a distributed surface code with the hybrid scheme.
+        """
+        # Star measurements
+        self.environmental_noise(self.p_env)
+        stars1 = self._incomplete_measuerement(self.stars_round1)
+        self.noisy_measurement_specific(stars1, 0, "star")
+
+        # Plaq measurements
+        self.environmental_noise(self.p_env)
+        plaqs1 = self._incomplete_measuerement(self.plaqs_round1)
+        self.noisy_measurement_specific(plaqs1, 1, "plaq")
 
     def measurement_protocol_local(self):
         """Noisy stabilizer measurement cycle for the monolithic arquitecture."""

@@ -12,6 +12,11 @@ import protocols
 import tools.names as names
 import matplotlib.pyplot as plt
 import noise_modeling
+
+# Set random seed
+np.random.seed(4567890)
+
+
 # Determine parameters
 # NOTE: Realistic paramters
 # ps = 0.006
@@ -36,7 +41,7 @@ theta = .63
 # a0 = 1/2.
 # eta = 1/200
 # Protocol name to save state
-protocol_name = "thres_a0_parallel"
+protocol_name = "thres_a0"
 
 def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers
@@ -75,14 +80,14 @@ targets = list(range(stab_size))
 # for a0 in [40., 30., 20., 10., 5., 2.]:
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
 # for s in [0]:
-for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]:
+for a0 in [110.0, 120.0, 130.0, 140.0, 150.0]:
 # for a0 in [3.0]:
 # for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", a0)
-    print("EPL PARALLEL")
-    ghz = protocols.ghz4_epl_parallel(ps, pm, pg, eta, a0, a1, theta)
+    print("EPL")
+    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -156,7 +161,7 @@ for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.
     qt.qsave(rho, name)
 
     # np.save("FIDELITY_EPL" + str(a0) + ".npy", fidelity)
-    np.save("TIME_EPL_PARALLEL" + str(a0) + ".npy", TIMES)
+    np.save("TIME_EPL" + str(a0) + ".npy", TIMES)
     ############################################
 
 # plt.plot(times[indices_sorted], fidelity[indices_sorted], "k.")

@@ -3,7 +3,7 @@ Simple simulation to test the surface code simulation is working
 without looking at plots.
 
 Run this code using mpi4py:
-mpiexec python result_one_point_model.py topology=toric distance=10 iterations=50 cycles=10 protocol=GHZ a0=0 a1=0 eta=0 time=0
+mpiexec python result_one_point_model.py topology=toric distance=10 iterations=1000 cycles=10 protocol=GHZ a0=0 a1=0 eta=0 time=0 measurement=nada
 
 created-on: 09/12/17
 @author: eduardo
@@ -16,6 +16,7 @@ import surface_code
 import layers
 import matching
 
+np.random.seed(4567890)
 
 def lambda_env(t, a0, a1):
     a = (a0 + a1)*t
@@ -52,25 +53,25 @@ distance = int(args["distance"])
 topology = args["topology"]
 iterations = int(args["iterations"])
 a0 = float(args["a0"])
-a1 = float(args["a1"])
 cycles = int(args["cycles"])
 eta = float(args["eta"])
 protocol = args["protocol"]
 t = float(args["time"])
-
+measurement = args["measurement"]
 # Improved parameters
 # Threshold over a0
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 30.0
 a1 = 1/30.
-eta = 0.0030
 theta = .63
 
-protocol = "thres_eta_parallel"
-t = 0.1835328
-
+# a0 = 6000.0
+# eta = 1/100.
+#
+# protocol = "thres_a0_parallel"
+# measurement = "single_rounds"
+# t = 0.084483
 
 
 
@@ -84,7 +85,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(t, a1, "single")
+sc.select_measurement_protocol(t, a1, measurement)
 
 
 # Perform measurements
@@ -127,9 +128,9 @@ if comm.rank == 0:
         # print("size: ", size)
         # print("id: ", rank)
 
-        args_str = get_file_name(args)
-        script_path = dirname(realpath(__file__))
-        file_name = (script_path + "/results/" + args_str)
-        print size, "rate :", round(total[0], 7)
-        print "rate :", round(total[0], 7)*cycles
+        # args_str = get_file_name(args)
+        # script_path = dirname(realpath(__file__))
+        # file_name = (script_path + "/results/" + args_str)
+        print size, protocol, a0, "rate :", round(total[0], 7)
+        # print "rate :", round(total[0], 7)*cycles
         # np.save(file_name, total)
