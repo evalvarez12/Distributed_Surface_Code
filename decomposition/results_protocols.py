@@ -41,7 +41,7 @@ theta = .63
 # a0 = 1/2.
 # eta = 1/200
 # Protocol name to save state
-protocol_name = "thres_eta"
+protocol_name = "thres_eta_parallel"
 
 def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers
@@ -60,7 +60,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz4_ref
+rho_ref = ghz3_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -87,7 +87,7 @@ for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.00
     TIMES = []
     print("------> Var=", eta)
     print("EPL")
-    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -161,7 +161,7 @@ for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.00
     qt.qsave(rho, name)
 
     # np.save("FIDELITY_EPL" + str(a0) + ".npy", fidelity)
-    np.save("TIME_EPL_eta_" + str(a0) + ".npy", TIMES)
+    np.save("TIME_EPL_eta_3_" + str(eta) + ".npy", TIMES)
     ############################################
 
 # plt.plot(times[indices_sorted], fidelity[indices_sorted], "k.")
