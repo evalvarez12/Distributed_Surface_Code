@@ -23,12 +23,12 @@ theta = .63
 # GHZ info
 ghz_size = 4
 stab_size = 4
-protocol = "thres_a0_parallel"
+protocol = "thres_eta"
 
 
 
-# for eta in [1/30., 1/40., 1/50., 1/60., 1/70., 1/80.]:
-for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]:
+for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
+# for a0 in [6000.0, 6500.0, 7000.0, 7500.0, 8000.0, 8500.0, 9000.0, 9500.0, 10000.0, 10500.0, 11000.0, 11500.0, 12000.0, 12500.0, 13000.0]:
 # for nothing in [0]:
     for parity in ["X", "Z"]:
         # Initialize objects
@@ -46,6 +46,8 @@ for a0 in [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.
         ghz_file = names.ghz(ps, pm, pg, eta, a0, a1, theta,
                              ghz_size, protocol)
         ghz = qt.qload(ghz_file)
+        if len(ghz.dims[0]) == 3:
+            protocol += "_3on4"
 
         p_res, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
 
