@@ -41,7 +41,7 @@ theta = .63
 # a0 = 1/2.
 # eta = 1/200
 # Protocol name to save state
-protocol_name = "thres_a0"
+protocol_name = "thres_eta_parallel"
 
 def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers
@@ -60,7 +60,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz4_ref
+rho_ref = ghz3_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -80,14 +80,14 @@ targets = list(range(stab_size))
 # for a0 in [40., 30., 20., 10., 5., 2.]:
 # for extra in [-20, -15, -10, -5, 0, 5, 10, 15, 20]:
 # for s in [0]:
-for a0 in [110.0, 120.0, 130.0, 140.0, 150.0]:
+# for a0 in [110.0, 120.0, 130.0, 140.0, 150.0]:
 # for a0 in [3.0]:
-# for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
+for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
     FIDELITY = []
     TIMES = []
-    print("------> Var=", a0)
+    print("------> Var=", eta)
     print("EPL")
-    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -98,7 +98,7 @@ for a0 in [110.0, 120.0, 130.0, 140.0, 150.0]:
         times += [c["time"]]
 
         r = stab.twirl_ghz(r)
-        fidelity += [qt.fidelity(r, rho_ref)**2]
+        fidelity += [qt.fidelity(r, rho_ref)]
 
         rhos += [r]
     times = np.array(times)
@@ -125,7 +125,7 @@ for a0 in [110.0, 120.0, 130.0, 140.0, 150.0]:
 
     rho = rho/iterations
 
-    print("F: ", favg, fstd, "-", qt.fidelity(rho, rho_ref)**2)
+    print("F: ", favg, fstd, "-", qt.fidelity(rho, rho_ref))
     print("T: ", tavg, tstd)
     print("TIME_MAX:", t_max)
 
@@ -161,7 +161,7 @@ for a0 in [110.0, 120.0, 130.0, 140.0, 150.0]:
     qt.qsave(rho, name)
 
     # np.save("FIDELITY_EPL" + str(a0) + ".npy", fidelity)
-    np.save("TIME_EPL" + str(a0) + ".npy", TIMES)
+    np.save("TIME_EPL_eta_3_" + str(eta) + ".npy", TIMES)
     ############################################
 
 # plt.plot(times[indices_sorted], fidelity[indices_sorted], "k.")
