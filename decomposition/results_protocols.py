@@ -47,7 +47,7 @@ def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers
     # measurements
     x = a * t
-    p_env = (1 + np.exp(-x))/2.
+    p_env = (1 - np.exp(-x))/4.
     return 1 - p_env
 
 # Number of iterations for a average
@@ -82,7 +82,7 @@ targets = list(range(stab_size))
 # for s in [0]:
 # for a0 in [110.0, 120.0, 130.0, 140.0, 150.0]:
 # for a0 in [3.0]:
-for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
+for eta in [0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", eta)
