@@ -18,11 +18,6 @@ import matching
 
 np.random.seed(4567890)
 
-def lambda_env(t, a0, a1):
-    a = (a0 + a1)*t
-    lamb = (1 + np.exp(-a * t))/2.
-    return 1 - lamb
-
 def get_file_name(params):
     protocol = "protocol=" + params["protocol"]
     topology = "topology=" + params["topology"]
@@ -131,6 +126,6 @@ if comm.rank == 0:
         # args_str = get_file_name(args)
         # script_path = dirname(realpath(__file__))
         # file_name = (script_path + "/results/" + args_str)
-        print size, protocol, a0, "rate :", round(total[0], 7)
+        print size, protocol, a0, eta, ":", round(total[0], 7)
         # print "rate :", round(total[0], 7)*cycles
         # np.save(file_name, total)
