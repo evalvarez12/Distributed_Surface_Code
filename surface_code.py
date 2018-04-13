@@ -296,7 +296,7 @@ class SurfaceCode:
 
         return p_env
 
-    def select_measurement_protocol(self, t, a, protocol):
+    def select_measurement_protocol(self, t, a, protocol, p_not_complete=0.01):
         """
         Select measuement protocol depending on the number of data qubits
         per node.
@@ -307,8 +307,9 @@ class SurfaceCode:
         a : (list) [a0, a1] paramters for the environmental error
         protocol : (string) protocol in with stabilizer measurements are made
         """
-        # Set memory error rate
+        # Set memory error rate and posiblity of not complete
         self.p_env = self._env_error_rate(t, a)
+        self.p_not_complete = p_not_complete
 
         # Select protocol function
         if protocol == "single":
@@ -316,7 +317,6 @@ class SurfaceCode:
             self.stab_protocol = self.measurement_protocol_single
 
             # Probaility of missing a stabilizer
-            self.p_not_complete = 0.01
 
             # Errors reduced flag for additional error objects
             self.errors_reduced = True
