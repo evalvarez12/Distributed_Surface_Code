@@ -3,7 +3,7 @@ Simple simulation to test the surface code simulation is working
 without looking at plots.
 
 Run this code using mpi4py:
-mpiexec python result_one_point_local.py topology=toric distance=10 iterations=50 cycles=10 protocol=LOCAL_TEST p=0.006
+mpiexec python result_one_point_local.py topology=toric distance=10 iterations=50 cycles=10 protocol=LOCAL p=0.006
 
 created-on: 09/12/17
 @author: eduardo
@@ -51,7 +51,7 @@ iterations = int(args["iterations"])
 p = float(args["p"])
 cycles = int(args["cycles"])
 protocol = args["protocol"]
-
+p_not_complete = float(args["ignore"])
 # Initialize fail rate
 fail_rate = 0
 
@@ -66,7 +66,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(0, 0, "single")
+sc.select_measurement_protocol(.11, 1/30., "single", p_not_complete)
 
 # Perform measurements
 for i in range(iterations):
@@ -105,7 +105,7 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 if rank == 0:
         total = total/float(size)
         total = total/float(cycles)
-        print size, "p=", p, " : ", round(total[0], 7)
+        print size, distance, "p=", p, "incomplete=",p_not_complete, ":", round(total[0], 7)
 
         # print("size: ", size)
         # print("id: ", rank)

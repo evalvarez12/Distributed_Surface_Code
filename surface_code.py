@@ -252,7 +252,7 @@ class SurfaceCode:
     def _incomplete_measuerement(self, pos):
         """Find stabilizers that are able to do a complete measurement."""
         # Calculate stabilizers that dont complete the measurement
-        incomplete = (np.random.rand(len(pos)) < self.p_not_complete)
+        incomplete = (np.random.rand(len(pos[0])) < self.p_not_complete)
         # Remove them from the positions list
         new_pos = np.delete(pos, np.where(incomplete), 1)
         return new_pos
@@ -296,7 +296,7 @@ class SurfaceCode:
 
         return p_env
 
-    def select_measurement_protocol(self, t, a, protocol, p_not_complete=0.01):
+    def select_measurement_protocol(self, t, a, protocol, p_not_complete=0.0):
         """
         Select measuement protocol depending on the number of data qubits
         per node.
@@ -309,6 +309,7 @@ class SurfaceCode:
         """
         # Set memory error rate and posiblity of not complete
         self.p_env = self._env_error_rate(t, a)
+        # Probaility of missing a stabilizer
         self.p_not_complete = p_not_complete
 
         # Select protocol function
@@ -316,17 +317,10 @@ class SurfaceCode:
             # Set protocol
             self.stab_protocol = self.measurement_protocol_single
 
-            # Probaility of missing a stabilizer
-
-            # Errors reduced flag for additional error objects
-            self.errors_reduced = True
-
         elif protocol == "single_rounds":
             # Set protocol
             self.stab_protocol = self.measurement_protocol_single_rounds
 
-            # Probaility of missing a stabilizer
-            self.p_not_complete = 0.01
             # Generate insterspersed stabilizer positions
             # NOTE this only works for even d
             if self.surface == "toric" and self.distance % 2 == 1:
@@ -337,15 +331,10 @@ class SurfaceCode:
             self.plaqs_round1 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x % 4) - 1, self.side, 4)]).transpose()
             self.plaqs_round2 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x + 2) % 4 - 1, self.side, 4)]).transpose()
 
-            # Errors reduced flag for additional error objects
-            self.errors_reduced = False
-
         elif protocol == "hybrid":
             # Set protocol
             self.stab_protocol = self.measurement_protocol_hybrid
 
-            # Probaility of missing a stabilizer
-            self.p_not_complete = 0.01
             # Generate insterspersed stabilizer positions
             # NOTE this only works for d multiple of 3
             if self.surface == "toric" and self.distance % 3 != 0:
@@ -354,8 +343,6 @@ class SurfaceCode:
         elif protocol == "local":
             self.stab_protocol = self.measurement_protocol_local
 
-            # Errors reduced flag for additional error objects
-            self.errors_reduced = True
 
     def measurement_protocol_single(self):
         """
