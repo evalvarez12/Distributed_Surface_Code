@@ -41,3 +41,19 @@ def ghz(ps, pm, pg, eta, a0, a1, theta, size, protocol):
     file_name = (script_path + "/data/" + file_name
                  + "_" + param_names)
     return file_name
+
+def ghz_times(ps, pm, pg, eta, a0, a1, theta, size, protocol):
+    """Name generator for saved GHZ states."""
+    param_names = ["ps=" + str(round(ps, 4)), "pm=" + str(round(pm, 4)),
+                   "pg=" + str(round(pg, 4)), "eta=" + str(round(eta, 4)),
+                   "a0=" + str(round(a0, 4)), "a1=" + str(round(a1, 4)),
+                   "theta=" + str(round(theta, 4))]
+
+    param_names = "_".join(param_names)
+    file_name = ["TIMES", protocol, str(size)]
+    file_name = "_".join(file_name)
+    # The address of the parent parent directory
+    script_path = dirname(dirname(realpath(__file__)))
+    file_name = (script_path + "/data/" + file_name
+                 + "_" + param_names)
+    return file_name
