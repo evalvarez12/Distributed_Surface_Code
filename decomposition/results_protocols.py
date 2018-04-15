@@ -50,6 +50,7 @@ def env_error_rate(t, a):
     p_env = (1 - np.exp(-x))/4.
     return p_env
 
+
 # Number of iterations for a average
 iterations = 1000
 ignore_number = int(iterations/10)
