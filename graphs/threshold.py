@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
+from pyexcel_ods import get_data
 
 # PQ TEST toric topology
 # pq = [0.026, 0.0265, 0.027, 0.0275, 0.028, 0.0285, 0.029, 0.0295, 0.03, 0.0305,
@@ -60,15 +61,24 @@ from scipy.optimize import curve_fit
 # d12= [0.0121042, 0.0125833, 0.0152917, 0.0157708, 0.0172292, 0.0199792, 0.0237083, 0.0244167, 0.0297083, 0.0332917, 0.045875]
 # d14= [0.0108214, 0.0122143, 0.015125, 0.0156786, 0.0171964, 0.0204821, 0.0243393, 0.0251429, 0.0311429, 0.03575, 0.0473214]
 # d16= [0.0116406, 0.0127187, 0.0152031, 0.0164367, 0.0182187, 0.0210625, 0.025875, 0.0269219, 0.0327656, 0.0371094, 0.0457344]
-# Transform to arrays
-pq = np.array(pq)
-# d6 = np.array(d6)
-d8 = np.array(d8)
-d10 = np.array(d10)
-d12 = np.array(d12)
-d14 = np.array(d14)
-d16 = np.array(d16)
 
+
+data = get_data("topython.ods")
+data = np.array(data["Sheet1"]).transpose()
+# Transform to arrays
+pq = data[0]
+# d6 = np.array(d6)
+# d8 = data[1]*8
+# d10 = data[2]*10
+# d12 = data[3]*12
+# d14 = data[4]*14
+# d16 = data[5]*16
+
+d8 = data[1]
+d10 = data[2]
+d12 = data[3]
+d14 = data[4]
+d16 = data[5]
 
 # # plt.plot(pq, 1/d14, 'o-', label=r"$d=14$")
 # plt.plot(pq*100, 1/d8, 'o-', label=r"$d=8$")
@@ -90,32 +100,35 @@ pl = np.concatenate((d8, d10,  d12, d14, d16))
 pqs = np.concatenate((pq, pq, pq, pq, pq))
 ds = np.concatenate((o*8, o*10, o*12, o*14, o*16))
 
+
+# plt.plot(pq, 1-d6, 'ro', label=r"$d=6$")
+plt.plot(pq, d8, 'gv', label=r"$d=8$")
+plt.plot(pq, d10, 'b*', label=r"$d=10$")
+plt.plot(pq, d12, 'c>', label=r"$d=12$")
+plt.plot(pq, d14, 'yo', label=r"$d=14$")
+plt.plot(pq, d16, 'rs', label=r"$d=16$")
+
+
+# Curve fit
 vals, pconv = curve_fit(threshold, (pqs, ds), pl, (0.5, 0.5, 0.5, 0.1, .2))
 perr = np.sqrt(np.diag(pconv))
-# plt.plot(pq, 1-d6, 'ro', label=r"$d=6$")
-plt.plot(pq, 1-d8, 'gv', label=r"$d=8$")
-plt.plot(pq, 1-d10, 'b*', label=r"$d=10$")
-plt.plot(pq, 1-d12, 'c>', label=r"$d=12$")
-plt.plot(pq, 1-d14, 'yo', label=r"$d=14$")
-plt.plot(pq, 1-d16, 'rs', label=r"$d=16$")
-
 # # plt.plot(pq, 1- threshold((pq, 6), vals[0], vals[1], vals[2], vals[3], vals[4]))
-# plt.plot(pq, 1- threshold((pq, 8), vals[0], vals[1], vals[2], vals[3], vals[4]), 'g--')
-# plt.plot(pq, 1- threshold((pq, 10), vals[0], vals[1], vals[2], vals[3], vals[4]), 'b--')
-# plt.plot(pq, 1- threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]), 'c--')
-# plt.plot(pq, 1-threshold((pq, 14), vals[0], vals[1], vals[2], vals[3], vals[4]), 'y--')
-# plt.plot(pq, 1-threshold((pq, 16), vals[0], vals[1], vals[2], vals[3], vals[4]), 'r--')
+plt.plot(pq, threshold((pq, 8), vals[0], vals[1], vals[2], vals[3], vals[4]), 'g--')
+plt.plot(pq, threshold((pq, 10), vals[0], vals[1], vals[2], vals[3], vals[4]), 'b--')
+plt.plot(pq, threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]), 'c--')
+plt.plot(pq, threshold((pq, 14), vals[0], vals[1], vals[2], vals[3], vals[4]), 'y--')
+plt.plot(pq, threshold((pq, 16), vals[0], vals[1], vals[2], vals[3], vals[4]), 'r--')
 
 
 
 
 # plt.ylim([0.4, 1])
 # plt.title("EXPEDIENT")
-plt.ylabel(r"Success rate", fontsize=17)
+plt.ylabel(r"Logical error rate", fontsize=17)
 plt.xlabel(r"Error rate", fontsize=17)
 plt.xticks(fontsize=15)
 plt.yticks(fontsize=15)
 plt.legend(fontsize=17)
 plt.tight_layout()
-plt.savefig('threshold_a0.pdf', format='pdf', dpi=300)
+# plt.savefig('threshold_a0.pdf', format='pdf', dpi=300)
 plt.show()
