@@ -66,7 +66,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(1, 1/100., "single", p_not_complete)
+sc.select_measurement_protocol(0., 0., "local", 0.)
 
 # Perform measurements
 for i in range(iterations):
@@ -104,13 +104,12 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if rank == 0:
         total = total/float(size)
-        total = total/float(cycles)
         print size, distance, "p=", p, "incomplete=",p_not_complete, ":", round(total[0], 7)
 
         # print("size: ", size)
         # print("id: ", rank)
-        args_str = get_file_name(args)
-        script_path = dirname(realpath(__file__))
-        file_name = (script_path + "/results/" + args_str)
+        # args_str = get_file_name(args)
+        # script_path = dirname(realpath(__file__))
+        # file_name = (script_path + "/results/" + args_str)
         # np.save(file_name, total)
         # print("TOTAL FAIL RATE: ", total)

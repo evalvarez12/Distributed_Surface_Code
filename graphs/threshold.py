@@ -63,8 +63,8 @@ from pyexcel_ods import get_data
 # d16= [0.0116406, 0.0127187, 0.0152031, 0.0164367, 0.0182187, 0.0210625, 0.025875, 0.0269219, 0.0327656, 0.0371094, 0.0457344]
 
 
-data = get_data("topython.ods")
-data = np.array(data["Sheet1"]).transpose()
+data = get_data("data.ods")
+data = np.array(data["Sheet3"]).transpose()
 # Transform to arrays
 pq = data[0]
 # d6 = np.array(d6)
