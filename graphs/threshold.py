@@ -68,17 +68,17 @@ data = np.array(data["Sheet1"]).transpose()
 # Transform to arrays
 pq = data[0]
 # d6 = np.array(d6)
-# d8 = data[1]*8
-# d10 = data[2]*10
-# d12 = data[3]*12
-# d14 = data[4]*14
-# d16 = data[5]*16
+d8 = data[1]*8
+d10 = data[2]*10
+d12 = data[3]*12
+d14 = data[4]*14
+d16 = data[5]*16
 
-d8 = data[1]
-d10 = data[2]
-d12 = data[3]
-d14 = data[4]
-d16 = data[5]
+# d8 = data[1]
+# d10 = data[2]
+# d12 = data[3]
+# d14 = data[4]
+# d16 = data[5]
 
 # # plt.plot(pq, 1/d14, 'o-', label=r"$d=14$")
 # plt.plot(pq*100, 1/d8, 'o-', label=r"$d=8$")
@@ -110,16 +110,16 @@ plt.plot(pq, d16, 'rs', label=r"$d=16$")
 
 
 # Curve fit
-vals, pconv = curve_fit(threshold, (pqs, ds), pl, (0.5, 0.5, 0.5, 0.1, .2))
-perr = np.sqrt(np.diag(pconv))
-# # plt.plot(pq, 1- threshold((pq, 6), vals[0], vals[1], vals[2], vals[3], vals[4]))
-plt.plot(pq, threshold((pq, 8), vals[0], vals[1], vals[2], vals[3], vals[4]), 'g--')
-plt.plot(pq, threshold((pq, 10), vals[0], vals[1], vals[2], vals[3], vals[4]), 'b--')
-plt.plot(pq, threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]), 'c--')
-plt.plot(pq, threshold((pq, 14), vals[0], vals[1], vals[2], vals[3], vals[4]), 'y--')
-plt.plot(pq, threshold((pq, 16), vals[0], vals[1], vals[2], vals[3], vals[4]), 'r--')
+# vals, pconv = curve_fit(threshold, (pqs, ds), pl, (0.5, 0.5, 0.5, 0.1, .2))
+# perr = np.sqrt(np.diag(pconv))
+# # # plt.plot(pq, 1- threshold((pq, 6), vals[0], vals[1], vals[2], vals[3], vals[4]))
+# plt.plot(pq, threshold((pq, 8), vals[0], vals[1], vals[2], vals[3], vals[4]), 'g--')
+# plt.plot(pq, threshold((pq, 10), vals[0], vals[1], vals[2], vals[3], vals[4]), 'b--')
+# plt.plot(pq, threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]), 'c--')
+# plt.plot(pq, threshold((pq, 14), vals[0], vals[1], vals[2], vals[3], vals[4]), 'y--')
+# plt.plot(pq, threshold((pq, 16), vals[0], vals[1], vals[2], vals[3], vals[4]), 'r--')
 
-
+#
 
 
 # plt.ylim([0.4, 1])
