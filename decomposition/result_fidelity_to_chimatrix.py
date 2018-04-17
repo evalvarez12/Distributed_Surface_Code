@@ -53,7 +53,7 @@ I_OK_full = []
 I_NOK_full = []
 E_full = []
 
-pgs = np.arange(0.0030, 0.0060, 0.0002)
+pgs = np.arange(0.0046, 0.0070, 0.0002)
 # pgs = [0.003, 0.006, 0.009, 0.012]
 # pgs = [0.0075]
 fs = np.linspace(.5, 1, 50)
