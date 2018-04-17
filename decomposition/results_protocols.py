@@ -86,7 +86,7 @@ for a0 in [6000.0, 6500.0, 7000.0]:
     TIMES = []
     print("------> Var=", a0)
     print("EPL")
-    ghz = protocols.ghz4_epl_parallel(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
