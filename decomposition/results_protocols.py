@@ -41,7 +41,7 @@ theta = .63
 # a0 = 1/2.
 # eta = 1/200
 # Protocol name to save state
-protocol_name = "thres_eta2"
+protocol_name = "thres_a0_parallel2"
 
 def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers
@@ -49,6 +49,7 @@ def env_error_rate(t, a):
     x = a * t
     p_env = (1 - np.exp(-x))/4.
     return p_env
+
 
 # Number of iterations for a average
 iterations = 1000
@@ -76,13 +77,14 @@ choi = choi * choi.dag()
 targets = list(range(stab_size))
 
 
+# Start from 6000.0
 # for s in [0]:
-# for a0 in [1000.0, 1500.0, 2000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0, 6500.0, 7000.0]:
+for a0 in [6000.0, 6500.0, 7000.0]:
 # for eta in [0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
-for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
+# for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
     FIDELITY = []
     TIMES = []
-    print("------> Var=", eta)
+    print("------> Var=", a0)
     print("EPL")
     ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps

@@ -251,6 +251,9 @@ class SurfaceCode:
 
     def _incomplete_measuerement(self, pos):
         """Find stabilizers that are able to do a complete measurement."""
+        if self.p_not_complete == 0:
+            return pos
+
         # Calculate stabilizers that dont complete the measurement
         incomplete = (np.random.rand(len(pos[0])) < self.p_not_complete)
         # Remove them from the positions list
@@ -281,13 +284,14 @@ class SurfaceCode:
         """
         Add environmental depolarizing noise. See decomposition/errors.py
         """
-        # Apply the X Z noise
-        self.apply_qubit_error(p/3., p/3.)
+        if  p != 0:
+            # Apply the X Z noise
+            self.apply_qubit_error(p/3., p/3.)
 
-        # Apply the Y noise
-        noise = 2*(np.random.rand(self.number_data_qubits) > p/3.) - 1
-        self.qubits[0, self.tags == "Q"] *= noise
-        self.qubits[1, self.tags == "Q"] *= noise
+            # Apply the Y noise
+            noise = 2*(np.random.rand(self.number_data_qubits) > p/3.) - 1
+            self.qubits[0, self.tags == "Q"] *= noise
+            self.qubits[1, self.tags == "Q"] *= noise
 
     def _env_error_rate(self, t, a):
         # Function to calculate the error to the enviroment for step of stabilizers
@@ -370,7 +374,7 @@ class SurfaceCode:
         self.noisy_measurement_specific(stars1, 0, "star")
         self.environmental_noise(self.p_env)
         stars2 = self._incomplete_measuerement(self.stars_round2)
-        self.noisy_measurement_specific(stars2, 0, "star")
+        self.noisy_measurement_specific(stars2, 0, "star", reverse=True)
 
         # Plaq measurements
         self.environmental_noise(self.p_env)
@@ -378,7 +382,7 @@ class SurfaceCode:
         self.noisy_measurement_specific(plaqs1, 1, "plaq")
         self.environmental_noise(self.p_env)
         plaqs2 = self._incomplete_measuerement(self.plaqs_round2)
-        self.noisy_measurement_specific(plaqs2, 1, "plaq")
+        self.noisy_measurement_specific(plaqs2, 1, "plaq", reverse=True)
 
     def measurement_protocol_hybrid(self):
         """
