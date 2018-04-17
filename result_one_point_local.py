@@ -38,6 +38,9 @@ size = comm.Get_size()
 pythonfile = sys.argv[0]
 args = dict(arg.split('=') for arg in sys.argv[1:])
 
+# Set random seed
+# np.random.seed(45678 + rank)
+
 # Parameters for noisy measurement
 eta = 0.0
 a0 = 0.0
@@ -92,6 +95,7 @@ for i in range(iterations):
 
 fail_rate = fail_rate/float(iterations)
 
+# print(rank, fail_rate)
 # Initializing variables. mpi4py requires that we pass numpy objects.
 f_rate = np.zeros(1)
 total = np.zeros(1)

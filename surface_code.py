@@ -251,6 +251,9 @@ class SurfaceCode:
 
     def _incomplete_measuerement(self, pos):
         """Find stabilizers that are able to do a complete measurement."""
+        if self.p_not_complete == 0:
+            return pos
+
         # Calculate stabilizers that dont complete the measurement
         incomplete = (np.random.rand(len(pos[0])) < self.p_not_complete)
         # Remove them from the positions list

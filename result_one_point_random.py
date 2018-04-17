@@ -23,7 +23,7 @@ def get_file_name_pq(params):
     iterations = "iterations=" + params["iterations"]
     cycles = "cycles=" + params["cycles"]
     p = "p=" + params["p"]
-    q = "q=" + params["q"]
+
 
     param_names = [protocol, topology, distance, iterations, cycles,
                    p, q]
@@ -47,7 +47,7 @@ iterations = int(args["iterations"])
 cycles = int(args["cycles"])
 protocol = args["protocol"]
 p = float(args["p"])
-q = float(args["q"])
+q = p
 
 # Initialize fail rate
 fail_rate = 0
@@ -98,14 +98,5 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if rank == 0:
         total = total/float(size)
-        if q != 0:
-            total = total/float(cycles)
         print size, "p=", p, " : ", round(total[0], 7)
-        print "total=", total[0]*cycles
         # print ("size: ", size, "rank: ", rank)
-        args_str = get_file_name_pq(args)
-        script_path = dirname(realpath(__file__))
-        file_name = (script_path + "/results/" + args_str)
-        # np.save(file_name, total)
-        # print(file_name)
-        # print("TOTAL FAIL RATE: ", total)
