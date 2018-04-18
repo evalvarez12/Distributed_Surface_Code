@@ -55,6 +55,7 @@ p = float(args["p"])
 cycles = int(args["cycles"])
 protocol = args["protocol"]
 p_not_complete = float(args["ignore"])
+method = args["method"]
 # Initialize fail rate
 fail_rate = 0
 
@@ -69,7 +70,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(0., 0., "local", 0.)
+sc.select_measurement_protocol(0., 0., method, 0.)
 
 # Perform measurements
 for i in range(iterations):
