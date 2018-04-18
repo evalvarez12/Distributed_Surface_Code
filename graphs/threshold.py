@@ -68,17 +68,17 @@ data = np.array(data["Sheet3"]).transpose()
 # Transform to arrays
 pq = data[0]
 # d6 = np.array(d6)
-# d8 = data[1]
-# d10 = data[2]
-# d12 = data[3]
-# d14 = data[4]
-# d16 = data[5]
+d8 = data[1]
+d10 = data[2]
+d12 = data[3]
+d14 = data[4]
+d16 = data[5]
 
-d8 = data[1]/8
-d10 = data[2]/10
-d12 = data[3]/12
-d14 = data[4]/14
-d16 = data[5]/16
+# d8 = data[1]/8
+# d10 = data[1]/10
+# d12 = data[2]/12
+# d14 = data[3]/14
+# d16 = data[4]/16
 
 # # plt.plot(pq, 1/d14, 'o-', label=r"$d=14$")
 # plt.plot(pq*100, 1/d8, 'o-', label=r"$d=8$")
@@ -95,7 +95,7 @@ def threshold(X, A, B, C, pth, v):
     pl = A + B*(p - pth)*(d**(1/v)) + C*((p - pth)*(d**(1/v)))**2
     return pl
 
-o = np.ones_like(d8)
+o = np.ones_like(d10)
 pl = np.concatenate((d10,  d12, d14, d16))
 pqs = np.concatenate((pq, pq, pq, pq))
 ds = np.concatenate((o*10, o*12, o*14, o*16))
