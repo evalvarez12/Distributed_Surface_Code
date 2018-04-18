@@ -16,3 +16,5 @@
 *.e
 *.out
 submit.sh
+
+graphs/.~lock.data.ods
