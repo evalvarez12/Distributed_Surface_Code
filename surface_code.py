@@ -386,17 +386,19 @@ class SurfaceCode:
         self.environmental_noise(self.p_env)
         stars1 = self._incomplete_measuerement(self.stars_round1)
         self.noisy_measurement_specific(stars1, 0, "star")
-        self.environmental_noise(self.p_env)
+
         stars2 = self._incomplete_measuerement(self.stars_round2)
         self.noisy_measurement_specific(stars2, 0, "star", reverse=True)
+        self.environmental_noise(self.p_env)
 
         # Plaq measurements
         self.environmental_noise(self.p_env)
         plaqs1 = self._incomplete_measuerement(self.plaqs_round1)
         self.noisy_measurement_specific(plaqs1, 1, "plaq")
-        self.environmental_noise(self.p_env)
+
         plaqs2 = self._incomplete_measuerement(self.plaqs_round2)
         self.noisy_measurement_specific(plaqs2, 1, "plaq", reverse=True)
+        self.environmental_noise(self.p_env)
 
     def measurement_protocol_single_rounds(self):
         """
@@ -407,6 +409,7 @@ class SurfaceCode:
         self.environmental_noise(self.p_env)
         stars1 = self._incomplete_measuerement(self.stars_round1)
         self.noisy_measurement_specific(stars1, 0, "star")
+
         self.environmental_noise(self.p_env)
         stars2 = self._incomplete_measuerement(self.stars_round2)
         self.noisy_measurement_specific(stars2, 0, "star")
@@ -415,6 +418,7 @@ class SurfaceCode:
         self.environmental_noise(self.p_env)
         plaqs1 = self._incomplete_measuerement(self.plaqs_round1)
         self.noisy_measurement_specific(plaqs1, 1, "plaq")
+
         self.environmental_noise(self.p_env)
         plaqs2 = self._incomplete_measuerement(self.plaqs_round2)
         self.noisy_measurement_specific(plaqs2, 1, "plaq")
