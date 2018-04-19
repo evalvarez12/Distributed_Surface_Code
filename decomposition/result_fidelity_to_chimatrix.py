@@ -37,7 +37,7 @@ eta = 0.0
 a0 = 0.0
 a1 = 0.0
 theta = 0.0
-protocol = "STRINGENT"
+protocol = "LOCAL"
 
 # Initialize objects
 model = noise_modeling.NoiseModel(system_size, parity)
@@ -53,7 +53,7 @@ I_OK_full = []
 I_NOK_full = []
 E_full = []
 
-pgs = np.arange(0.0046, 0.0070, 0.0002)
+pgs = np.arange(0.0030, 0.0101, 0.0001)
 # pgs = [0.003, 0.006, 0.009, 0.012]
 # pgs = [0.0075]
 fs = np.linspace(.5, 1, 50)
@@ -65,8 +65,8 @@ for parity in ["X", "Z"]:
         pg = pg
         pn = 0.1
 
-        # stab.change_parameters(ps=ps, pm=pm, pg=pg)
-        stab = protocols_nn.Protocols(ps, pm, pg, pn)
+        stab.change_parameters(ps=ps, pm=pm, pg=pg)
+        # stab = protocols_nn.Protocols(ps, pm, pg, pn)
         I_OK = []
         I_NOK = []
         E = []
@@ -79,8 +79,8 @@ for parity in ["X", "Z"]:
             # model.set_rho(rhos, probs)
 
             # Define function and apply superoperator
-            # superoperator_function = stab.local_stabilizer
-            superoperator_function = stab.stringent
+            superoperator_function = stab.local_stabilizer
+            # superoperator_function = stab.stringent
             model.apply_superoperator(superoperator_function)
             model.make_chi_matrix()
 

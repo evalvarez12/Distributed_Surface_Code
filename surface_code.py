@@ -335,6 +335,20 @@ class SurfaceCode:
             self.plaqs_round1 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x % 4) - 1, self.side, 4)]).transpose()
             self.plaqs_round2 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x + 2) % 4 - 1, self.side, 4)]).transpose()
 
+        elif protocol == "single_rounds_rev":
+            # Set protocol
+            self.stab_protocol = self.measurement_protocol_single_rounds_rev
+
+            # Generate insterspersed stabilizer positions
+            # NOTE this only works for even d
+            if self.surface == "toric" and self.distance % 2 == 1:
+                raise ValueError("Single protocol only works for even distance")
+
+            self.stars_round1 = np.array([(x, y) for x in range(0, self.side, 2) for y in range((x % 4) + 1, self.side, 4)]).transpose()
+            self.stars_round2 = np.array([(x, y) for x in range(0, self.side, 2) for y in range((x + 2) % 4 + 1, self.side, 4)]).transpose()
+            self.plaqs_round1 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x % 4) - 1, self.side, 4)]).transpose()
+            self.plaqs_round2 = np.array([(x, y) for x in range(1, self.side, 2) for y in range((x + 2) % 4 - 1, self.side, 4)]).transpose()
+
         elif protocol == "hybrid":
             # Set protocol
             self.stab_protocol = self.measurement_protocol_hybrid
@@ -363,6 +377,29 @@ class SurfaceCode:
         plaqs1 = self._incomplete_measuerement(self.plaqs)
         self.noisy_measurement_specific(plaqs1, 1, "plaq")
 
+    def measurement_protocol_single_rounds_rev(self):
+        """
+        Noisy stabilizer measuement cylce following the insterspersed stabilizer
+        rounds protocol for a distributed surface code.
+        """
+        # Star measurements
+        self.environmental_noise(self.p_env)
+        stars1 = self._incomplete_measuerement(self.stars_round1)
+        self.noisy_measurement_specific(stars1, 0, "star")
+
+        stars2 = self._incomplete_measuerement(self.stars_round2)
+        self.noisy_measurement_specific(stars2, 0, "star", reverse=True)
+        self.environmental_noise(self.p_env)
+
+        # Plaq measurements
+        self.environmental_noise(self.p_env)
+        plaqs1 = self._incomplete_measuerement(self.plaqs_round1)
+        self.noisy_measurement_specific(plaqs1, 1, "plaq")
+
+        plaqs2 = self._incomplete_measuerement(self.plaqs_round2)
+        self.noisy_measurement_specific(plaqs2, 1, "plaq", reverse=True)
+        self.environmental_noise(self.p_env)
+
     def measurement_protocol_single_rounds(self):
         """
         Noisy stabilizer measuement cylce following the insterspersed stabilizer
@@ -372,17 +409,19 @@ class SurfaceCode:
         self.environmental_noise(self.p_env)
         stars1 = self._incomplete_measuerement(self.stars_round1)
         self.noisy_measurement_specific(stars1, 0, "star")
+
         self.environmental_noise(self.p_env)
         stars2 = self._incomplete_measuerement(self.stars_round2)
-        self.noisy_measurement_specific(stars2, 0, "star", reverse=True)
+        self.noisy_measurement_specific(stars2, 0, "star")
 
         # Plaq measurements
         self.environmental_noise(self.p_env)
         plaqs1 = self._incomplete_measuerement(self.plaqs_round1)
         self.noisy_measurement_specific(plaqs1, 1, "plaq")
+
         self.environmental_noise(self.p_env)
         plaqs2 = self._incomplete_measuerement(self.plaqs_round2)
-        self.noisy_measurement_specific(plaqs2, 1, "plaq", reverse=True)
+        self.noisy_measurement_specific(plaqs2, 1, "plaq")
 
     def measurement_protocol_hybrid(self):
         """

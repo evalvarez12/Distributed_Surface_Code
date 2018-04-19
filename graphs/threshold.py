@@ -68,17 +68,17 @@ data = np.array(data["Sheet3"]).transpose()
 # Transform to arrays
 pq = data[0]
 # d6 = np.array(d6)
+# d8 = data[1]
+d8 = data[1]
+d12 = data[2]
+d16 = data[3]
+# d16 = data[4]
+
 # d8 = data[1]/8
 # d10 = data[2]/10
 # d12 = data[3]/12
 # d14 = data[4]/14
 # d16 = data[5]/16
-
-d8 = data[1]
-d10 = data[2]
-d12 = data[3]
-d14 = data[4]
-d16 = data[5]
 
 # # plt.plot(pq, 1/d14, 'o-', label=r"$d=14$")
 # plt.plot(pq*100, 1/d8, 'o-', label=r"$d=8$")
@@ -95,30 +95,35 @@ def threshold(X, A, B, C, pth, v):
     pl = A + B*(p - pth)*(d**(1/v)) + C*((p - pth)*(d**(1/v)))**2
     return pl
 
-o = np.ones_like(d8)
-pl = np.concatenate((d8, d10,  d12, d14, d16))
-pqs = np.concatenate((pq, pq, pq, pq, pq))
-ds = np.concatenate((o*8, o*10, o*12, o*14, o*16))
+o = np.ones_like(d12)
+pl = np.concatenate((d8, d12, d16))
+pqs = np.concatenate((pq, pq, pq))
+ds = np.concatenate((o*8, o*12, o*16))
 
 
 # plt.plot(pq, 1-d6, 'ro', label=r"$d=6$")
-plt.plot(pq, d8, 'gv', label=r"$d=8$")
-plt.plot(pq, d10, 'b*', label=r"$d=10$")
+# plt.plot(pq, d8, 'gv', label=r"$d=8$")
+plt.plot(pq, d8, 'b*', label=r"$d=10$")
 plt.plot(pq, d12, 'c>', label=r"$d=12$")
-plt.plot(pq, d14, 'yo', label=r"$d=14$")
+# plt.plot(pq, d14, 'yo', label=r"$d=14$")
 plt.plot(pq, d16, 'rs', label=r"$d=16$")
 
 
 # Curve fit
-# vals, pconv = curve_fit(threshold, (pqs, ds), pl, (1., 1., 1., 1., 1.))
-# perr = np.sqrt(np.diag(pconv))
-# # # plt.plot(pq, 1- threshold((pq, 6), vals[0], vals[1], vals[2], vals[3], vals[4]))
+vals, pconv = curve_fit(threshold, (pqs, ds), pl, (1., 1., 1., 1., 1.))
+perr = np.sqrt(np.diag(pconv))
+# # plt.plot(pq, 1- threshold((pq, 6), vals[0], vals[1], vals[2], vals[3], vals[4]))
 # plt.plot(pq, threshold((pq, 8), vals[0], vals[1], vals[2], vals[3], vals[4]), 'g--')
-# plt.plot(pq, threshold((pq, 10), vals[0], vals[1], vals[2], vals[3], vals[4]), 'b--')
-# plt.plot(pq, threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]), 'c--')
-# plt.plot(pq, threshold((pq, 14), vals[0], vals[1], vals[2], vals[3], vals[4]), 'y--')
-# plt.plot(pq, threshold((pq, 16), vals[0], vals[1], vals[2], vals[3], vals[4]), 'r--')
+plt.plot(pq, threshold((pq, 10), vals[0], vals[1], vals[2], vals[3], vals[4]), 'b--')
+plt.plot(pq, threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]), 'c--')
+plt.plot(pq, threshold((pq, 14), vals[0], vals[1], vals[2], vals[3], vals[4]), 'y--')
+plt.plot(pq, threshold((pq, 16), vals[0], vals[1], vals[2], vals[3], vals[4]), 'r--')
 
+print("VALUES")
+print(vals)
+
+print("ERROR")
+print(perr)
 
 # plt.ylim([0.4, 1])
 # plt.title("EXPEDIENT")

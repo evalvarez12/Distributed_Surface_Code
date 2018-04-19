@@ -16,7 +16,6 @@ import surface_code
 import layers
 import matching
 
-np.random.seed(4567890)
 
 def get_file_name(params):
     protocol = "protocol=" + params["protocol"]
@@ -38,6 +37,9 @@ def get_file_name(params):
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
+
+#Set random seed
+np.random.seed(rank)
 
 # Get the arguments
 pythonfile = sys.argv[0]

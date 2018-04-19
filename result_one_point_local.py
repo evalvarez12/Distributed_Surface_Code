@@ -55,6 +55,7 @@ p = float(args["p"])
 cycles = int(args["cycles"])
 protocol = args["protocol"]
 p_not_complete = float(args["ignore"])
+method = args["method"]
 # Initialize fail rate
 fail_rate = 0
 
@@ -69,7 +70,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(0., 0., "single_rounds", 0.)
+sc.select_measurement_protocol(0.0, 0.0, method, p_not_complete)
 
 # Perform measurements
 for i in range(iterations):
@@ -108,7 +109,8 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if rank == 0:
         total = total/float(size)
-        print size, distance, "p=", p, "incomplete=",p_not_complete, ":", round(total[0], 7)
+        total = total/float(cycles)
+        print size, method, distance, "p=", p, "incomplete=",p_not_complete, ":", round(total[0], 7)
 
         # print("size: ", size)
         # print("id: ", rank)
