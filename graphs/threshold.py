@@ -69,10 +69,10 @@ data = np.array(data["Sheet3"]).transpose()
 pq = data[0]
 # d6 = np.array(d6)
 # d8 = data[1]
-d10 = data[1]
+d8 = data[1]
 d12 = data[2]
-d14 = data[3]
-d16 = data[4]
+d16 = data[3]
+# d16 = data[4]
 
 # d8 = data[1]/8
 # d10 = data[2]/10
@@ -95,17 +95,17 @@ def threshold(X, A, B, C, pth, v):
     pl = A + B*(p - pth)*(d**(1/v)) + C*((p - pth)*(d**(1/v)))**2
     return pl
 
-o = np.ones_like(d10)
-pl = np.concatenate((d10,  d12, d14, d16))
-pqs = np.concatenate((pq, pq, pq, pq))
-ds = np.concatenate((o*10, o*12, o*14, o*16))
+o = np.ones_like(d12)
+pl = np.concatenate((d8, d12, d16))
+pqs = np.concatenate((pq, pq, pq))
+ds = np.concatenate((o*8, o*12, o*16))
 
 
 # plt.plot(pq, 1-d6, 'ro', label=r"$d=6$")
 # plt.plot(pq, d8, 'gv', label=r"$d=8$")
-plt.plot(pq, d10, 'b*', label=r"$d=10$")
+plt.plot(pq, d8, 'b*', label=r"$d=10$")
 plt.plot(pq, d12, 'c>', label=r"$d=12$")
-plt.plot(pq, d14, 'yo', label=r"$d=14$")
+# plt.plot(pq, d14, 'yo', label=r"$d=14$")
 plt.plot(pq, d16, 'rs', label=r"$d=16$")
 
 

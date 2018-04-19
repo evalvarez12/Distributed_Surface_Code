@@ -70,7 +70,7 @@ lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(0., 0., method, 0.)
+sc.select_measurement_protocol(0.0, 0.0, method, p_not_complete)
 
 # Perform measurements
 for i in range(iterations):
