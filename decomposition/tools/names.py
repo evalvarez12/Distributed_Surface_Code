@@ -56,4 +56,4 @@ def ghz_times(ps, pm, pg, eta, a0, a1, theta, size, protocol):
     script_path = dirname(dirname(realpath(__file__)))
     file_name = (script_path + "/data/" + file_name
                  + "_" + param_names)
-    return file_name
+    return file_name + ".npy"

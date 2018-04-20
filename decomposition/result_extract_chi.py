@@ -7,6 +7,7 @@ author: Eduardo Villasenor
 created-on: 03/01/18
 """
 import qutip as qt
+import numpy as np
 import stabilizer
 import noise_modeling
 import pickle
@@ -23,13 +24,64 @@ theta = .63
 # GHZ info
 ghz_size = 4
 stab_size = 4
-protocol = "thres_eta"
+protocol = "thres_a0"
 
+extra = True
+ignore_percent = 5
 
+TIME = []
 
-for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
+# for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
 # for a0 in [6000.0, 6500.0, 7000.0, 7500.0, 8000.0, 8500.0, 9000.0, 9500.0, 10000.0, 10500.0, 11000.0, 11500.0, 12000.0, 12500.0, 13000.0]:
-# for nothing in [0]:
+for a0 in [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 80.0, 90.0]:
+# for pg in [0.00325]:
+    ps = pg
+    pm = pg
+    # Load GHZ state files
+    ghz_file = names.ghz(ps, pm, pg, eta, a0, a1, theta,
+                         ghz_size, protocol)
+    times_file = names.ghz_times(ps, pm, pg, eta, a0, a1, theta,
+                                 ghz_size, protocol)
+
+    ghzs = qt.qload(ghz_file)
+    times = np.load(times_file)
+    if extra:
+        ghz_file2 = names.ghz(ps, pm, pg, eta, a0, a1, theta,
+                              ghz_size, protocol+"2")
+        times_file2 = names.ghz_times(ps, pm, pg, eta, a0, a1, theta,
+                                      ghz_size, protocol+"2")
+
+        ghzs = np.append(ghzs, qt.qload(ghz_file2))
+        times = np.append(times, np.load(times_file2))
+
+    ###################################################################
+    # CHOSE PERCENTILE
+    N = len(times)
+    ignore_number = int(N*ignore_percent/100)
+
+    indices_sorted = np.argsort(times)
+    t_sorted = times[indices_sorted]
+
+    if ignore_number != 0:
+        t_max = t_sorted[:-ignore_number][-1]
+        tavg = np.average(times[indices_sorted][:-ignore_number])
+        tstd = np.std(times[indices_sorted][:-ignore_number])
+        ghz = np.sum(ghzs[indices_sorted][:-ignore_number])
+    else:
+        t_max = t_sorted[-1]
+        tavg = np.average(times)
+        tstd = np.std(times)
+        ghz = np.sum(ghzs)
+
+    ghz = ghz/(N - ignore_number)
+    TIME += [t_max]
+    # print("F: ", qt.fidelity(rho, rho_ref))
+    print("_____________________________________________________")
+    print("N: ", N)
+    print("T_avg: ", tavg, tstd)
+    print("TIME_MAX:", t_max)
+    ################################################
+    # CHOI decomposition
     for parity in ["X", "Z"]:
         # Initialize objects
         model = noise_modeling.NoiseModel(stab_size, parity)
@@ -41,13 +93,10 @@ for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.00
         choi = choi * choi.dag()
         targets = list(range(stab_size))
 
-
-        # Load GHZ state
-        ghz_file = names.ghz(ps, pm, pg, eta, a0, a1, theta,
-                             ghz_size, protocol)
-        ghz = qt.qload(ghz_file)
         if len(ghz.dims[0]) == 3:
             protocol += "_3on4"
+        elif len(ghz.dims[0]) == 2:
+            protocol += "_2on4"
 
         p_res, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
 
@@ -78,3 +127,5 @@ for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.00
 
         # print(model.chi)
         model.reset_chi()
+
+TIME = np.array(TIME)
