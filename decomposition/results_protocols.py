@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import noise_modeling
 
 # Set random seed
-np.random.seed(890123)
+np.random.seed(4567890)
 
 
 # Determine parameters
@@ -41,7 +41,7 @@ theta = .63
 # a0 = 1/2.
 # eta = 1/200
 # Protocol name to save state
-protocol_name = "thres_a0_parallel2"
+protocol_name = "thres_a0_parallel"
 
 def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers
@@ -52,7 +52,7 @@ def env_error_rate(t, a):
 
 
 # Number of iterations for a average
-iterations = 1000
+iterations = 2000
 ignore_number = int(iterations/10)
 
 # Initialize objects and define references
@@ -79,14 +79,14 @@ targets = list(range(stab_size))
 
 # Start from 6000.0
 # for s in [0]:
-for a0 in [6000.0, 6500.0, 7000.0]:
+for a0 in [500.0, 600.0, 700.0, 800.0, 900.0, 1000.0, 1100.0, 1200.0, 1300.0, 1400.0, 1500.0]:
 # for eta in [0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
 # for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", a0)
     print("EPL")
-    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz4_epl_parallel(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
