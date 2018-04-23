@@ -62,13 +62,8 @@ pg = 0.003
 a1 = 1/30.
 theta = .63
 
-# a0 = 6000.0
-eta = 1/100.
-
-protocol = "thres_a0"
-measurement = "single_rounds"
+# Other parameters
 ignore = 0.05
-t = 0.084125687500000018
 
 # Initialize fail rate
 fail_rate = 0
