@@ -32,7 +32,7 @@ np.random.seed(4567890)
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 30.0
+a0 = 5.0
 a1 = 1/30.
 eta = 1/100.
 theta = .63
@@ -52,7 +52,7 @@ def env_error_rate(t, a):
 
 
 # Number of iterations for a average
-iterations = 1000
+iterations = 2000
 ignore_number = int(iterations/10)
 
 # Initialize objects and define references
@@ -61,7 +61,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = bell_ref
+rho_ref = ghz4_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -80,12 +80,12 @@ targets = list(range(stab_size))
 # for s in [0]:
 # for a0 in [1000.0, 1500.0, 2000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0, 6500.0, 7000.0]:
 # for eta in [0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
-for eta in [0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
+for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
     FIDELITY = []
     TIMES = []
     print("------> Var=", eta)
-    print("EPL 2")
-    ghz = protocols.ghz2_epl(ps, pm, pg, eta, a0, a1, theta)
+    print("EPL 4")
+    ghz = protocols.ghz4_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
