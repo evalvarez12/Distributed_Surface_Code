@@ -16,7 +16,7 @@ import tools.names as names
 ps = 0.003
 pm = 0.003
 pg = 0.003
-a0 = 30.0
+a0 = 5.0
 a1 = 1/30.
 eta = 1/100.
 theta = .63
@@ -24,17 +24,17 @@ theta = .63
 # GHZ info
 ghz_size = 4
 stab_size = 4
-protocol = "thres_a0_parallel"
+protocol = "thres_eta"
 
 extra = False
 ignore_percent = 5
 
 TIME = []
 
-# for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
-for a0 in [500.0, 600.0, 700.0, 800.0, 900.0, 1000.0, 1100.0, 1200.0, 1300.0, 1400.0, 1500.0]:
+for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
+# for a0 in [3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]:
 # for a0 in [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0]:
-# for pg in [0.00325]:
+# for pg in [0.0032, 0.0034, 0.0036, 0.0038, 0.0040, 0.0042, 0.0044, 0.0046, 0.0048, 0.0050]:
     ps = pg
     pm = pg
     # Load GHZ state files
@@ -130,3 +130,11 @@ for a0 in [500.0, 600.0, 700.0, 800.0, 900.0, 1000.0, 1100.0, 1200.0, 1300.0, 14
         model.reset_chi()
 
 TIME = np.array(TIME)
+
+
+def env_error_rate(t, a):
+    # Function to calculate the error to the enviroment for step of stabilizers
+    # measurements
+    x = a * t
+    p_env = (1 - np.exp(-x))/4.
+    return p_env
