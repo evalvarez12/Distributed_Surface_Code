@@ -128,6 +128,12 @@ class SurfaceCode:
                                        pg=pg, eta=eta, a0=a0, a1=a1,
                                        theta=theta, protocol=protocol)
 
+    def init_error_obj_extra(self, surface, ps, pm, pg, eta, a0, a1, theta, protocol):
+        self.errors_extra = errors.Generator(surface=self.surface, ps=ps,
+                                             pm=pm, pg=pg, eta=eta, a0=a0,
+                                             a1=a1, theta=theta,
+                                             protocol=protocol)
+
     def measure_all_stabilizers(self, p_not_complete=0):
         """
         Measure all stabilizer in the code.
@@ -356,7 +362,17 @@ class SurfaceCode:
             # Generate insterspersed stabilizer positions
             # NOTE this only works for d multiple of 3
             if self.surface == "toric" and self.distance % 3 != 0:
-                raise ValueError("Single protocol only works for even distance")
+                raise ValueError("Hybrid scheme only works when d % 3 = 0")
+
+            self.stars_weight3 = self.stars[:, ::3].copy()
+            self.stars_weight2 = np.delete(self.stars,
+                                           range(0, self.number_stabs, 3),
+                                           axis=1)
+
+            self.plaqs_weight3 = self.plaqs[:, 2::3].copy()
+            self.plaqs_weight2 = np.delete(self.plaqs,
+                                           range(2, self.number_stabs, 3),
+                                           axis=1)
 
         elif protocol == "local":
             self.stab_protocol = self.measurement_protocol_local
@@ -430,13 +446,17 @@ class SurfaceCode:
         """
         # Star measurements
         self.environmental_noise(self.p_env)
-        stars1 = self._incomplete_measuerement(self.stars_round1)
+        stars1 = self._incomplete_measuerement(self.stars_weight3)
         self.noisy_measurement_specific(stars1, 0, "star")
+        stars2 = self._incomplete_measuerement(self.stars_weight2)
+        self.noisy_measurement_specific_extra(stars2, 0, "star")
 
         # Plaq measurements
         self.environmental_noise(self.p_env)
-        plaqs1 = self._incomplete_measuerement(self.plaqs_round1)
+        plaqs1 = self._incomplete_measuerement(self.plaqs_weight3)
         self.noisy_measurement_specific(plaqs1, 1, "plaq")
+        plaqs2 = self._incomplete_measuerement(self.plaqs_weight2)
+        self.noisy_measurement_specific_extra(plaqs2, 1, "plaq")
 
     def measurement_protocol_local(self):
         """Noisy stabilizer measurement cycle for the monolithic arquitecture."""
@@ -481,7 +501,6 @@ class SurfaceCode:
         self.noisy_measurement_specific(pos, c, stabilizer)
 
     def _noisy_measurement_noreversed(self, stab, stab_qubits, m_err, q_err, c):
-        # print("BUG HERE!")
         # Apply error to qubits
         for i in range(q_err.shape[1]):
             self.qubits[:, stab_qubits[i, 0], stab_qubits[i, 1]] *= q_err[:, i]
@@ -553,6 +572,16 @@ class SurfaceCode:
                     self.qubits[:, bord_qubits[:, 0], bord_qubits[:, 1]] *= q_err
 
                 self.qubits[0, bord_stabs[0], bord_stabs[1]] *= m_err
+
+    def noisy_measurement_specific_extra(self, pos, c, stabilizer):
+        # Measure the given stabilizers and apply the corresponding errors
+        if self.surface == "toric":
+            N = len(pos[0])
+            m_err, q_err = self.errors_extra.get_errors(N, stabilizer)
+            stab_qubits = self._stabilizer_qubits_bulk(pos)
+
+            self._noisy_measurement_reversed(pos, stab_qubits,
+                                             m_err, q_err, c)
 
     def _select_stabilizer(self, stabilizer):
         """Return useful parameters for stabilizer type."""

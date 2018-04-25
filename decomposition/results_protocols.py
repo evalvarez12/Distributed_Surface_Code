@@ -52,7 +52,7 @@ def env_error_rate(t, a):
 
 
 # Number of iterations for a average
-iterations = 2000
+iterations = 100
 ignore_number = int(iterations/100*5.)
 
 # Initialize objects and define references
@@ -79,7 +79,7 @@ targets = list(range(stab_size))
 
 # Start from 6000.0
 # for s in [0]:
-# for a0 in [2500.0, 3000.0]:
+# for a0 in [5.0]:
 # for eta in [0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
 for eta in [0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030, 0.0025, 0.0020, 0.0015, 0.0010, 0.0005]:
 #for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039, 0.0040, 0.0041]:

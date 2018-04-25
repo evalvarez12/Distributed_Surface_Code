@@ -51,14 +51,14 @@ iterations = int(args["iterations"])
 a0 = float(args["a0"])
 cycles = int(args["cycles"])
 eta = float(args["eta"])
+pg = float(args["pg"])
 protocol = args["protocol"]
 t = float(args["time"])
 measurement = args["measurement"]
 # Improved parameters
 # Threshold over a0
-ps = 0.003
-pm = 0.003
-pg = 0.003
+ps = pg
+pm = pg
 a1 = 1/30.
 theta = .63
 
@@ -120,6 +120,6 @@ if comm.rank == 0:
         # args_str = get_file_name(args)
         # script_path = dirname(realpath(__file__))
         # file_name = (script_path + "/results/" + args_str)
-        print size, distance, protocol, a0, eta, ":", round(total[0], 7)
+        print size, distance, protocol, measurement, a0, eta, pg, ":", round(total[0], 7)
         # print "rate :", round(total[0], 7)*cycles
         # np.save(file_name, total)
