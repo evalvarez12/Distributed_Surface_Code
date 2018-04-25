@@ -11,11 +11,11 @@ import numpy.testing as nptest
 import surface_code
 
 # initialize the surface code object
-distance = 5
+distance = 6
 surface = "toric"
 sc = surface_code.SurfaceCode(distance, surface)
 
-sc.select_measurement_protocol(0, [0, 0], "single")
+sc.select_measurement_protocol(0, 0, "single_rounds")
 
 
 print("-------------------Testing random noise------------------------")

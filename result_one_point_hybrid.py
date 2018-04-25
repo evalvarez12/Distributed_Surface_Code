@@ -120,6 +120,6 @@ if comm.rank == 0:
         # args_str = get_file_name(args)
         # script_path = dirname(realpath(__file__))
         # file_name = (script_path + "/results/" + args_str)
-        print size, distance, protocol, measurement, a0, eta, pg, ":", round(total[0], 7)
+        print size, distance, protocol, a0, eta, pg, ":", round(total[0], 7)
         # print "rate :", round(total[0], 7)*cycles
         # np.save(file_name, total)
