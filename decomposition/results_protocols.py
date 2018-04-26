@@ -41,7 +41,7 @@ theta = .63
 # a0 = 1/2.
 # eta = 1/200
 # Protocol name to save state
-protocol_name = "thres_eta"
+protocol_name = "thres_pg"
 
 def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers
@@ -52,7 +52,7 @@ def env_error_rate(t, a):
 
 
 # Number of iterations for a average
-iterations = 100
+iterations = 2000
 ignore_number = int(iterations/100*5.)
 
 # Initialize objects and define references
@@ -61,7 +61,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = bell_ref
+rho_ref = ghz3_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -81,15 +81,15 @@ targets = list(range(stab_size))
 # for s in [0]:
 # for a0 in [5.0]:
 # for eta in [0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
-for eta in [0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030, 0.0025, 0.0020, 0.0015, 0.0010, 0.0005]:
-#for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039, 0.0040, 0.0041]:
+# for eta in [0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030, 0.0025, 0.0020, 0.0015, 0.0010, 0.0005]:
+for pg in [0.0046, 0.0047, 0.0048, 0.0049, 0.0050, 0.0051, 0.0052, 0.0053, 0.0054, 0.0055]:
     ps = pg
     pm = pg
     FIDELITY = []
     TIMES = []
-    print("------> Var=", eta)
-    print("EPL 2")
-    ghz = protocols.ghz2_epl(ps, pm, pg, eta, a0, a1, theta)
+    print("------> Var=", pg)
+    print("EPL 3")
+    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
@@ -125,7 +125,7 @@ for eta in [0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.00
         tstd = np.std(times)
         rho = np.sum(rhos)
 
-    rho = rho/iterations
+    rho = rho/(iterations - ignore_number)
 
     print("F: ", favg, fstd, "-", qt.fidelity(rho, rho_ref))
     print("T: ", tavg, tstd)

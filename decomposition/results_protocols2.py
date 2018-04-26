@@ -61,7 +61,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz3_ref
+rho_ref = bell_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -79,16 +79,16 @@ targets = list(range(stab_size))
 
 # for s in [0]:
 # for a0 in [1000.0, 1500.0, 2000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0, 6500.0, 7000.0]:
-# for eta in [0.0055, 0.0050, 0.0045, 0.0040, 0.0035, 0.0030]:
-for eta in [0.0005]:
+for eta in [0.0050, 0.0045, 0.0040, 0.0035, 0.0030, 0.0025, 0.0020, 0.0015, 0.0010, 0.0005]:
+#for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039, 0.0040, 0.0041, 0.0042, 0.0043, 0.0044, 0.0045]:
 #for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039, 0.0040, 0.0041]:
     ps = pg
     pm = pg
     FIDELITY = []
     TIMES = []
     print("------> Var=", eta)
-    print("EPL PARALLEL")
-    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
+    print("EPL 2")
+    ghz = protocols.ghz2_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
