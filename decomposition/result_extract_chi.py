@@ -24,17 +24,17 @@ theta = .63
 # GHZ info
 ghz_size = 4
 stab_size = 4
-protocol = "thres_pg_parallel"
+protocol = "thres_eta"
 
 extra = False
 ignore_percent = 5
 
 TIME = []
 
-# for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
+for eta in [0.01, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050, 0.0045]:
 # for a0 in [2000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]:
 # for a0 in [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0]:
-for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039, 0.0040, 0.0041]:
+# for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039, 0.0040, 0.0041]:
     ps = pg
     pm = pg
     # Load GHZ state files
@@ -93,10 +93,11 @@ for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.003
         choi = choi * choi.dag()
         targets = list(range(stab_size))
 
+        protocol_chi = protocol
         if len(ghz.dims[0]) == 3:
-            protocol += "_3on4"
+            protocol_chi += "_3on4"
         elif len(ghz.dims[0]) == 2:
-            protocol += "_2on4"
+            protocol_chi += "_2on4"
 
         ghz = stab.twirl_ghz(ghz)
         p_res, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
@@ -105,7 +106,7 @@ for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.003
         model.set_rho(rhos, p_res)
         model.make_chi_matrix()
 
-        print("a0: ", a0)
+        print("PARAMS: ", a0, eta, pg)
         print("Total sum check: ", model.check_total_sum())
 
         I_OK = model.chi["IIII_OK"]
@@ -119,7 +120,7 @@ for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.003
         print("-------------")
 
         file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
-                              stab_size, parity, protocol)
+                              stab_size, parity, protocol_chi)
 
         print(file_name)
         pickle_out = open(file_name, "wb")
