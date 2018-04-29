@@ -3,7 +3,7 @@ Simple simulation to test the surface code simulation is working
 without looking at plots.
 
 Run this code using mpi4py:
- mpiexec python result_one_point_model.py topology=toric distance=10 iterations=1000 cycles=10 protocol=thes_a0 a0=10.0 a1=0 eta=0 time=0 measurement=nada
+mpiexec python result_one_point_model.py topology=toric distance=10 iterations=100 cycles=10 protocol=thres_pg_paired a0=5.0 a1=0 eta=0.01 time=0.0555 pg=0.0035 measurement=single
 created-on: 09/12/17
 @author: eduardo
 """

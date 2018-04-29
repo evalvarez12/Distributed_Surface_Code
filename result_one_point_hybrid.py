@@ -3,7 +3,7 @@ Simple simulation to test the surface code simulation is working
 without looking at plots.
 
 Run this code using mpi4py:
- mpiexec python result_one_point_model.py topology=toric distance=10 iterations=1000 cycles=10 protocol=thes_a0 a0=10.0 a1=0 eta=0 time=0 measurement=nada
+mpiexec python result_one_point_hybrid.py topology=toric distance=10 iterations=100 cycles=10 protocol=thres_pg_paired a0=5.0 a1=0 eta=0.01 time=0.0555 pg=0.0035 measurement=single
 created-on: 09/12/17
 @author: eduardo
 """
@@ -54,7 +54,7 @@ eta = float(args["eta"])
 pg = float(args["pg"])
 protocol = args["protocol"]
 t = float(args["time"])
-measurement = args["measurement"]
+# measurement = args["measurement"]
 # Improved parameters
 # Threshold over a0
 ps = pg
@@ -72,9 +72,10 @@ fail_rate = 0
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
 sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
+sc.init_error_obj_extra(topology, ps, pm, pg, eta, a0, a1, theta, protocol + "_extra")
 
 # Choose a measurement protocol
-sc.select_measurement_protocol(t, a1, measurement, ignore)
+sc.select_measurement_protocol(t, a1, "hybrid", ignore)
 
 
 # Perform measurements
