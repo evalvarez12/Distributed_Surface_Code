@@ -124,7 +124,7 @@ for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.00
         tstd = np.std(times)
         rho = np.sum(rhos)
 
-    rho = rho/iterations
+    rho = rho/(iterations - ignore_number)
 
     print("F: ", favg, fstd, "-", qt.fidelity(rho, rho_ref))
     print("T: ", tavg, tstd)
