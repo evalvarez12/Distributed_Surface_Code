@@ -25,6 +25,7 @@ theta = .63
 ghz_size = 4
 stab_size = 4
 protocol = "thres_eta"
+protocol_chi = protocol
 
 extra = False
 ignore_percent = 5
@@ -93,11 +94,9 @@ for eta in [0.01, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060
         choi = choi * choi.dag()
         targets = list(range(stab_size))
 
-        protocol_chi = protocol
-        if len(ghz.dims[0]) == 3:
-            protocol_chi += "_3on4"
-        elif len(ghz.dims[0]) == 2:
-            protocol_chi += "_2on4"
+
+        eif len(ghz.dims[0]) == 2:
+            protocol_chi += "_extra"
 
         ghz = stab.twirl_ghz(ghz)
         p_res, rhos = stab.measure_ghz_stabilizer(choi, ghz, targets, parity)
