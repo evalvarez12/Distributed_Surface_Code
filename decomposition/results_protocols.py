@@ -41,7 +41,7 @@ theta = .63
 # a0 = 1/2.
 # eta = 1/200
 # Protocol name to save state
-protocol_name = "thres_pg_doublesel"
+protocol_name = "thres_pg_bk"
 
 def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers
@@ -88,8 +88,8 @@ for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.003
     FIDELITY = []
     TIMES = []
     print("------> Var=", pg)
-    print("EPL DOUBLE")
-    ghz = protocols.ghz4_double(ps, pm, pg, eta, a0, a1, theta)
+    print("EPL BK")
+    ghz = protocols.ghz4_bk(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
