@@ -116,6 +116,12 @@ class Protocols:
                                              projections[i], "X")
         return rho
 
+    def raw_state(self, pn, r):
+        imperfect_state = errs.bell_pair_phi(pn)
+        noise = qt.tensor(qt.basis(2, 1), qt.basis(2, 1))
+        noise = noise * noise.dag()
+        return (1 - r) * imperfect_state + r * noise
+
     def generate_epl(self):
         """
         Circuit that generates a Bell pair using the EPL protocol.
@@ -125,8 +131,8 @@ class Protocols:
         p_drift = 1/100.
 
         # Generate states
-        raw1 = errs.raw_state(self.pn, r)
-        raw2 = errs.raw_state(self.pn, r)
+        raw1 = self.raw_state(self.pn, r)
+        raw2 = self.raw_state(self.pn, r)
         raw2 = errs.drift(raw2, p_drift)
 
         # Join state
@@ -145,6 +151,9 @@ class Protocols:
             rho = self.measure_single_forced(rho, N, pos,
                                              1, "Z")
             N = N - 1
+
+        X = qt.rx(np.pi, 2, 0)
+        rho = errs.single_qubit_gate(rho, X, self.ps, 2, 0)
 
         return rho
 
@@ -321,8 +330,8 @@ class Protocols:
         # Measure this procedures ancillas
         projections = [0] * N_ancillas
         collapsed_rho = self.collapse_ancillas_forced(rho, N,
-                                                             N_ancillas,
-                                                             projections)
+                                                      N_ancillas,
+                                                      projections)
         return collapsed_rho
 
     def make_ghz_expedient(self, N_ghz):
@@ -422,7 +431,7 @@ class Protocols:
             rho = qt.tensor(rho, self.generate_epl())
 
         N = len(rho.dims[0])
-        
+
         # Append single qubit if number of qubits is not pair
         if N_ghz % 2:
             rho = qt.tensor(rho, self.generate_noisy_plus())
@@ -463,3 +472,36 @@ class Protocols:
         return self.measure_ghz_stabilizer(rho_initial, ghz,
                                            parity_targets,
                                            stabilizer)
+
+    def basic(self, rho_initial, parity_targets, stabilizer):
+        """
+        Perform the basic protocol.
+        Uses 4 ancillas per data qubit at maximum.
+        """
+        # GHZ number of qubits is same as the number of qubits
+        # in the state to be parity measured
+        N_parity = len(parity_targets)
+        ghz = self.make_ghz_basic(N_parity)
+
+        ghz = self.ghz_purification(ghz)
+
+        ghz = self.twirl_ghz(ghz)
+        return self.measure_ghz_stabilizer(rho_initial, ghz,
+                                           parity_targets,
+                                           stabilizer)
+
+    def ghz_purification(self, ghz):
+        # Two GHZ states to make a parity measuement
+        ghz = qt.tensor(ghz, ghz)
+
+        # Apply second set of gates
+        targets = [0, 1, 2, 3]
+        controls = [4, 5, 6, 7]
+        ghz = self.apply_two_qubit_gates(ghz, 8, controls, targets, "X")
+
+        # Collapse one GHZ
+        # Measure this procedures ancillas
+        projections = [0] * 4
+        ghz = self.collapse_ancillas_forced(ghz, 8, 4,
+                                            projections)
+        return ghz

@@ -156,7 +156,7 @@ class Blocks:
         # NOTE: This is expensive, adjust manually as required
         # 100000 tries required for EPL
         # 1000000 for BK
-        i = np.arange(500000)
+        i = np.arange(1000000)
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
 

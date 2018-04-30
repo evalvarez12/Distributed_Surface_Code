@@ -206,7 +206,7 @@ def bell_pair(p):
     return W
 
 
-def bell_pair_phi(p):
+def bell_pair_psi(p):
     """
     Return a noisy |phi+> Bell pair.
 

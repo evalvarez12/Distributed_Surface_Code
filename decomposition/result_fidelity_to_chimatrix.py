@@ -27,9 +27,9 @@ def get_errors_dict(dict, ok):
 
 
 # Initial parameters
-ps = 0.0075
-pm = 0.0075
-pg = 0.0075
+ps = 0.0001
+pm = 0.0005
+pg = 0.001
 system_size = 4
 parity = "X"
 
@@ -37,7 +37,7 @@ eta = 0.0
 a0 = 0.0
 a1 = 0.0
 theta = 0.0
-protocol = "LOCAL"
+protocol = "BASIC"
 
 # Initialize objects
 model = noise_modeling.NoiseModel(system_size, parity)
@@ -53,20 +53,22 @@ I_OK_full = []
 I_NOK_full = []
 E_full = []
 
-pgs = np.arange(0.0030, 0.0101, 0.0001)
+# pgs = np.arange(0.0030, 0.0101, 0.0001)
 # pgs = [0.003, 0.006, 0.009, 0.012]
 # pgs = [0.0075]
 fs = np.linspace(.5, 1, 50)
+pns = [0.0070, 0.0072 ,0.0074, 0.0076, 0.0078, 0.0080, 0.0082, 0.0084]
+
 
 for parity in ["X", "Z"]:
-    for pg in pgs:
-        ps = pg
-        pm = pg
-        pg = pg
-        pn = 0.1
+    for pn in pns:
+        # ps = pg
+        # pm = pg
+        # pg = pg
+        # pn = 0.1
 
-        stab.change_parameters(ps=ps, pm=pm, pg=pg)
-        # stab = protocols_nn.Protocols(ps, pm, pg, pn)
+        # stab.change_parameters(ps=ps, pm=pm, pg=pg)
+        stab = protocols_nn.Protocols(ps, pm, pg, pn)
         I_OK = []
         I_NOK = []
         E = []
@@ -78,9 +80,9 @@ for parity in ["X", "Z"]:
             # probs, rhos = stab.local_stabilizer(choi, targets, parity)
             # model.set_rho(rhos, probs)
 
-            # Define function and apply superoperator
-            superoperator_function = stab.local_stabilizer
-            # superoperator_function = stab.stringent
+            # Define function and apply superoperator NN
+            # superoperator_function = stab.local_stabilizer
+            superoperator_function = stab.basic
             model.apply_superoperator(superoperator_function)
             model.make_chi_matrix()
 
@@ -97,8 +99,9 @@ for parity in ["X", "Z"]:
             print("E: ", E)
             print("-------------")
 
-            file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
+            file_name = names.chi(ps, pm, pg, pn, a0, a1, theta,
                                   system_size, parity, protocol)
+            print(file_name)
 
             pickle_out = open(file_name, "wb")
             pickle.dump(model.chi, pickle_out, protocol=2)
