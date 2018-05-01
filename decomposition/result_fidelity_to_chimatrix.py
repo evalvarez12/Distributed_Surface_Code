@@ -103,6 +103,12 @@ for parity in ["X", "Z"]:
                                   system_size, parity, protocol)
             print(file_name)
 
+            ##########################
+            rest = 1 - model.check_total_sum()
+            model.chi["IIII_OK"] += rest
+            print("Total sum check: ", model.check_total_sum())
+
+
             pickle_out = open(file_name, "wb")
             pickle.dump(model.chi, pickle_out, protocol=2)
             pickle_out.close()
