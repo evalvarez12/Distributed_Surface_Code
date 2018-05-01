@@ -213,6 +213,10 @@ green_patch = mpatches.Patch(color='green', label=r'$a_0$')
 
 plt.legend(fontsize=14, handles=[blue_patch, red_patch, green_patch])
 
+legend1 = pyplot.legend(plot_lines[0], ["algo1", "algo2", "algo3"], loc=1)
+pyplot.legend([l[0] for l in plot_lines], parameters, loc=4)
+pyplot.gca().add_artist(legend1)
+
 plt.axis([0.059, 0.25, .942, 0.981])
 
 plt.tight_layout()

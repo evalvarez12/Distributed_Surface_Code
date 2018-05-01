@@ -57,7 +57,7 @@ E_full = []
 # pgs = [0.003, 0.006, 0.009, 0.012]
 # pgs = [0.0075]
 fs = np.linspace(.5, 1, 50)
-pns = [0.0070, 0.0072 ,0.0074, 0.0076, 0.0078, 0.0080, 0.0082, 0.0084]
+pns = [0.070, 0.072 ,0.074, 0.076, 0.078, 0.080, 0.082, 0.084]
 
 
 for parity in ["X", "Z"]:
@@ -93,7 +93,7 @@ for parity in ["X", "Z"]:
             # The sum of all physical errors
             E += [(1 - model.chi["IIII_OK"] - model.chi["IIII_NOK"])/4.]
 
-            print("Errors:", pg)
+            print("Errors:", pn)
             print("OK: ", I_OK)
             print("NOK: ", I_NOK)
             print("E: ", E)

@@ -117,7 +117,7 @@ class Protocols:
         return rho
 
     def raw_state(self, pn, r):
-        imperfect_state = errs.bell_pair_phi(pn)
+        imperfect_state = errs.bell_pair_psi(pn)
         noise = qt.tensor(qt.basis(2, 1), qt.basis(2, 1))
         noise = noise * noise.dag()
         return (1 - r) * imperfect_state + r * noise
