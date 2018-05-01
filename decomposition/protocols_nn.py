@@ -483,7 +483,7 @@ class Protocols:
         N_parity = len(parity_targets)
         ghz = self.make_ghz_basic(N_parity)
 
-        ghz = self.ghz_purification(ghz)
+        # ghz = self.ghz_purification(ghz)
 
         ghz = self.twirl_ghz(ghz)
         return self.measure_ghz_stabilizer(rho_initial, ghz,
