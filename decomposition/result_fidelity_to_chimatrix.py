@@ -37,7 +37,7 @@ eta = 0.0
 a0 = 0.0
 a1 = 0.0
 theta = 0.0
-protocol = "BASIC"
+protocol = "LOCAL"
 
 # Initialize objects
 model = noise_modeling.NoiseModel(system_size, parity)
@@ -53,22 +53,22 @@ I_OK_full = []
 I_NOK_full = []
 E_full = []
 
-# pgs = np.arange(0.0030, 0.0101, 0.0001)
+pgs = np.arange(0.0030, 0.0101, 0.0001)
 # pgs = [0.003, 0.006, 0.009, 0.012]
 # pgs = [0.0075]
-fs = np.linspace(.5, 1, 50)
-pns = [0.070, 0.072 ,0.074, 0.076, 0.078, 0.080, 0.082, 0.084]
+# fs = np.linspace(.5, 1, 50)
+# pns = [0.070, 0.072 ,0.074, 0.076, 0.078, 0.080, 0.082, 0.084]
 
 
 for parity in ["X", "Z"]:
-    for pn in pns:
-        # ps = pg
-        # pm = pg
-        # pg = pg
+    for pg in pgs:
+        ps = pg
+        pm = pg
+        pg = pg
         # pn = 0.1
 
-        # stab.change_parameters(ps=ps, pm=pm, pg=pg)
-        stab = protocols_nn.Protocols(ps, pm, pg, pn)
+        stab.change_parameters(ps=ps, pm=pm, pg=pg)
+        # stab = protocols_nn.Protocols(ps, pm, pg, pn)
         I_OK = []
         I_NOK = []
         E = []
@@ -81,8 +81,8 @@ for parity in ["X", "Z"]:
             # model.set_rho(rhos, probs)
 
             # Define function and apply superoperator NN
-            # superoperator_function = stab.local_stabilizer
-            superoperator_function = stab.basic
+            superoperator_function = stab.local_stabilizer
+            # superoperator_function = stab.basic
             model.apply_superoperator(superoperator_function)
             model.make_chi_matrix()
 
@@ -93,20 +93,20 @@ for parity in ["X", "Z"]:
             # The sum of all physical errors
             E += [(1 - model.chi["IIII_OK"] - model.chi["IIII_NOK"])/4.]
 
-            print("Errors:", pn)
+            print("Errors:", pg)
             print("OK: ", I_OK)
             print("NOK: ", I_NOK)
             print("E: ", E)
             print("-------------")
 
-            file_name = names.chi(ps, pm, pg, pn, a0, a1, theta,
+            file_name = names.chi(ps, pm, pg, eta, a0, a1, theta,
                                   system_size, parity, protocol)
             print(file_name)
 
             ##########################
             rest = 1 - model.check_total_sum()
             model.chi["IIII_OK"] += rest
-            print("Total sum check: ", model.check_total_sum())
+            print("Total sum check: ", model.check_total_sum(), rest)
 
 
             pickle_out = open(file_name, "wb")

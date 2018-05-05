@@ -60,12 +60,9 @@ method = args["method"]
 fail_rate = 0
 
 # Paramters
-ps = 0.0001
-pm = 0.0005
-pg = 0.001
-
-p_not_complete = 0.0
-eta = p
+ps = p
+pm = p
+pg = p
 
 # Initialize objects
 sc = surface_code.SurfaceCode(distance, topology)
@@ -112,7 +109,7 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if rank == 0:
         total = total/float(size)
-        # total = total/float(cycles)
+        total = total/float(cycles)
         print size, method, distance, "p=", p, "incomplete=",p_not_complete, ":", round(total[0], 7)
 
         # print("size: ", size)
