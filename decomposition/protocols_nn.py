@@ -418,9 +418,10 @@ class Protocols:
 
         return rho
 
-    def make_ghz_basic(self, N_ghz):
+    def make_ghz_basic(self):
+        N_ghz=4
         # Calculate number of bell pairs required
-        N_pairs = np.int(N_ghz / 2)
+        N_pairs = np.int(N_ghz)
 
         # Phase 1
         # Make first pair Bell state
@@ -431,17 +432,19 @@ class Protocols:
             rho = qt.tensor(rho, self.generate_epl())
 
         N = len(rho.dims[0])
+        N_ancillas = 4
 
-        # Append single qubit if number of qubits is not pair
-        if N_ghz % 2:
-            rho = qt.tensor(rho, self.generate_noisy_plus())
+        controls = [1, 3, 0, 2]
+        targets = [4, 5, 6, 7]
+        rho = self.apply_two_qubit_gates(rho, N, controls,
+                                         targets,
+                                         "Z")
 
-        # Define pairs to form the GHZ state
-        pairs = [[i, i + 2] for i in range(N_ghz - 2)]
-        # Perform the pair operations
-        for p in pairs:
-            rho = self.one_dot(rho, p, "Z")
-            rho = self.one_dot(rho, p, "Z")
+        # Measure this procedures ancillas
+        projections = [0] * len(controls)
+        rho = self.collapse_ancillas_forced(rho, N,
+                                            N_ancillas,
+                                            projections)
 
         return rho
 
@@ -481,9 +484,9 @@ class Protocols:
         # GHZ number of qubits is same as the number of qubits
         # in the state to be parity measured
         N_parity = len(parity_targets)
-        ghz = self.make_ghz_basic(N_parity)
+        ghz = self.make_ghz_basic()
 
-        # ghz = self.ghz_purification(ghz)
+        ghz = self.ghz_purification(ghz)
 
         ghz = self.twirl_ghz(ghz)
         return self.measure_ghz_stabilizer(rho_initial, ghz,
