@@ -134,7 +134,7 @@ class Protocols:
         raw1 = self.raw_state(self.pn, r)
         raw2 = self.raw_state(self.pn, r)
         raw2 = errs.drift(raw2, p_drift)
-
+        # raw1 = errs.drift(raw1, p_drift)
         # Join state
         rho = qt.tensor(raw1, raw2)
 
@@ -434,7 +434,7 @@ class Protocols:
         N = len(rho.dims[0])
         N_ancillas = 4
 
-        controls = [1, 3, 0, 2]
+        controls = [0, 2, 3, 1]
         targets = [4, 5, 6, 7]
         rho = self.apply_two_qubit_gates(rho, N, controls,
                                          targets,
