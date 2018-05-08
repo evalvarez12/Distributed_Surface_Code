@@ -60,7 +60,7 @@ method = args["method"]
 fail_rate = 0
 
 # Paramters
-ps = 0.0001
+ps = 0.0
 pm = 0.0005
 pg = 0.001
 
