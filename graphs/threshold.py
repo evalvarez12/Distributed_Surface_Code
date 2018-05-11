@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 from pyexcel_ods import get_data
+from matplotlib.ticker import FormatStrFormatter
 
 # PQ TEST toric topology
 # pq = [0.026, 0.0265, 0.027, 0.0275, 0.028, 0.0285, 0.029, 0.0295, 0.03, 0.0305,
@@ -75,11 +76,12 @@ pq = data[0]
 # d16 = data[4]
 # d20 = data[4]/20
 
-d8 = data[1]
-# d10 = data[1]/10
-d12 = data[2]
-# d14 = data[3]/14
-d16 = data[3]
+d6 = data[1]
+d8 = data[2]
+d10 = data[3]
+d12 = data[4]
+d14 = data[5]
+d16 = data[6]
 
 # # plt.plot(pq, 1/d14, 'o-', label=r"$d=14$")
 # plt.plot(pq*100, 1/d8, 'o-', label=r"$d=8$")
@@ -98,11 +100,11 @@ def threshold(X, A, B, C, pth, v):
 
 
 
-# plt.plot(pq, 1-d6, 'ro', label=r"$d=6$")
-plt.plot(pq, d8, 'gv-', label=r"$d=8$")
-# plt.plot(pq, d10, 'b*', label=r"$d=10$")
+plt.plot(pq, d6, 'm<', label=r"$d=6$")
+plt.plot(pq, d8, 'gv', label=r"$d=8$")
+plt.plot(pq, d10, 'b*', label=r"$d=10$")
 plt.plot(pq, d12, 'c>', label=r"$d=12$")
-# plt.plot(pq, d14, 'yo', label=r"$d=14$")
+plt.plot(pq, d14, 'yo', label=r"$d=14$")
 plt.plot(pq, d16, 'rs', label=r"$d=16$")
 # plt.plot(pq, 1-d20, 'mo-', label=r"$d=20$")
 
@@ -114,7 +116,7 @@ plt.plot(pq, d16, 'rs', label=r"$d=16$")
 # pl = np.concatenate((d10, d12, d14, d16))
 # pqs = np.concatenate((pq, pq, pq, pq))
 # ds = np.concatenate((o*10, o*12, o*14, o*16))
-
+#
 # vals, pconv = curve_fit(threshold, (pqs, ds), pl, (1., 1., 1., 1., 1.))
 # perr = np.sqrt(np.diag(pconv))
 # # # plt.plot(pq, 1- threshold((pq, 6), vals[0], vals[1], vals[2], vals[3], vals[4]))
@@ -137,10 +139,14 @@ plt.plot(pq, d16, 'rs', label=r"$d=16$")
 plt.ylabel(r"$p_{logical}$", fontsize=17)
 # plt.xlabel(r"Error rate", fontsize=17)
 plt.xlabel(r"$\eta$", fontsize=17)
-plt.tight_layout()
 
-plt.xticks(fontsize=15)
+
+plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%g'))
+plt.tight_layout()
+# plt.xticks(pq, pq, fontsize=15)
+
+# plt.xticks(fontsize=15)
 plt.yticks(fontsize=15)
 plt.legend(fontsize=17)
-# plt.savefig('threshold_eta.pdf', format='pdf', dpi=300)
+# plt.savefig('threshold_eta_parallel.pdf', format='pdf', dpi=300)
 plt.show()
