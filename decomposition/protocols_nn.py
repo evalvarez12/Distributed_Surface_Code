@@ -128,7 +128,7 @@ class Protocols:
         """
         # Define extra paramters
         r = 1/4.
-        p_drift = 1/100.
+        p_drift = 1/100.*0
 
         # Generate states
         raw1 = self.raw_state(self.pn, r)
@@ -303,6 +303,30 @@ class Protocols:
                                                              projections)
         return collapsed_rho
 
+    def one_dot_epl(self):
+        """
+        Perform the one dot procedure.
+        Uses 4 ancillas.
+        """
+        rho = self.generate_epl()
+        rho = qt.tensor(rho, self.generate_epl())
+
+        N = len(rho.dims[0])
+        N_ancillas = 2
+
+        # Apply two qubit gates
+        controls = [3, 2]
+        targets = [0, 1]
+        rho = self.apply_two_qubit_gates(rho, N, controls,
+                                         targets, "Z")
+
+        # Measure ancillas in X basis
+        projections = [0]*N_ancillas
+        collapsed_rho = self.collapse_ancillas_forced(rho, N,
+                                                      N_ancillas,
+                                                      projections)
+        return collapsed_rho
+
     def two_dots(self, rho_initial, operation_qubits, sigma):
         """
         Perform the two dots procedure.
@@ -419,17 +443,17 @@ class Protocols:
         return rho
 
     def make_ghz_basic(self):
-        N_ghz=4
+        N_ghz = 4
         # Calculate number of bell pairs required
         N_pairs = np.int(N_ghz)
 
         # Phase 1
         # Make first pair Bell state
-        rho = self.generate_epl()
+        rho = self.one_dot_epl()
 
         # Additional Bell states purification
         for i in range(N_pairs - 1):
-            rho = qt.tensor(rho, self.generate_epl())
+            rho = qt.tensor(rho, self.one_dot_epl())
 
         N = len(rho.dims[0])
         N_ancillas = 4
