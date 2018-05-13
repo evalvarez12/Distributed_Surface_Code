@@ -449,11 +449,11 @@ class Protocols:
 
         # Phase 1
         # Make first pair Bell state
-        rho = self.one_dot_epl()
+        rho = self.generate_epl()
 
         # Additional Bell states purification
         for i in range(N_pairs - 1):
-            rho = qt.tensor(rho, self.one_dot_epl())
+            rho = qt.tensor(rho, self.generate_epl())
 
         N = len(rho.dims[0])
         N_ancillas = 4
@@ -510,6 +510,11 @@ class Protocols:
         N_parity = len(parity_targets)
         ghz = self.make_ghz_basic()
 
+        # ghz = self.twirl_ghz(ghz)
+
+        ghz = self.ghz_purification(ghz, "X")
+        # ghz = self.ghz_purification(ghz, "Z")
+
         # ghz = self.ghz_purification(ghz)
 
         ghz = self.twirl_ghz(ghz)
@@ -517,14 +522,14 @@ class Protocols:
                                            parity_targets,
                                            stabilizer)
 
-    def ghz_purification(self, ghz):
+    def ghz_purification(self, ghz, sigma):
         # Two GHZ states to make a parity measuement
         ghz = qt.tensor(ghz, ghz)
 
         # Apply second set of gates
         targets = [0, 1, 2, 3]
         controls = [4, 5, 6, 7]
-        ghz = self.apply_two_qubit_gates(ghz, 8, controls, targets, "X")
+        ghz = self.apply_two_qubit_gates(ghz, 8, controls, targets, sigma)
 
         # Collapse one GHZ
         # Measure this procedures ancillas

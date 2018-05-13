@@ -37,7 +37,7 @@ eta = 0.0
 a0 = 0.0
 a1 = 0.0
 theta = 0.0
-protocol = "MEDIUM"
+protocol = "BASIC"
 
 # Initialize objects
 model = noise_modeling.NoiseModel(system_size, parity)
@@ -57,7 +57,7 @@ E_full = []
 # pgs = [0.003, 0.006, 0.009, 0.012]
 # pgs = [0.0075]
 # fs = np.linspace(.5, 1, 50)
-pns = [0.126, 0.128, 0.130, 0.132, 0.134, 0.136, 0.138, 0.140]
+pns = [0.070, 0.072, 0.074, 0.076, 0.078, 0.080, 0.082, 0.084, 0.086]
 
 
 for parity in ["X", "Z"]:
