@@ -83,9 +83,10 @@ pq = data[0]
 # d14 = data[3]
 # d16 = data[4]
 
-d12 = data[1]
-d15 = data[2]
-d18 = data[3]
+d9 = data[1]
+d12 = data[2]
+d15 = data[3]
+d18 = data[4]
 
 # # plt.plot(pq, 1/d14, 'o-', label=r"$d=14$")
 # plt.plot(pq*100, 1/d8, 'o-', label=r"$d=8$")
@@ -106,7 +107,7 @@ def threshold(X, A, B, C, pth, v):
 
 # plt.plot(pq, d6, 'm<', label=r"$d=6$")
 # plt.plot(pq, d8, 'gv', label=r"$d=8$")
-# plt.plot(pq, d10, 'b*', label=r"$d=10$")
+# plt.plot(pq, d9, 'b*', label=r"$d=9$")
 plt.plot(pq, d12, 'c>', label=r"$d=12$")
 plt.plot(pq, d15, 'yo', label=r"$d=15$")
 plt.plot(pq, d18, 'rs', label=r"$d=18$")
@@ -125,7 +126,7 @@ vals, pconv = curve_fit(threshold, (pqs, ds), pl, (1., 1., 1., 1., 1.))
 perr = np.sqrt(np.diag(pconv))
 # # plt.plot(pq, 1- threshold((pq, 6), vals[0], vals[1], vals[2], vals[3], vals[4]))
 # plt.plot(pq, threshold((pq, 8), vals[0], vals[1], vals[2], vals[3], vals[4]), 'g--')
-# plt.plot(pq, threshold((pq, 10), vals[0], vals[1], vals[2], vals[3], vals[4]), 'b--')
+# plt.plot(pq, threshold((pq, 9), vals[0], vals[1], vals[2], vals[3], vals[4]), 'b--')
 plt.plot(pq, threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]), 'c--')
 plt.plot(pq, threshold((pq, 15), vals[0], vals[1], vals[2], vals[3], vals[4]), 'y--')
 plt.plot(pq, threshold((pq, 18), vals[0], vals[1], vals[2], vals[3], vals[4]), 'r--')
