@@ -88,6 +88,12 @@ for parity in ["X", "Z"]:
 
             print("Total sum check: ", model.check_total_sum())
             print("LEN: ", len(model.chi))
+
+            rest = 1 - model.check_total_sum()
+            model.chi["IIII_OK"] += rest
+            print("Total sum check: ", model.check_total_sum(), rest)
+
+
             I_OK += [model.chi["IIII_OK"]]
             I_NOK += [model.chi["IIII_NOK"]]
             # The sum of all physical errors
@@ -104,9 +110,6 @@ for parity in ["X", "Z"]:
             print(file_name)
 
             ##########################
-            rest = 1 - model.check_total_sum()
-            model.chi["IIII_OK"] += rest
-            print("Total sum check: ", model.check_total_sum(), rest)
 
 
             pickle_out = open(file_name, "wb")
