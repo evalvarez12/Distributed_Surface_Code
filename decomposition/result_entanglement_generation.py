@@ -46,32 +46,32 @@ thetas = np.linspace(0.1, np.pi/2. - 0., 20)
 ##################################################################
 ############### DATA IS OBTAINED HERE#############################
 
-F = []
-T = []
-P = []
-for theta in thetas:
-    print(theta)
-    cb.change_parameters(ps, pm, pg, eta, a0, a1, theta)
-    f = []
-    t = []
-    p = []
-    for i in range(iterations):
-        p_success, check, rho = cb.start_epl(None)
-
-        p += [p_success]
-        f += [qt.fidelity(rho, rho_ref)]
-        t += [check["time"]]
-    T += [(np.average(t), np.std(t))]
-    F += [(np.average(f), np.std(f))]
-    P += [(np.average(p), np.std(p))]
-
-F = np.array(F)
-T = np.array(T)
-P = np.array(P)
-# #
-np.save("data/F_epl_params_raja.npy", F)
-np.save("data/T_epl_params_raja.npy", T)
-np.save("data/P_epl_params_raja.npy", P)
+# F = []
+# T = []
+# P = []
+# for theta in thetas:
+#     print(theta)
+#     cb.change_parameters(ps, pm, pg, eta, a0, a1, theta)
+#     f = []
+#     t = []
+#     p = []
+#     for i in range(iterations):
+#         p_success, check, rho = cb.start_epl(None)
+#
+#         p += [p_success]
+#         f += [qt.fidelity(rho, rho_ref)]
+#         t += [check["time"]]
+#     T += [(np.average(t), np.std(t))]
+#     F += [(np.average(f), np.std(f))]
+#     P += [(np.average(p), np.std(p))]
+#
+# F = np.array(F)
+# T = np.array(T)
+# P = np.array(P)
+# # #
+# np.save("data/F_epl_params_raja.npy", F)
+# np.save("data/T_epl_params_raja.npy", T)
+# np.save("data/P_epl_params_raja.npy", P)
 
 #################################################################
 #################################################################
@@ -103,9 +103,9 @@ def single_selection(F1, F2):
     return F
 
 ################### PLOT THE RESULTS ######################
-# F = np.load("data/F_epl_params_raja.npy")
-# T = np.load("data/T_epl_params_raja.npy")
-# P = np.load("data/P_epl_params_raja.npy")
+F = np.load("data/F_epl_params_raja.npy")
+T = np.load("data/T_epl_params_raja.npy")
+P = np.load("data/P_epl_params_raja.npy")
 
 plt.figure()
 plt.ylabel(r"$F$", fontsize=17)
@@ -115,27 +115,35 @@ plt.plot(thetas, f_one_click(thetas), 'r-',label="One click")
 plt.legend(fontsize=17)
 plt.xticks(fontsize=17)
 plt.yticks(fontsize=17)
+plt.tight_layout()
+plt.savefig('f_epl_click.pdf', format='pdf', dpi=300)
 
 
 plt.figure()
-plt.ylabel(r"$t(s)$", fontsize=21)
+plt.ylabel(r"$t(s)$", fontsize=17)
 plt.plot(thetas, T[:, 0]/P[:,0], 'go-', label=r"EPL")
 plt.plot(thetas, T[:, 0]/2., 'r-',label="One click")
-plt.xlabel(r"$\theta$", fontsize=21)
+plt.xlabel(r"$\theta$", fontsize=17)
 # plt.legend(fontsize=17)
-plt.xticks(fontsize=21)
-plt.yticks(fontsize=21)
+plt.xticks(fontsize=17)
+plt.yticks(fontsize=17)
+plt.tight_layout()
+plt.savefig('t_epl_click.pdf', format='pdf', dpi=300)
 
 #
 plt.figure()
-plt.ylabel(r"$p_{success}$", fontsize=21)
-plt.xlabel(r"$\theta$", fontsize=21)
+plt.ylabel(r"$p_{success}$", fontsize=17)
+plt.xlabel(r"$\theta$", fontsize=17)
 plt.errorbar(thetas, P[:, 0], yerr=P[:, 1], fmt='go-', label=r"EPL")
 plt.plot(thetas, 100*p_one_click(thetas), 'r-', label="100xOne click")
 plt.plot(thetas, 1000*p_one_click(thetas)*P[:, 0], 'k--')
 # plt.plot(thetas, 10000*p_bk(thetas), 'k--' )
 plt.xticks(fontsize=21)
 plt.yticks(fontsize=21)
+plt.tight_layout()
+plt.savefig('p_epl_click.pdf', format='pdf', dpi=300)
+
+
 # plt.legend()
 
 # plt.plot(thetas, 500000*p_bk(thetas))
