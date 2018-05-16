@@ -89,11 +89,25 @@ for parity in ["X", "Z"]:
             print("Total sum check: ", model.check_total_sum())
             print("LEN: ", len(model.chi))
 
-            rest = 1 - model.check_total_sum()
-            model.chi["IIII_OK"] += rest
+            # rest = 1 - model.check_total_sum()
+            # model.chi["IIII_OK"] += rest
+
+            ###########################################
+            ###############Remove last errors
+            chi = model.chi
+
+            # Remove the 3 qubit errors part
+            for i in list(chi.keys()):
+                if i.count('I') < 2:
+                    chi[i] = 0
+
+            rest = 1 - sum(chi.values())
+            chi['IIII_OK'] += rest
+
+
             print("Total sum check: ", model.check_total_sum(), rest)
-
-
+            #########################################
+            ########################################
             I_OK += [model.chi["IIII_OK"]]
             I_NOK += [model.chi["IIII_NOK"]]
             # The sum of all physical errors
@@ -112,25 +126,15 @@ for parity in ["X", "Z"]:
             ##########################
 
 
-            pickle_out = open(file_name, "wb")
-            pickle.dump(model.chi, pickle_out, protocol=2)
-            pickle_out.close()
+            # pickle_out = open(file_name, "wb")
+            # pickle.dump(model.chi, pickle_out, protocol=2)
+            # pickle_out.close()
 
             model.reset_chi()
             # print(model.chi)
-            # chi = model.chi
-
-            # Remove the 3 qubit errors part
-            # for i in list(chi.keys()):
-            #     if i.count('I') < 2:
-            #         chi[i] = 0
-            #
-            # rest = 1 - sum(chi.values())
-            # chi['IIII_OK'] += rest
-
-            # pickle_out = open(file_name, "wb")
-            # pickle.dump(chi, pickle_out, protocol=2)
-            # pickle_out.close()
+            pickle_out = open(file_name, "wb")
+            pickle.dump(chi, pickle_out, protocol=2)
+            pickle_out.close()
 
     I_OK_full += [I_OK]
     I_NOK_full += [I_NOK]

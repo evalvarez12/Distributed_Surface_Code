@@ -83,10 +83,10 @@ pq = data[0]
 # d14 = data[3]
 # d16 = data[4]
 
-d9 = data[1]
-d12 = data[2]
-d15 = data[3]
-d18 = data[4]
+# d9 = data[1]
+d12 = data[1]
+d15 = data[2]
+d18 = data[3]
 
 # # plt.plot(pq, 1/d14, 'o-', label=r"$d=14$")
 # plt.plot(pq*100, 1/d8, 'o-', label=r"$d=8$")
@@ -143,7 +143,7 @@ print(perr)
 # plt.title("EXPEDIENT")
 plt.ylabel(r"$p_{logical}$", fontsize=17)
 # plt.xlabel(r"Error rate", fontsize=17)
-plt.xlabel(r"$p$", fontsize=17)
+plt.xlabel(r"$\eta$", fontsize=17)
 
 
 plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%g'))
@@ -152,6 +152,6 @@ plt.tight_layout()
 
 plt.xticks(fontsize=15)
 plt.yticks(fontsize=15)
-plt.legend(fontsize=17)
-plt.savefig('threshold_pg_hybrid.pdf', format='pdf', dpi=300)
+# plt.legend(fontsize=17)
+plt.savefig('threshold_eta_hybrid.pdf', format='pdf', dpi=300)
 plt.show()
