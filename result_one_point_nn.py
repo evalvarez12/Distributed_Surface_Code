@@ -3,8 +3,7 @@ Simple simulation to test the surface code simulation is working
 without looking at plots.
 
 Run this code using mpi4py:
-mpiexec python result_one_point_local.py topology=toric distance=10 iterations=50 cycles=10 protocol=LOCAL p=0.006
-
+mpiexec python result_one_point_nn.py topology=toric distance=8 iterations=500 cycles=8 protocol=BASIC p=0.07 ignore=0.0 method=single_rounds_rev
 created-on: 09/12/17
 @author: eduardo
 """
@@ -113,7 +112,7 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 if rank == 0:
         total = total/float(size)
         # total = total/float(cycles)
-        print size, method, distance, cycles, "p=", p, "incomplete=",p_not_complete, ":", round(total[0], 7)
+        print size, method, distance, cycles, "p=", p, "incomplete=",p_not_complete, ":", round(total[0], 7), ":", round(total[0], 7)/float(cycles)
 
         # print("size: ", size)
         # print("id: ", rank)

@@ -57,10 +57,11 @@ E_full = []
 # pgs = [0.003, 0.006, 0.009, 0.012]
 # pgs = [0.0075]
 # fs = np.linspace(.5, 1, 50)
-pns = [0.070, 0.072, 0.074, 0.076, 0.078, 0.080, 0.082, 0.084, 0.086]
+# pns = [0.070, 0.072, 0.074, 0.076, 0.078, 0.080, 0.082, 0.084, 0.086]
+pns = [0.070]
 
 
-for parity in ["X", "Z"]:
+for parity in ["X"]:
     for pn in pns:
         # ps = pg
         # pm = pg
@@ -96,13 +97,13 @@ for parity in ["X", "Z"]:
             ###############Remove last errors
             chi = model.chi
 
-            # Remove the 3 qubit errors part
-            for i in list(chi.keys()):
-                if i.count('I') < 2:
-                    chi[i] = 0
+            # # Remove the 3 qubit errors part
+            # for i in list(chi.keys()):
+            #     if i.count('I') < 2:
+            #         chi[i] = 0
 
             rest = 1 - sum(chi.values())
-            chi['IIII_OK'] += rest
+            # chi['IIII_OK'] += rest
 
 
             print("Total sum check: ", model.check_total_sum(), rest)

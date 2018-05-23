@@ -248,7 +248,8 @@ def drift(state, pd):
     Drift noise according to NN article.
     """
     N = len(state.dims[0])
-    Z = qt.rz(np.pi, N, 0) * qt.rz(np.pi, N, 1)
+    Z = qt.rz(np.pi, N, 0)
+    # print(state)
     state = (1-pd) * state + pd * Z * state * Z.dag()
     return state
 

@@ -148,7 +148,7 @@ plt.xlabel(r"$\eta$", fontsize=17)
 
 plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%g'))
 plt.tight_layout()
-# plt.xticks(pq, pq, fontsize=15)
+plt.xticks(pq, pq, fontsize=15)
 
 plt.xticks(fontsize=15)
 plt.yticks(fontsize=15)

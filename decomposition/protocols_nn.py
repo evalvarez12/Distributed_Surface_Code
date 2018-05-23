@@ -128,7 +128,7 @@ class Protocols:
         """
         # Define extra paramters
         r = 1/4.
-        p_drift = 1/100.*0
+        p_drift = 1/100.
 
         # Generate states
         raw1 = self.raw_state(self.pn, r)
@@ -136,6 +136,7 @@ class Protocols:
         raw2 = errs.drift(raw2, p_drift)
         # raw1 = errs.drift(raw1, p_drift)
         # Join state
+        # print(raw1.norm(), raw2.norm())
         rho = qt.tensor(raw1, raw2)
 
         # Apply two qubit gates
@@ -152,8 +153,8 @@ class Protocols:
                                              1, "Z")
             N = N - 1
 
-        X = qt.rx(np.pi, 2, 0)
-        rho = errs.single_qubit_gate(rho, X, self.ps, 2, 0)
+        # X = qt.rx(np.pi, 2, 0)
+        # rho = errs.single_qubit_gate(rho, X, self.ps, 2, 0)
 
         return rho
 
@@ -204,6 +205,9 @@ class Protocols:
 
         # Get probabilites for each outcome
         p_even, p_odd = self._get_probabilities_measurement(rho, N_ghz)
+        print(rho_even)
+        print(rho_odd)
+        print(rho_odd == rho_even)
         return [p_even, p_odd], [rho_even, rho_odd]
 
     def _get_probabilities_measurement(self, rho, N_ghz):
@@ -321,7 +325,7 @@ class Protocols:
                                          targets, "Z")
 
         # Measure ancillas in X basis
-        projections = [0]*N_ancillas
+        projections = [0, 1]
         collapsed_rho = self.collapse_ancillas_forced(rho, N,
                                                       N_ancillas,
                                                       projections)
@@ -449,13 +453,18 @@ class Protocols:
 
         # Phase 1
         # Make first pair Bell state
+        # rho = self.one_dot_epl()
         rho = self.generate_epl()
+
+        # print(rho)
 
         # Additional Bell states purification
         for i in range(N_pairs - 1):
+            # rho = qt.tensor(rho, self.one_dot_epl())
             rho = qt.tensor(rho, self.generate_epl())
 
         N = len(rho.dims[0])
+        print(N)
         N_ancillas = 4
 
         controls = [0, 2, 3, 1]
@@ -465,12 +474,13 @@ class Protocols:
                                          "Z")
 
         # Measure this procedures ancillas
-        projections = [0] * len(controls)
+        projections = [0, 0, 0, 0]
         rho = self.collapse_ancillas_forced(rho, N,
                                             N_ancillas,
                                             projections)
 
-        return rho
+        ghz = self.ghz_purification(rho, "X")
+        return ghz
 
     def expedient(self, rho_initial, parity_targets, stabilizer):
         """
@@ -511,8 +521,6 @@ class Protocols:
         ghz = self.make_ghz_basic()
 
         # ghz = self.twirl_ghz(ghz)
-
-        ghz = self.ghz_purification(ghz, "X")
         # ghz = self.ghz_purification(ghz, "Z")
 
         # ghz = self.ghz_purification(ghz)
@@ -524,6 +532,8 @@ class Protocols:
 
     def ghz_purification(self, ghz, sigma):
         # Two GHZ states to make a parity measuement
+        # ghz = self.twirl_ghz(ghz)
+
         ghz = qt.tensor(ghz, ghz)
 
         # Apply second set of gates
