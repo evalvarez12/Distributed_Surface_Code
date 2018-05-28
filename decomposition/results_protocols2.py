@@ -10,6 +10,7 @@ import qutip as qt
 import stabilizer
 import protocols
 import tools.names as names
+import tools.fgh as fgh
 import matplotlib.pyplot as plt
 import noise_modeling
 
@@ -41,7 +42,7 @@ theta = .63
 # a0 = 1/2.
 # eta = 1/200
 # Protocol name to save state
-protocol_name = "thres_eta"
+protocol_name = "thres_tau"
 
 def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers
@@ -53,7 +54,7 @@ def env_error_rate(t, a):
 
 # Number of iterations for a average
 iterations = 2000
-ignore_number = int(iterations/100.*5)
+ignore_number = int(iterations/100*5.)
 
 # Initialize objects and define references
 bell_ref = qt.bell_state('00') * qt.bell_state('00').dag()
@@ -61,7 +62,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = bell_ref
+rho_ref = ghz4_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -77,25 +78,33 @@ choi = choi * choi.dag()
 targets = list(range(stab_size))
 
 
+# Start from 6000.0
 # for s in [0]:
-# for a0 in [5.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0]:
+# for a0 in [5.0]:
+# for eta in [0.00055]:
+# for eta in [0.00045, 0.00040, 0.00035, 0.00030, 0.00025, 0.00020]:
 # for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
-#for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039, 0.0040, 0.0041, 0.0042, 0.0043, 0.0044, 0.0045]:
-#for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039, 0.0040, 0.0041]:
-for eta in [0.00055]:
+# for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039, 0.0041]:
+# for pg in [0.0040]:
+for tau in range(1, 10):
+    a0 = fgh.f2(tau)
+    eta = fgh.g2(tau)
+    pg = fgh.h2(tau)
+
     ps = pg
     pm = pg
     FIDELITY = []
     TIMES = []
-    print("------> Var=", eta)
+    print("------> Var=", a0, eta, pg)
     print("EPL")
-    ghz = protocols.ghz2_epl(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz4_epl_parallel(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []
     rhos = []
     # check = collections.Counter({})
     for i in range(iterations):
+        # print(i)
         r, c = ghz.run()
         times += [c["time"]]
 

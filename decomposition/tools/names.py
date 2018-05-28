@@ -28,10 +28,10 @@ def chi(ps, pm, pg, eta, a0, a1, theta, stab_size, parity, protocol):
 
 def ghz(ps, pm, pg, eta, a0, a1, theta, size, protocol):
     """Name generator for saved GHZ states."""
-    param_names = ["ps=" + str(round(ps, 4)), "pm=" + str(round(pm, 4)),
-                   "pg=" + str(round(pg, 4)), "eta=" + str(round(eta, 5)),
-                   "a0=" + str(round(a0, 4)), "a1=" + str(round(a1, 4)),
-                   "theta=" + str(round(theta, 4))]
+    param_names = ["ps=" + str(round(ps, 5)), "pm=" + str(round(pm, 5)),
+                   "pg=" + str(round(pg, 5)), "eta=" + str(round(eta, 5)),
+                   "a0=" + str(round(a0, 5)), "a1=" + str(round(a1, 5)),
+                   "theta=" + str(round(theta, 5))]
 
     param_names = "_".join(param_names)
     file_name = ["GHZ", protocol, str(size)]
@@ -44,10 +44,10 @@ def ghz(ps, pm, pg, eta, a0, a1, theta, size, protocol):
 
 def ghz_times(ps, pm, pg, eta, a0, a1, theta, size, protocol):
     """Name generator for saved GHZ states."""
-    param_names = ["ps=" + str(round(ps, 4)), "pm=" + str(round(pm, 4)),
-                   "pg=" + str(round(pg, 4)), "eta=" + str(round(eta, 5)),
-                   "a0=" + str(round(a0, 4)), "a1=" + str(round(a1, 4)),
-                   "theta=" + str(round(theta, 4))]
+    param_names = ["ps=" + str(round(ps, 5)), "pm=" + str(round(pm, 5)),
+                   "pg=" + str(round(pg, 5)), "eta=" + str(round(eta, 5)),
+                   "a0=" + str(round(a0, 5)), "a1=" + str(round(a1, 5)),
+                   "theta=" + str(round(theta, 5))]
 
     param_names = "_".join(param_names)
     file_name = ["TIMES", protocol, str(size)]
