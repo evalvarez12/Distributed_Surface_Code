@@ -53,6 +53,7 @@ tau = int(args["tau"])
 protocol = args["protocol"]
 t = float(args["time"])
 mode = int(args["mode"])
+measurement = args["measurement"]
 
 # Set paramters
 f, g, h = fgh.fgh(mode)
@@ -69,7 +70,6 @@ theta = .63
 
 # Other parameters
 ignore = 0.05
-measurement = "single_rounds"
 # Initialize fail rate
 fail_rate = 0
 
