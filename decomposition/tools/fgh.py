@@ -4,15 +4,15 @@ def f1(t):
     return a0
 
 def f2(t):
-    a0 = 100. + 200.*t
+    a0 = 100.0 + 200.*t
     return a0
 
 def f3(t):
-    a0 = 100
+    a0 = 100.0
     return a0
 
 def f4(t):
-    a0 = 100
+    a0 = 100.0
     return a0
 
 def g1(t):
