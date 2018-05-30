@@ -6,7 +6,7 @@ import blossom5.py_match as pm
 import numpy as np
 
 
-def match_simple(size, anyons, surface, stabilizer, weights=[1, 1]):
+def match_simple(size, anyons, surface, stabilizer, weights):
     """
     Find a matching to fix the errors in a 3D planar code given the positions
     of '-1' stabilizer outcomes
@@ -39,7 +39,7 @@ def match_simple(size, anyons, surface, stabilizer, weights=[1, 1]):
     N = len(anyons)
 
     graph = make_graph(size, anyons, N_real, weights, cyclic=cyclic)
-
+    # print(graph)
     if N % 2 == 1:
         raise ValueError("Number of nodes is odd!")
     matching = pm.blossom_match(N, graph)
@@ -54,7 +54,7 @@ def match_simple(size, anyons, surface, stabilizer, weights=[1, 1]):
         pairs = pairs_remove_out_planar_space(size, stabilizer, pairs)
     return pairs
 
-def match(size, anyons, surface, stabilizer, time, weights=[1, 1]):
+def match(size, anyons, surface, stabilizer, time, weights):
     """
     Find a matching to fix the errors in a 3D planar code given the positions
     of '-1' stabilizer outcomes
@@ -108,7 +108,7 @@ def match(size, anyons, surface, stabilizer, time, weights=[1, 1]):
     return pairs
 
 
-def make_graph(size, nodes, N_real, weights=[1, 1], cyclic=True):
+def make_graph(size, nodes, N_real, weights, cyclic=True):
     # Function to make the graph representation of the anyons
     # Nodes array format is:
     # [[x1, y1, t1], [x2, y2, t2], [x3, y3, t3], ...]

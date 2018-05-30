@@ -50,10 +50,15 @@ class Layers:
         self.syndromes_star = []
         self.syndromes_plaq = []
 
-    def decode(self, weights=[1, 1]):
+    def decode(self, weights=[1, 2]):
         """Decode the measured syndromes using MWPM"""
         # Get anyons
         anyons_star, anyons_plaq = self.find_anyons_all()
+
+        # print("ANYON STAR")
+        # print(anyons_star)
+        # print("ANYON PLAQ")
+        # print(anyons_plaq)
 
         # The number of measurements done so far
         time = len(self.syndromes_star)

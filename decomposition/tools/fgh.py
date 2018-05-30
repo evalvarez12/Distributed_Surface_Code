@@ -24,11 +24,11 @@ def g2(t):
     return eta
 
 def g3(t):
-    eta = 0.0015 - 0.0001*t
+    eta = 0.008 - 0.0005*t
     return eta
 
 def g4(t):
-    eta = 0.0007 - 0.00005*t
+    eta = 0.008 - 0.0005*t
     return eta
 
 def h1(t):

@@ -78,15 +78,15 @@ pq = data[0]
 
 # d6 = data[1]
 # d8 = data[2]
-# d10 = data[1]
-# d12 = data[2]
-# d14 = data[3]
-# d16 = data[4]
+d10 = data[1]
+d12 = data[2]
+d14 = data[3]
+d16 = data[4]
 
 # d9 = data[1]
-d12 = data[1]
-d15 = data[2]
-d18 = data[3]
+# d12 = data[1]
+# d15 = data[2]
+# d18 = data[3]
 
 # # plt.plot(pq, 1/d14, 'o-', label=r"$d=14$")
 # plt.plot(pq*100, 1/d8, 'o-', label=r"$d=8$")
@@ -107,35 +107,35 @@ def threshold(X, A, B, C, pth, v):
 
 # plt.plot(pq, d6, 'm<', label=r"$d=6$")
 # plt.plot(pq, d8, 'gv', label=r"$d=8$")
-# plt.plot(pq, d9, 'b*', label=r"$d=9$")
+plt.plot(pq, d10, 'b*', label=r"$d=10$")
 plt.plot(pq, d12, 'c>', label=r"$d=12$")
-plt.plot(pq, d15, 'yo', label=r"$d=15$")
-plt.plot(pq, d18, 'rs', label=r"$d=18$")
+plt.plot(pq, d14, 'yo', label=r"$d=14$")
+plt.plot(pq, d16, 'rs', label=r"$d=16$")
 # plt.plot(pq, 1-d20, 'mo-', label=r"$d=20$")
 
 
 ################################################################
 ################################################################
 ##### Curve fit
-o = np.ones_like(d12)
-pl = np.concatenate((d12, d15, d18))
-pqs = np.concatenate((pq, pq, pq))
-ds = np.concatenate((o*12, o*15, o*18))
-
-vals, pconv = curve_fit(threshold, (pqs, ds), pl, (1., 1., 1., 1., 1.))
-perr = np.sqrt(np.diag(pconv))
-# # plt.plot(pq, 1- threshold((pq, 6), vals[0], vals[1], vals[2], vals[3], vals[4]))
-# plt.plot(pq, threshold((pq, 8), vals[0], vals[1], vals[2], vals[3], vals[4]), 'g--')
-# plt.plot(pq, threshold((pq, 9), vals[0], vals[1], vals[2], vals[3], vals[4]), 'b--')
-plt.plot(pq, threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]), 'c--')
-plt.plot(pq, threshold((pq, 15), vals[0], vals[1], vals[2], vals[3], vals[4]), 'y--')
-plt.plot(pq, threshold((pq, 18), vals[0], vals[1], vals[2], vals[3], vals[4]), 'r--')
-
-print("VALUES")
-print(vals)
-
-print("ERROR")
-print(perr)
+# o = np.ones_like(d12)
+# pl = np.concatenate((d10, d12, d14, d16))
+# pqs = np.concatenate((pq, pq, pq, pq))
+# ds = np.concatenate((o*10, o*12, o*14, o*16))
+#
+# vals, pconv = curve_fit(threshold, (pqs, ds), pl, (1., 1., 1., 1., 1.))
+# perr = np.sqrt(np.diag(pconv))
+# # # plt.plot(pq, 1- threshold((pq, 6), vals[0], vals[1], vals[2], vals[3], vals[4]))
+# # plt.plot(pq, threshold((pq, 8), vals[0], vals[1], vals[2], vals[3], vals[4]), 'g--')
+# plt.plot(pq, threshold((pq, 10), vals[0], vals[1], vals[2], vals[3], vals[4]), 'b--')
+# plt.plot(pq, threshold((pq, 12), vals[0], vals[1], vals[2], vals[3], vals[4]), 'c--')
+# plt.plot(pq, threshold((pq, 14), vals[0], vals[1], vals[2], vals[3], vals[4]), 'y--')
+# plt.plot(pq, threshold((pq, 16), vals[0], vals[1], vals[2], vals[3], vals[4]), 'r--')
+#
+# print("VALUES")
+# print(vals)
+#
+# print("ERROR")
+# print(perr)
 ##################################################################
 ##################################################################
 
@@ -153,5 +153,5 @@ plt.xticks(pq, pq, fontsize=15)
 plt.xticks(fontsize=15)
 plt.yticks(fontsize=15)
 # plt.legend(fontsize=17)
-plt.savefig('threshold_eta_hybrid.pdf', format='pdf', dpi=300)
+# plt.savefig('threshold_eta_hybrid.pdf', format='pdf', dpi=300)
 plt.show()
