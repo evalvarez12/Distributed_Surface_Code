@@ -53,7 +53,7 @@ tau = int(args["tau"])
 protocol = args["protocol"]
 t = float(args["time"])
 mode = int(args["mode"])
-measurement = args["measurement"]
+measurement = args["method"]
 
 # Set paramters
 f, g, h = fgh.fgh(mode)
