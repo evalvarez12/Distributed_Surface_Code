@@ -50,7 +50,7 @@ class Layers:
         self.syndromes_star = []
         self.syndromes_plaq = []
 
-    def decode(self, weights=[1, 2]):
+    def decode(self, weights=[1, 1]):
         """Decode the measured syndromes using MWPM"""
         # Get anyons
         anyons_star, anyons_plaq = self.find_anyons_all()
