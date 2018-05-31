@@ -110,7 +110,7 @@ comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 if rank == 0:
         total = total/float(size)
         # total = total/float(cycles)
-        print size, method, distance, "p=", p, "incomplete=",p_not_complete, ":", round(total[0], 7)
+        print size, method, distance, "p=", p, "incomplete=",p_not_complete, roud(total[0], 7), ":", round(total[0], 7)/cycles
 
         # print("size: ", size)
         # print("id: ", rank)
