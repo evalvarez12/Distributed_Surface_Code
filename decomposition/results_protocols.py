@@ -86,7 +86,7 @@ targets = list(range(stab_size))
 # for eta in [0.0100, 0.0095, 0.0090, 0.0085, 0.0080, 0.0075, 0.0070, 0.0065, 0.0060, 0.0055, 0.0050]:
 # for pg in [0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039, 0.0041]:
 # for pg in [0.0040]:
-for tau in range(10):
+for tau in range(5):
     f, g, h = fgh.fgh(mode)
 
     a0 = f(tau)
