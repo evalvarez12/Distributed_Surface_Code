@@ -44,7 +44,7 @@ def h3(t):
     return p
 
 def h4(t):
-    p = 0.0035 + 0.00005*t
+    p = 0.0040 + 0.00005*t
     return p
 
 

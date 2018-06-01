@@ -70,18 +70,18 @@ data = np.array(sheet["Sheet3"]).transpose()
 pq = data[0]
 # d6 = np.array(d6)
 # d8 = data[1]
-# d10 = data[1]
-# d12 = data[2]
-# d14 = data[3]
-# d16 = data[4]
+d10 = data[1]
+d12 = data[2]
+d14 = data[3]
+d16 = data[4]
 # d20 = data[4]/20
 
 # d6 = data[1]
 # d8 = data[2]
-d10 = data[1]*10.
-d12 = data[2]*12.
-d14 = data[3]*14.
-d16 = data[4]*16.
+# d10 = data[1]/10.
+# d12 = data[2]/12.
+# d14 = data[3]/14.
+# d16 = data[4]/16.
 
 # d9 = data[1]
 # d12 = data[1]

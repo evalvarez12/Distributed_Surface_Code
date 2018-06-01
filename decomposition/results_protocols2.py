@@ -42,8 +42,8 @@ theta = .63
 # a0 = 1/2.
 # eta = 1/200
 # Protocol name to save state
-protocol_name = "thres_tau_paired"
-mode = 3
+protocol_name = "thres_tau_hybrid"
+mode = 4
 
 def env_error_rate(t, a):
     # Function to calculate the error to the enviroment for step of stabilizers

@@ -4,6 +4,8 @@ without looking at plots.
 
 Run this code using mpi4py:
 mpiexec python result_one_point_model.py topology=toric distance=10 iterations=100 cycles=10 protocol=thres_pg_paired a0=5.0 a1=0 eta=0.01 time=0.0555 pg=0.0035 measurement=single
+mpiexec python result_one_point_model.py topology=toric distance=10 iterations=500 cycles=10 protocol=thres_eta a0=5.0 eta=0.0100 pg=0.0030 time=0.07928850 measurement=single_rounds
+
 created-on: 09/12/17
 @author: eduardo
 """
@@ -120,6 +122,6 @@ if comm.rank == 0:
         # args_str = get_file_name(args)
         # script_path = dirname(realpath(__file__))
         # file_name = (script_path + "/results/" + args_str)
-        print size, distance, protocol, measurement, a0, eta, pg, round(total[0]/cycles,7), ":", round(total[0], 7)
+        print size, distance, protocol, measurement, a0, eta, pg, round(total[0],7), ":", round(total[0]/cycles, 7)
         # print "rate :", round(total[0], 7)*cycles
         # np.save(file_name, total)
