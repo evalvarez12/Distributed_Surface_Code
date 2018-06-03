@@ -24,11 +24,11 @@ eta = 1/100.
 theta = .63
 
 # GHZ info
-ghz_size = 3
-protocol = "thres_tau_paired"
+ghz_size = 2
+protocol = "thres_tau_hybrid"
 protocol_chi = protocol
 # protocol_chi = "thres_tau"
-mode = 3
+mode = 4
 extra = False
 ignore_percent = 5
 stab_size = 4

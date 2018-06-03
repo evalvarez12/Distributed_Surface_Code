@@ -62,7 +62,7 @@ bell_ref2 = qt.bell_state('01') * qt.bell_state('01').dag()
 ghz4_ref = qt.ghz_state(4) * qt.ghz_state(4).dag()
 ghz3_ref = qt.ghz_state(3) * qt.ghz_state(3).dag()
 
-rho_ref = ghz3_ref
+rho_ref = bell_ref
 
 # Stabilizer and error modeling stuff
 stab_size = 4
@@ -99,7 +99,7 @@ for tau in range(5):
     TIMES = []
     print("------> Var=", a0, eta, pg)
     print("EPL")
-    ghz = protocols.ghz3_epl(ps, pm, pg, eta, a0, a1, theta)
+    ghz = protocols.ghz2_epl(ps, pm, pg, eta, a0, a1, theta)
     # Get average number of steps
     fidelity = []
     times = []

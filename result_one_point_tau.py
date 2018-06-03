@@ -76,8 +76,10 @@ fail_rate = 0
 # Initialize objects
 sc = surface_code.SurfaceCode(distance, topology)
 lc = layers.Layers(sc)
-sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
 
+sc.init_error_obj(topology, ps, pm, pg, eta, a0, a1, theta, protocol)
+sc.init_error_obj_extra(topology, ps, pm, pg, eta, a0, a1, theta, protocol + "_extra")
+measurement = "hybrid"
 # Choose a measurement protocol
 sc.select_measurement_protocol(t, a1, measurement, ignore)
 
