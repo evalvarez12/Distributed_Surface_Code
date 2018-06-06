@@ -24,7 +24,7 @@ eta = 1/100.
 theta = .63
 
 # GHZ info
-ghz_size = 2
+ghz_size = 3
 protocol = "thres_tau_hybrid"
 protocol_chi = protocol
 # protocol_chi = "thres_tau"

@@ -11,7 +11,8 @@ ps = 0.003
 pm = 0.003
 pg = 0.003
 a0 = 5.0
-a1 = 1/30.
+# a1 = 1/30.
+a1 = 0.0333
 eta = 1/100.
 theta = .63
 
@@ -106,7 +107,8 @@ ps = 0.003
 pm = 0.003
 pg = 0.003
 a0 = 5.0
-a1 = 1/30.
+# a1 = 1/30.
+a1 = 0.0333
 eta = 1/100.
 theta = .63
 
@@ -156,7 +158,8 @@ ps = 0.003
 pm = 0.003
 pg = 0.003
 a0 = 5.0
-a1 = 1/30.
+# a1 = 1/30.
+a1 = 0.0333
 eta = 1/100.
 theta = .63
 
@@ -208,14 +211,14 @@ plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 
 blue_patch = mpatches.Patch(color='blue', label=r'$\eta$')
-red_patch = mpatches.Patch(color='red', label=r'$p_g$')
+red_patch = mpatches.Patch(color='red', label=r'$p$')
 green_patch = mpatches.Patch(color='green', label=r'$a_0$')
 
 plt.legend(fontsize=14, handles=[blue_patch, red_patch, green_patch])
 
-legend1 = pyplot.legend(plot_lines[0], ["algo1", "algo2", "algo3"], loc=1)
-pyplot.legend([l[0] for l in plot_lines], parameters, loc=4)
-pyplot.gca().add_artist(legend1)
+# legend1 = pyplot.legend(plot_lines[0], ["algo1", "algo2", "algo3"], loc=1)
+# pyplot.legend([l[0] for l in plot_lines], parameters, loc=4)
+# pyplot.gca().add_artist(legend1)
 
 plt.axis([0.059, 0.25, .942, 0.981])
 
