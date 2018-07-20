@@ -61,7 +61,7 @@ E_full = []
 pns = [0.070]
 
 
-for parity in ["X"]:
+for parity in ["X", "Z"]:
     for pn in pns:
         # ps = pg
         # pm = pg
