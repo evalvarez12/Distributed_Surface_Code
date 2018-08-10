@@ -37,9 +37,74 @@
             
   <div class="section" id="welcome-to-distributedsc-s-documentation">
 <h1>Welcome to DistributedSC’s documentation!<a class="headerlink" href="#welcome-to-distributedsc-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>hoi
-hoi</p>
+<p><strong>API &amp; documentation</strong> can be found in <cite>docs/build/html/index.html</cite> (opens in webbrowser).</p>
+<p>Brief code overview as interpreted by Tim</p>
+<p>Last updated: 2018_08_10</p>
+<p>The class <cite>SurfaceCode</cite> (in <cite>surface_code.py</cite>) represents the set of qubits involved in an implementation of the surface code and has methods such as <cite>_measure_stabilizer_bulk</cite> and <cite>apply_qubit_error</cite>.</p>
+<p>A <cite>Layers</cite> object (in <cite>layers.py</cite>) is a collection of “sheets of measurements”, each of which is performed at a different instance in time. Dealing with anyons and decoding happens in this class, by importing functions from <cite>matching.py</cite>, which contains functions that basically wrap around the implementation of Edmond’s blossom algorithm is the <cite>blossom5</cite> folder.</p>
+<p>The class <cite>Generator</cite> (in <cite>errors.py</cite>) reads an error model in, stored in the folder <cite>config_files</cite>.</p>
+<p><strong>Folder `decomposition`</strong></p>
+<p>The class <cite>Blocks</cite> (in <cite>decomposition/circuit_block.py</cite>) represents compositions of the (distributed) circuits for creating a (noisy) Bell pair. Possible entanglement-creation-protocols are single-click, Barrett-Kok and EPL. It also contains a few functions that correspond to operations on these Bell pairs, such as performing a “single selection round” or “collapsing the ancillas in the nodes to create a GHZ state”.</p>
+<p>The class <cite>Circuit</cite> (in <cite>decomposition/circuit.py</cite>) represents compositions of general circuits (so not only for Bell pair generation and operations on it). It can hold either <cite>Block</cite> instances or <cite>Circuit</cite> instances itself. This <cite>Circuit</cite> object can be <cite>run</cite>, which results in a final state as output of the circuit.</p>
+<p>The file <cite>decomposition/error_models.py</cite> contains a whole bunch of functions which take a state <span class="math notranslate nohighlight">\(\rho\)</span> and returns <span class="math notranslate nohighlight">\(\mathcal{N}(\rho)\)</span>, where <span class="math notranslate nohighlight">\(\mathcal{N}\)</span> is a particular (error) map. Also includes measurements.</p>
+<p>The file <cite>decomposition/protocols.py</cite> contains a number of functions, each of which outputs a <cite>Circuit object</cite>. These functions are <cite>pair_EPL</cite>, <cite>pair_single_sel</cite>, <cite>ghz4_epl</cite>, etc. The Circuit object they output is the circuit that generates an EPL state, a state outputted by the single-selection-distillation-protocol, etc. Each function only takes error parameters as input.</p>
+<p>The class <cite>Stabilizer</cite> (in <cite>decomposition/stabilizer.py</cite>) contains functions used for the production of particular states without having to go through the <cite>Circuit</cite> objects, as in <cite>decomposition/protocols.py</cite>. It also has function for processing of the states, such as applying gates and performing measurements. I presume these functions are mainly meant for operations on GHZ-states, which are used for the stabilizer measurements; hence the class’s name.</p>
+<p>Several standard parameters values are defined in the directory <cite>decomposition/tools</cite>, but also some operations such as measurements and gates (e.g. <cite>operations.py</cite>).</p>
+<p><strong>Folder `blossom5`</strong></p>
+<p>This folder contains Vladimir Kolmogorov’s implementation of Edmonds blossom algorithm that is used in the minimum-weight-perfect-matching decoding of the surface code.</p>
+<p><strong>Folder `config_files`</strong></p>
+<p>Contains a large number noisy channels, represented as Chi-matrices, each for a different set of noise parameters.</p>
+<div class="figure" id="id1">
+<a class="reference internal image-reference" href="../../../pics/dependency_tree.jpg"><img alt="../../../pics/dependency_tree.jpg" src="../../../pics/dependency_tree.jpg" style="width: 1000px;" /></a>
+<p class="caption"><span class="caption-text">Dependency tree of the folder <cite>faulttolerance/decomposition</cite>. <a class="reference external" href="../../../pics/dependency_tree.pdf">For better resolution, click here</a></span></p>
+</div>
+<p>2018_08_10</p>
+<div class="section" id="recommendations-for-refactoring">
+<h2>Recommendations for refactoring<a class="headerlink" href="#recommendations-for-refactoring" title="Permalink to this headline">¶</a></h2>
+<p><strong>file blocks and circuit</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>make a class for Blocks/Circuits that output a bell pair, with as initialization parameter <cite>generation_method</cite>, which takes a string from [“single_click”, “Barrett-Kok”, “EPL”]</li>
+<li>all the operations in the <cite>Block</cite> class are quite vague; it looks like a lot of refactoring, subclassing et cetera could definitely help here. Also, there are many of them, which makes testing a whole lot of work.</li>
+</ul>
+</div></blockquote>
+<p><strong>file `error_models.py`</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>the functions <cite>bell_pair</cite> (which outputs a noisy Phi+) and <cite>bell_pair_psi</cite> (which outputs a noisy Psi+) can be put together in a single function</li>
+<li>(optional) create a class <cite>State</cite> (inherit from <cite>qutip.Quobj</cite>?) which has functions that, when called, apply the noise to <cite>self</cite></li>
+</ul>
+</div></blockquote>
+<p><strong>file `protocols.py`</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>each of these functions outputs a Circuit object. Each of these functions could be rewritten to a subclass of <cite>Circuit</cite>.</li>
+<li>it seems like <cite>protocols.py</cite> and <cite>stabilizer.py</cite> have functions that perform a similar function. Can the two be merged?</li>
+</ul>
+</div></blockquote>
+<p><strong>file `stabilizer.py`</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The name “Stabilizer” is maybe not the most intuitive name for this class; maybe <cite>GHZoperations</cite> or something like that better covers it purpose?</li>
+</ul>
+</div></blockquote>
+<p><strong>file `surface_code.py`</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li>the current code is a bit hard to test</li>
+<li>the class has almost 40 methods, which is quite a lot</li>
+<li>it would be a lot simpler if there were a separate base class <cite>Lattice</cite>, which has functions such as <cite>get_neighbours(pos)</cite> where <cite>pos</cite> is a tuple (x,y)-coordinates. The class <cite>SurfaceCode</cite> then either inherits from <cite>Lattice</cite> or holds one as an attribute. This prevents that you need, like now, functions such as <cite>_measure_stabilizer_side</cite>, <cite>_measure_stabilizer_qubits_bulk</cite>, et cetera. A function like <cite>_stabilizer_qubits_boundary</cite> would then move to the <cite>Lattice</cite> class
+* rather than using <cite>c=0</cite> for “stars” and <cite>c=1</cite> for “plaquettes”, readability would be improved when one makes a class variable <cite>_STARS = 0</cite> and <cite>_PLAQS = 1</cite>.</li>
+</ul>
+</div></blockquote>
+<p><strong>file `layers.py`</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li>what about making a class <cite>Layer</cite> or <cite>MeasurementSheet</cite>, which contains a single layer of measurements? The current class <cite>Layers</cite> (which we would then rename to <cite>LayerList</cite> or something like it) would be a collection of such <cite>Layer</cite> object, possibly with some additional methods in the way it is now.</li>
+</ul>
+</div></blockquote>
 <div class="toctree-wrapper compound">
+</div>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
@@ -59,7 +124,10 @@ hoi</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to DistributedSC’s documentation!</a></li>
+<li><a class="reference internal" href="#">Welcome to DistributedSC’s documentation!</a><ul>
+<li><a class="reference internal" href="#recommendations-for-refactoring">Recommendations for refactoring</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
