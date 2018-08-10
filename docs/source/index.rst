@@ -6,7 +6,7 @@
 Welcome to DistributedSC's documentation!
 =========================================
 
-.. include:: ../../documentation.rst
+.. include:: ../../README..rst
 
 .. toctree::
    :maxdepth: 2
