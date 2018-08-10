@@ -1,0 +1,1133 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>faulttolerance.decomposition package &#8212; DistributedSC  documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DistributedSC  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="faulttolerance-decomposition-package">
+<h1>faulttolerance.decomposition package<a class="headerlink" href="#faulttolerance-decomposition-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faulttolerance.decomposition.tools.html">faulttolerance.decomposition.tools package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#module-faulttolerance.decomposition.tools.basic_units">faulttolerance.decomposition.tools.basic_units module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="faulttolerance.decomposition.tools.html#basic-units">Basic Units</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#module-faulttolerance.decomposition.tools.fgh">faulttolerance.decomposition.tools.fgh module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#module-faulttolerance.decomposition.tools.ghz_correction">faulttolerance.decomposition.tools.ghz_correction module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#module-faulttolerance.decomposition.tools.names">faulttolerance.decomposition.tools.names module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#module-faulttolerance.decomposition.tools.operations">faulttolerance.decomposition.tools.operations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#module-faulttolerance.decomposition.tools.operations_test">faulttolerance.decomposition.tools.operations_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#module-faulttolerance.decomposition.tools.p_success">faulttolerance.decomposition.tools.p_success module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#module-faulttolerance.decomposition.tools.pauli_basis">faulttolerance.decomposition.tools.pauli_basis module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#faulttolerance-decomposition-tools-pauli-basis-test-module">faulttolerance.decomposition.tools.pauli_basis_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#module-faulttolerance.decomposition.tools.projectors">faulttolerance.decomposition.tools.projectors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#faulttolerance-decomposition-tools-purification-module">faulttolerance.decomposition.tools.purification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faulttolerance.decomposition.tools.html#module-faulttolerance.decomposition.tools">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-faulttolerance.decomposition.circuit">
+<span id="faulttolerance-decomposition-circuit-module"></span><h2>faulttolerance.decomposition.circuit module<a class="headerlink" href="#module-faulttolerance.decomposition.circuit" title="Permalink to this headline">¶</a></h2>
+<p>Wrapper functions to put together circuits involved
+in the process of making GHZ states out of entangled Bell pairs.
+Must be used with ‘circuit_block.py’</p>
+<p>author: Eduardo Villasenor
+created-on: 20/11/17</p>
+<dl class="class">
+<dt id="faulttolerance.decomposition.circuit.Circuit">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.circuit.</code><code class="descname">Circuit</code><span class="sig-paren">(</span><em>a0</em>, <em>a1</em>, <em>circuit_block</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit.Circuit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to hold a block in the overall GHZ state formation protocol.
+Subcircuit object for the circuit that goes inside this block.</p>
+<p>Circuits are assembled using recursive objects and circuit blocks.
+After each level with a success probability a number of attempts is calculated
+and used to evaluate the time it required unit success. Similar to an event
+oriented simulation.</p>
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit.Circuit.add_circuit">
+<code class="descname">add_circuit</code><span class="sig-paren">(</span><em>circuit_block</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit.Circuit.add_circuit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a circuit to the current circuit chain.</p>
+<dl class="docutils">
+<dt>cicuit_block <span class="classifier-delimiter">:</span> <span class="classifier">(Blocks) function from circuit_block.py to be evaluated</span></dt>
+<dd>in a step of the circuit</dd>
+</dl>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs : arguments for evaluating the cicuit_block</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit.Circuit.append_circuit">
+<code class="descname">append_circuit</code><span class="sig-paren">(</span><em>rho=None</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit.Circuit.append_circuit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appended circuit, and depolarize accordingly.
+Must be self contained event</p>
+<dl class="docutils">
+<dt>rho <span class="classifier-delimiter">:</span> <span class="classifier">(densmat) density matrix involved in the circuit, can be None depending</span></dt>
+<dd>on the circuit block</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit.Circuit.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit.Circuit.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function to run circuits recurively.</p>
+<dl class="docutils">
+<dt>rho <span class="classifier-delimiter">:</span> <span class="classifier">(densmat) density matrix involved in the circuit, can be None depending</span></dt>
+<dd>on the circuit block</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit.Circuit.run_as_block">
+<code class="descname">run_as_block</code><span class="sig-paren">(</span><em>rho=None</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit.Circuit.run_as_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run circuit as a block.
+This function is used to wrap circuits and run them as blocks
+in order to append them to another circuit.</p>
+<dl class="docutils">
+<dt>rho <span class="classifier-delimiter">:</span> <span class="classifier">(densmat) density matrix involved in the circuit, can be None depending</span></dt>
+<dd>on the circuit block</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit.Circuit.run_parallel">
+<code class="descname">run_parallel</code><span class="sig-paren">(</span><em>rho=None</em>, <em>parallel=2</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit.Circuit.run_parallel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run circuit three times in parallel, tensoring the resulting states,
+and dephasing the one that was generated first accordingly.
+Cicuits must be self contained events to be able to run in parallel.</p>
+<dl class="docutils">
+<dt>rho <span class="classifier-delimiter">:</span> <span class="classifier">(densmat) density matrix involved in the circuit, can be None depending</span></dt>
+<dd>on the circuit block</dd>
+</dl>
+<p>parallel : (int) number of executions in parallel of the circuit</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit.Circuit.start">
+<code class="descname">start</code><span class="sig-paren">(</span><em>rho=None</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit.Circuit.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Star the first element of the circuit.
+Must be self contained event</p>
+<dl class="docutils">
+<dt>rho <span class="classifier-delimiter">:</span> <span class="classifier">(densmat) density matrix involved in the circuit, can be None depending</span></dt>
+<dd>on the circuit block</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.circuit_block">
+<span id="faulttolerance-decomposition-circuit-block-module"></span><h2>faulttolerance.decomposition.circuit_block module<a class="headerlink" href="#module-faulttolerance.decomposition.circuit_block" title="Permalink to this headline">¶</a></h2>
+<p>Individual circuits involved the remote generation of entanglement
+and in different steps of purification protocols. Must be used together
+with ‘circuit.py’ to assemeble complete circuits.</p>
+<p>Includes features to keep track of how many operations and time has passed
+after each circuit.</p>
+<p>author: Eduardo Villasenor
+created-on: 20/11/17</p>
+<dl class="class">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.circuit_block.</code><code class="descname">Blocks</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for holding all protocols.
+Each circuit block returns the resulting state, number of steps used
+and the probability of success if applicable.</p>
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.add_bell_pair">
+<code class="descname">add_bell_pair</code><span class="sig-paren">(</span><em>rho</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.add_bell_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a single click Bell pair to the state.</p>
+<p>rho : (densmat) density matrix in which the bell pair appends.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.change_parameters">
+<code class="descname">change_parameters</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.change_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to change the parameters of all the operations.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.collapse_ancillas_GHZ">
+<code class="descname">collapse_ancillas_GHZ</code><span class="sig-paren">(</span><em>rho</em>, <em>ghz_size</em>, <em>measure_pos</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.collapse_ancillas_GHZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse the ancillas in the nodes to create a GHZ state.
+In the ghz_4 connected through 4 pairs then the
+ancillas must be the last qubit(s)</p>
+<p>rho : (densmat) density matrix
+ghz_size : (int) size of the GHZ state being formed, must be 3 or 4
+measure_pos : (int) list with the positions of ancillas to be measured</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.collapse_ancillas_X">
+<code class="descname">collapse_ancillas_X</code><span class="sig-paren">(</span><em>rho</em>, <em>ancillas_pos</em>, <em>projections</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.collapse_ancillas_X" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure the ancillas in the X basis in parallel in each node.
+Ancillas position need to be the last part of the state.</p>
+<p>rho : (densmat) density matrix
+ancillas_pos : (int) list with the positions of ancillas to be measured
+projections : (list) list with the projections in which every ancilla collapses</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.collapse_ancillas_Z">
+<code class="descname">collapse_ancillas_Z</code><span class="sig-paren">(</span><em>rho</em>, <em>ancillas_pos</em>, <em>projections</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.collapse_ancillas_Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure the ancillas in the X basis in parallel in each node.
+Ancillas position need to be the last part of the state.</p>
+<p>rho : (densmat) density matrix
+ancillas_pos : (int) list with the positions of ancillas to be measured
+projections : (list) list with the projections in which every ancilla collapses</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.double_selection">
+<code class="descname">double_selection</code><span class="sig-paren">(</span><em>rho</em>, <em>operation_qubits</em>, <em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.double_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Double selection round. Uses 4 ancilla qubits.</p>
+<p>rho : (densmat) density matrix
+operation_pos : (list) list with the positions of the qubits to be purified</p>
+<blockquote>
+<div>by the protocol</div></blockquote>
+<p>sigma : (string) X or Z parity used in the purification</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.double_selection22">
+<code class="descname">double_selection22</code><span class="sig-paren">(</span><em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.double_selection22" title="Permalink to this definition">¶</a></dt>
+<dd><p>Double selection round. Uses 4 ancilla qubits.</p>
+<p>rho : (densmat) density matrix
+operation_pos : (list) list with the positions of the qubits to be purified</p>
+<blockquote>
+<div>by the protocol</div></blockquote>
+<p>sigma : (string) X or Z parity used in the purification</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.double_selection_ops">
+<code class="descname">double_selection_ops</code><span class="sig-paren">(</span><em>rho</em>, <em>targets</em>, <em>ancillas1</em>, <em>ancillas2</em>, <em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.double_selection_ops" title="Permalink to this definition">¶</a></dt>
+<dd><p>Double selection round. Uses 4 ancilla qubits.</p>
+<p>rho : (densmat) density matrix
+operation_pos : (list) list with the positions of the qubits to be purified</p>
+<blockquote>
+<div>by the protocol</div></blockquote>
+<p>sigma : (string) X or Z parity used in the purification</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.single_selection">
+<code class="descname">single_selection</code><span class="sig-paren">(</span><em>rho</em>, <em>operation_qubits</em>, <em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.single_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Single selection round. Uses 2 ancilla qubits.</p>
+<p>rho : (densmat) density matrix
+operation_pos : (list) list with the positions of the qubits to be purified</p>
+<blockquote>
+<div>by the protocol</div></blockquote>
+<p>sigma : (string) X or Z parity used in the purification</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.single_selection_ops">
+<code class="descname">single_selection_ops</code><span class="sig-paren">(</span><em>rho</em>, <em>targets</em>, <em>ancillas</em>, <em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.single_selection_ops" title="Permalink to this definition">¶</a></dt>
+<dd><p>Single selection round. Uses 2 ancilla qubits.</p>
+<p>rho : (densmat) density matrix
+targets : (list) list with the positions of the qubits to be purified</p>
+<blockquote>
+<div>by the protocol</div></blockquote>
+<p>ancillas : (list) list with the positions of the ancilla qubits
+sigma : (string) X or Z parity used in the purification</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.start_BK">
+<code class="descname">start_BK</code><span class="sig-paren">(</span><em>rho=None</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.start_BK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Circuit that generates a Bell pair from the Barret-Kok protocol.</p>
+<p>NOTE: rho is not taken from arguments, only exists due to
+how ‘circuit.py’ is constructed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.start_bell_pair">
+<code class="descname">start_bell_pair</code><span class="sig-paren">(</span><em>rho=None</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.start_bell_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start with a raw Bell pair using the single click protocol.</p>
+<p>NOTE: rho is not taken from arguments, only exists due to
+how ‘circuit.py’ is constructed.</p>
+<p>1, check list, bell state : int, Collections.Counter, qutip.Qobj</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.start_epl">
+<code class="descname">start_epl</code><span class="sig-paren">(</span><em>rho=None</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.start_epl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Circuit that generates a Bell pair using the EPL protocol.</p>
+<p>NOTE: rho is not taken from arguments, only exists due to
+how ‘circuit.py’ is constructed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.swap_pair">
+<code class="descname">swap_pair</code><span class="sig-paren">(</span><em>rho</em>, <em>pair</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.swap_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does not really make a SWAP, only applies the noise.
+Position of states in each node must be keep track manually.</p>
+<p>rho : (densmat) density matrix
+pair : (list) pair of qubits to be swaped ex. [2, 3]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.circuit_block.Blocks.two_qubit_gates">
+<code class="descname">two_qubit_gates</code><span class="sig-paren">(</span><em>rho</em>, <em>controls</em>, <em>targets</em>, <em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.circuit_block.Blocks.two_qubit_gates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply one local two qubit Control type of gates in parallel
+on each node.</p>
+<p>rho : (densmat) density matrix
+controls : (list) list with the control qubits position
+targets : (list) list with the target qubits position
+sigma : (string) X or Z depending on the gate</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.error_models">
+<span id="faulttolerance-decomposition-error-models-module"></span><h2>faulttolerance.decomposition.error_models module<a class="headerlink" href="#module-faulttolerance.decomposition.error_models" title="Permalink to this headline">¶</a></h2>
+<p>Error models used to simulate the decoherence effects due to imperfect operations.</p>
+<p>author: Eduardo Villasenor
+created-on: 05/06/17</p>
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.bell_pair">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">bell_pair</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.bell_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a noisy <a href="#id3"><span class="problematic" id="id4">|</span></a>phi+&gt; Bell pair of the form 
+$(1-p)*Phi^{+} + p/3 * ( Phi^{-} + Psi^{+} + Psi^{-})$</p>
+<p>p : (scalar) error rate</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.bell_pair_click">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">bell_pair_click</code><span class="sig-paren">(</span><em>eta</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.bell_pair_click" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a Bell pair generated using the single click protocol.
+Initial qubits are initialized in the states: sin(theta)|0&gt; + cos(theta)|1&gt;</p>
+<dl class="docutils">
+<dt>eta <span class="classifier-delimiter">:</span> <span class="classifier">???</span></dt>
+<dd>(scalar) detection efficiency</dd>
+<dt>theta <span class="classifier-delimiter">:</span> <span class="classifier">???</span></dt>
+<dd>(scalar) determines how the initial qubits are initialized</dd>
+</dl>
+<p>Qobj (QuTip object)???</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.bell_pair_psi">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">bell_pair_psi</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.bell_pair_psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a noisy <a href="#id5"><span class="problematic" id="id6">|</span></a>psi+&gt; Bell pair of the form 
+$(1-p)*Phi^{+} + p/3 * ( Phi^{-} + Psi^{+} + Psi^{-})$</p>
+<p>p : (scalar) error rate</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.drift">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">drift</code><span class="sig-paren">(</span><em>state</em>, <em>pd</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.drift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Drift noise according to NN article.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.env_error">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">env_error</code><span class="sig-paren">(</span><em>rho</em>, <em>a0</em>, <em>a1</em>, <em>t</em>, <em>N</em>, <em>qubits</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.env_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply environmental error on the selected qubits from the list.</p>
+<p>rho : (densmat) the state to be dephased.
+a0 : (scalar) depolarizing effect due to the entanglement generation attemts.
+a1 : (scalar) depolarizing due to the environment interactions.
+t : (scalar) time in wich the dephasing ocurrs.
+N : (int) total size of the system
+qubits : (list) list with the qubits on which the error applies</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.env_error_all">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">env_error_all</code><span class="sig-paren">(</span><em>rho</em>, <em>a0</em>, <em>a1</em>, <em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.env_error_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply environtmental dephasing on all qubits in the state rho.</p>
+<p>rho : (densmat) the state to be dephased.
+a0 : (scalar) dephaising effect due to the entanglement generation attemts.
+a1 : (scalar) dephasing due to the environment interactions.
+t : (scalar) time in wich the dephasing ocurrs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.env_error_single">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">env_error_single</code><span class="sig-paren">(</span><em>rho</em>, <em>a0</em>, <em>a1</em>, <em>t</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.env_error_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply environmental error on a single qubit from the state rho.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.generate_noisy_ghz">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">generate_noisy_ghz</code><span class="sig-paren">(</span><em>F</em>, <em>N</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.generate_noisy_ghz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a noisy GHZ state of a given fidelity.</p>
+<p>F : (scalar) fidelity of the final state
+N : (int) size of the final GHZ</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.get_sigmas">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">get_sigmas</code><span class="sig-paren">(</span><em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.get_sigmas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return set of single qubit X Y Z gates.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.measure_single_Xbasis_forced">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">measure_single_Xbasis_forced</code><span class="sig-paren">(</span><em>rho</em>, <em>p</em>, <em>project</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.measure_single_Xbasis_forced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse the state on the given position and to the given projector.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.measure_single_Xbasis_random">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">measure_single_Xbasis_random</code><span class="sig-paren">(</span><em>rho</em>, <em>p</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.measure_single_Xbasis_random" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probabilisticly measure and collapse the state on the given position.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.measure_single_Zbasis_forced">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">measure_single_Zbasis_forced</code><span class="sig-paren">(</span><em>rho</em>, <em>p</em>, <em>project</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.measure_single_Zbasis_forced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse the state on the given position and to the given projector.</p>
+<p>rho : (densmat) the state to apply the noisy gate on
+p : (scalar) measurement error rate
+project : (scalar) 0 or 1, projector involved in the measurement collapse
+N : (int) total system size
+pos : (int) position of the qubit to be measured</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.measure_single_Zbasis_random">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">measure_single_Zbasis_random</code><span class="sig-paren">(</span><em>rho</em>, <em>p</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.measure_single_Zbasis_random" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probabilisticly measure and collapse the state on the given position.</p>
+<p>rho : (densmat) the state to apply the noisy gate on
+p : (scalar) measurement error rate
+N : (int) total system size
+pos : (int) position of the qubit to be measured</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.single_qubit_gate">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">single_qubit_gate</code><span class="sig-paren">(</span><em>rho</em>, <em>gate</em>, <em>p</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.single_qubit_gate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a single qubit with the corresponding noise.</p>
+<p>rho : (densmat) the state to apply the noisy gate on
+gate : (operator) ideal gate to be applied
+p : (scalar) error rate
+N : (int) total system size
+pos : (int) position of the qubit in which the gate applies</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.single_qubit_gate_noise">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">single_qubit_gate_noise</code><span class="sig-paren">(</span><em>rho</em>, <em>p</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.single_qubit_gate_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply depolarizing noise due a single qubit operation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.two_qubit_gate">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">two_qubit_gate</code><span class="sig-paren">(</span><em>rho</em>, <em>gate</em>, <em>p</em>, <em>N=2</em>, <em>pos1=0</em>, <em>pos2=1</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.two_qubit_gate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a two quit gate with its corresponding noise.</p>
+<p>rho : (densmat) the state to apply the noisy gate on
+gate : (operator) ideal gate to be applied
+p : (scalar) error rate
+N : (int) total system size
+pos1 : (int) position of the first qubit in which the gate applies
+pos2 : (int) position of the second qubit in which the gate applies</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.error_models.two_qubit_gate_noise">
+<code class="descclassname">faulttolerance.decomposition.error_models.</code><code class="descname">two_qubit_gate_noise</code><span class="sig-paren">(</span><em>rho</em>, <em>p</em>, <em>N=2</em>, <em>pos1=0</em>, <em>pos2=1</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.error_models.two_qubit_gate_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Depolarizing noise due to a noisy two qubit gate.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.protocols">
+<span id="faulttolerance-decomposition-protocols-module"></span><h2>faulttolerance.decomposition.protocols module<a class="headerlink" href="#module-faulttolerance.decomposition.protocols" title="Permalink to this headline">¶</a></h2>
+<p>Functions with the different protocols for generating a GHZ state.
+They rely on circuit.py and circuit_block.py to enssemble the circuit that
+generates the GHZ.
+Each function returns a circuit object that must be executed to obtain a GHZ.</p>
+<p>author: Eduardo Villasenor
+created-on: 21/11/17</p>
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz2_bk">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz2_bk</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz2_bk" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 2 created using 2 Bell pairs
+generated using the double selection protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz2_double">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz2_double</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz2_double" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 2 created using 2 Bell pairs
+generated using the double selection protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz2_epl">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz2_epl</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz2_epl" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 2 created using 2 Bell pairs
+generated using the EPL protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz2_single">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz2_single</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz2_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 2 created using 2 Bell pairs
+generated using the EPL protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz3_bk">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz3_bk</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz3_bk" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 3 created using 3 Bell pairs
+generated using the Barret-Kok protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz3_bk_simple">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz3_bk_simple</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz3_bk_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 3 created using 2 Bell pairs
+generated using the Barret-Kok protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz3_double">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz3_double</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz3_double" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 3 created using 3 Bell pairs
+generated using the EPL protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz3_double_simple">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz3_double_simple</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz3_double_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 3 created using 2 Bell pairs
+generated using the EPL protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz3_epl">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz3_epl</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz3_epl" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 3 created using 3 Bell pairs
+generated using the EPL protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz3_epl_simple">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz3_epl_simple</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz3_epl_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 3 created using 2 Bell pairs
+generated using the EPL protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz3_single">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz3_single</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz3_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 3 created using 3 Bell pairs
+generated using the EPL protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz3_single_simple">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz3_single_simple</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz3_single_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 3 created using 2 Bell pairs
+generated using the EPL protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz4_bk">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz4_bk</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz4_bk" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 4 created using 4 Bell pairs
+generated using the Barret-Kok protocol.</p>
+<p>ps : single qubit gate error rate.
+pm : measurement error rate.
+pg : two qubit gate error rate.
+eta : detection efficiency.
+a0 : extra environmental error when electron spin is being operated.
+a1 : default environmental error.
+theta : determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz4_bk_simple">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz4_bk_simple</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz4_bk_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 4 created using 3 Bell pairs
+generated using the Barret-Kok protocol.</p>
+<p>ps : single qubit gate error rate.
+pm : measurement error rate.
+pg : two qubit gate error rate.
+eta : detection efficiency.
+a0 : extra environmental error when electron spin is being operated.
+a1 : default environmental error.
+theta : determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz4_double">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz4_double</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz4_double" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 4 created using 4 pairs
+using the double selection
+protocol (see documentation).</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz4_double_simple">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz4_double_simple</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz4_double_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 4 created using 3 pairs
+using the double selection
+protocol (see documentation).</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz4_epl">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz4_epl</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz4_epl" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 4 created using 4 Bell pairs
+generated using the EPL protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz4_epl_parallel">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz4_epl_parallel</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz4_epl_parallel" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 4 created using 4 Bell pairs
+generated using the EPL protocol.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz4_epl_simple">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz4_epl_simple</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz4_epl_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 4 created using 3 Bell pairs
+generated using the EPL protocol.
+Note: On simplified you need to substract the average time it
+takes to create a EPL pair</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz4_single">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz4_single</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz4_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 4 created using using the single selection
+protocol (see documentation).</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz4_single_parallel">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz4_single_parallel</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz4_single_parallel" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 4 created using using the single selection
+protocol (see documentation).</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.ghz4_single_simple">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">ghz4_single_simple</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.ghz4_single_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>GHZ state of weigth 4 created using 3 pairs
+using the single selection
+protocol (see documentation).</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.
+eta : (scalar) detection efficiency.
+a0 : (scalar) extra environmental error when electron spin is being operated.
+a1 : (scalar) default environmental error.
+theta : (scalar) determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.pair_EPL">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">pair_EPL</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.pair_EPL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a entangled pair using the EPL protocol.</p>
+<p>ps : single qubit gate error rate.
+pm : measurement error rate.
+pg : two qubit gate error rate.
+eta : detection efficiency.
+a0 : extra environmental error when electron spin is being operated.
+a1 : default environmental error.
+theta : determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.pair_double_sel">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">pair_double_sel</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.pair_double_sel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a entangled pair using the double selection
+distillation protocol. The EPL protocol is used in the intermediate
+entangled pairs used.</p>
+<p>ps : single qubit gate error rate.
+pm : measurement error rate.
+pg : two qubit gate error rate.
+eta : detection efficiency.
+a0 : extra environmental error when electron spin is being operated.
+a1 : default environmental error.
+theta : determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.protocols.pair_single_sel">
+<code class="descclassname">faulttolerance.decomposition.protocols.</code><code class="descname">pair_single_sel</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.protocols.pair_single_sel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a entangled pair using single selection
+distillation protocol. The EPL protocol is used in the intermediate
+entangled pairs used.</p>
+<p>ps : single qubit gate error rate.
+pm : measurement error rate.
+pg : two qubit gate error rate.
+eta : detection efficiency.
+a0 : extra environmental error when electron spin is being operated.
+a1 : default environmental error.
+theta : determines how the states are initialized when generating remote</p>
+<blockquote>
+<div>entanglement.</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.stabilizer">
+<span id="faulttolerance-decomposition-stabilizer-module"></span><h2>faulttolerance.decomposition.stabilizer module<a class="headerlink" href="#module-faulttolerance.decomposition.stabilizer" title="Permalink to this headline">¶</a></h2>
+<p>Routines for measuring stabilizers in a local system or in a disitributed
+one by means of GHZ states.</p>
+<p>author: Eduardo Villasenor
+created-on: 05/02/18</p>
+<dl class="class">
+<dt id="faulttolerance.decomposition.stabilizer.Stabilizer">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.stabilizer.</code><code class="descname">Stabilizer</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.stabilizer.Stabilizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for holding functions relevant to making stabilizer measurements</p>
+<dl class="method">
+<dt id="faulttolerance.decomposition.stabilizer.Stabilizer.apply_two_qubit_gates">
+<code class="descname">apply_two_qubit_gates</code><span class="sig-paren">(</span><em>rho</em>, <em>N</em>, <em>controls</em>, <em>targets</em>, <em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.stabilizer.Stabilizer.apply_two_qubit_gates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a series of two qubit Control type of gates.</p>
+<p>rho : (densmat) density matrix
+N : (int) total system size
+controls : (list) list with the control qubits position
+targets : (list) list with the target qubits position
+sigma : (string) X or Z depending on the gate</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.stabilizer.Stabilizer.change_parameters">
+<code class="descname">change_parameters</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.stabilizer.Stabilizer.change_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to change the parameters of all the operations.</p>
+<p>ps : (scalar) single qubit gate error rate.
+pm : (scalar) measurement error rate.
+pg : (scalar) two qubit gate error rate.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.stabilizer.Stabilizer.collapse_ancillas_forced">
+<code class="descname">collapse_ancillas_forced</code><span class="sig-paren">(</span><em>rho</em>, <em>N</em>, <em>N_ancillas</em>, <em>projections</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.stabilizer.Stabilizer.collapse_ancillas_forced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure the ancillas in the X basis.
+Ancillas position need to be the last part of the state.</p>
+<p>rho : (densmat) density matrix
+N : (int) total system size
+N_ancillas : (int) number of ancillas to be measured
+projections : (list) list with the projections in which every ancilla collapses</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.stabilizer.Stabilizer.generate_noisy_plus">
+<code class="descname">generate_noisy_plus</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.stabilizer.Stabilizer.generate_noisy_plus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate single noisy qubit in the <a href="#id7"><span class="problematic" id="id8">|</span></a>+&gt; state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.stabilizer.Stabilizer.get_two_qubit_gates">
+<code class="descname">get_two_qubit_gates</code><span class="sig-paren">(</span><em>N</em>, <em>controls</em>, <em>targets</em>, <em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.stabilizer.Stabilizer.get_two_qubit_gates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct two qubit Control type of gates.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.stabilizer.Stabilizer.local_stabilizer">
+<code class="descname">local_stabilizer</code><span class="sig-paren">(</span><em>rho</em>, <em>parity_targets</em>, <em>stabilizer</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.stabilizer.Stabilizer.local_stabilizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a local stabilizer measurement.
+Uses 4 data qubits and 1 ancillas.</p>
+<p>rho : (densmat) state to be measured by the stabilizer
+parity_targets : (list) positions of the qubits to be measured
+stabilizer : (string) star or plaquette</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.stabilizer.Stabilizer.measure_ghz_stabilizer">
+<code class="descname">measure_ghz_stabilizer</code><span class="sig-paren">(</span><em>rho</em>, <em>ghz</em>, <em>parity_targets</em>, <em>stabilizer</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.stabilizer.Stabilizer.measure_ghz_stabilizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure a stabilizer through a GHZ state.
+Size of the GHZ equals the number of qubits measured through the stabilizer.</p>
+<p>rho : (densmat) state to be measured by the stabilizer
+ghz : (densmat) GHZ state to be used in the stabilizer measurement
+parity_targets : (list) positions of the qubits to be measured
+stabilizer : (string) star or plaquette</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.stabilizer.Stabilizer.measure_single_forced">
+<code class="descname">measure_single_forced</code><span class="sig-paren">(</span><em>rho</em>, <em>N</em>, <em>pos</em>, <em>project</em>, <em>basis</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.stabilizer.Stabilizer.measure_single_forced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure a single qubit in the state.
+Dimension is reduced after collapse</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.stabilizer.Stabilizer.twirl_ghz">
+<code class="descname">twirl_ghz</code><span class="sig-paren">(</span><em>ghz</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.stabilizer.Stabilizer.twirl_ghz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Twirl the GHZ state to disitribute error uniformly.
+Twirling is made trough averaging through permutation of all qubits in the GHZ.</p>
+<p>ghz : (densmat) density matrix of a ghz state.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.test_circuit_block">
+<span id="faulttolerance-decomposition-test-circuit-block-module"></span><h2>faulttolerance.decomposition.test_circuit_block module<a class="headerlink" href="#module-faulttolerance.decomposition.test_circuit_block" title="Permalink to this headline">¶</a></h2>
+<p>Test file for the functions on Circuit Block.</p>
+<p>author: Eduardo Villasenor
+created-on: 20/11/17</p>
+<dl class="class">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.test_circuit_block.</code><code class="descname">Test_Blocks</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="staticmethod">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.check_close">
+<em class="property">static </em><code class="descname">check_close</code><span class="sig-paren">(</span><em>threshold</em>, <em>val1</em>, <em>val2</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.check_close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.check_perfect_case">
+<code class="descname">check_perfect_case</code><span class="sig-paren">(</span><em>bell_generate_function</em>, <em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.check_perfect_case" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>state</cite> should be one of [‘00’, ‘01’, ‘10’, ‘11’]</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.get_noiseless_blocks">
+<em class="property">static </em><code class="descname">get_noiseless_blocks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.get_noiseless_blocks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.get_perfect_bell_pair">
+<em class="property">static </em><code class="descname">get_perfect_bell_pair</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.get_perfect_bell_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>state</cite> should be one of [‘00’, ‘01’, ‘10’, ‘11’]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.setUp">
+<code class="descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up the test fixture before exercising it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_change_parameters">
+<code class="descname">test_change_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_change_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_generate_bell_pair_BK">
+<code class="descname">test_generate_bell_pair_BK</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_generate_bell_pair_BK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_generate_bell_single_click">
+<code class="descname">test_generate_bell_single_click</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_generate_bell_single_click" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_init">
+<code class="descname">test_init</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_start_bell_pair">
+<code class="descname">test_start_bell_pair</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_start_bell_pair" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_success_number_of_attempts">
+<code class="descname">test_success_number_of_attempts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.test_circuit_block.Test_Blocks.test_success_number_of_attempts" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function Blocks._success_number_of_attempts samples
+from the CDF of the geometric distribution.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="faulttolerance-decomposition-try-protocols-module">
+<h2>faulttolerance.decomposition.try_protocols module<a class="headerlink" href="#faulttolerance-decomposition-try-protocols-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-faulttolerance.decomposition">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-faulttolerance.decomposition" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">faulttolerance.decomposition package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.circuit">faulttolerance.decomposition.circuit module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.circuit_block">faulttolerance.decomposition.circuit_block module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.error_models">faulttolerance.decomposition.error_models module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.protocols">faulttolerance.decomposition.protocols module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.stabilizer">faulttolerance.decomposition.stabilizer module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.test_circuit_block">faulttolerance.decomposition.test_circuit_block module</a></li>
+<li><a class="reference internal" href="#faulttolerance-decomposition-try-protocols-module">faulttolerance.decomposition.try_protocols module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/faulttolerance.decomposition.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DistributedSC  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Eduardo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

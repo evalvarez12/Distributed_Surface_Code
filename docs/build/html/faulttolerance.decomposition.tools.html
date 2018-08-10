@@ -1,0 +1,748 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>faulttolerance.decomposition.tools package &#8212; DistributedSC  documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DistributedSC  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="faulttolerance-decomposition-tools-package">
+<h1>faulttolerance.decomposition.tools package<a class="headerlink" href="#faulttolerance-decomposition-tools-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-faulttolerance.decomposition.tools.basic_units">
+<span id="faulttolerance-decomposition-tools-basic-units-module"></span><h2>faulttolerance.decomposition.tools.basic_units module<a class="headerlink" href="#module-faulttolerance.decomposition.tools.basic_units" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basic-units">
+<h3>Basic Units<a class="headerlink" href="#basic-units" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.basic_units.BasicUnit">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">BasicUnit</code><span class="sig-paren">(</span><em>name</em>, <em>fullname=None</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.BasicUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.BasicUnit.add_conversion_factor">
+<code class="descname">add_conversion_factor</code><span class="sig-paren">(</span><em>unit</em>, <em>factor</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.BasicUnit.add_conversion_factor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.BasicUnit.add_conversion_fn">
+<code class="descname">add_conversion_fn</code><span class="sig-paren">(</span><em>unit</em>, <em>fn</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.BasicUnit.add_conversion_fn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.BasicUnit.convert_value_to">
+<code class="descname">convert_value_to</code><span class="sig-paren">(</span><em>value</em>, <em>unit</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.BasicUnit.convert_value_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.BasicUnit.get_conversion_fn">
+<code class="descname">get_conversion_fn</code><span class="sig-paren">(</span><em>unit</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.BasicUnit.get_conversion_fn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.BasicUnit.get_unit">
+<code class="descname">get_unit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.BasicUnit.get_unit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.basic_units.BasicUnitConverter">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">BasicUnitConverter</code><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.BasicUnitConverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.units.ConversionInterface</span></code></p>
+<dl class="staticmethod">
+<dt id="faulttolerance.decomposition.tools.basic_units.BasicUnitConverter.axisinfo">
+<em class="property">static </em><code class="descname">axisinfo</code><span class="sig-paren">(</span><em>unit</em>, <em>axis</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.BasicUnitConverter.axisinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>return AxisInfo instance for x and unit</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="faulttolerance.decomposition.tools.basic_units.BasicUnitConverter.convert">
+<em class="property">static </em><code class="descname">convert</code><span class="sig-paren">(</span><em>val</em>, <em>unit</em>, <em>axis</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.BasicUnitConverter.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert obj using unit for the specified axis.  If obj is a sequence,
+return the converted sequence.  The output must be a sequence of
+scalars that can be used by the numpy array layer</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="faulttolerance.decomposition.tools.basic_units.BasicUnitConverter.default_units">
+<em class="property">static </em><code class="descname">default_units</code><span class="sig-paren">(</span><em>x</em>, <em>axis</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.BasicUnitConverter.default_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the default unit for x or None</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.basic_units.ConvertAllProxy">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">ConvertAllProxy</code><span class="sig-paren">(</span><em>fn_name</em>, <em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.ConvertAllProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#faulttolerance.decomposition.tools.basic_units.PassThroughProxy" title="faulttolerance.decomposition.tools.basic_units.PassThroughProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">faulttolerance.decomposition.tools.basic_units.PassThroughProxy</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.basic_units.ConvertArgsProxy">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">ConvertArgsProxy</code><span class="sig-paren">(</span><em>fn_name</em>, <em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.ConvertArgsProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#faulttolerance.decomposition.tools.basic_units.PassThroughProxy" title="faulttolerance.decomposition.tools.basic_units.PassThroughProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">faulttolerance.decomposition.tools.basic_units.PassThroughProxy</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.basic_units.ConvertReturnProxy">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">ConvertReturnProxy</code><span class="sig-paren">(</span><em>fn_name</em>, <em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.ConvertReturnProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#faulttolerance.decomposition.tools.basic_units.PassThroughProxy" title="faulttolerance.decomposition.tools.basic_units.PassThroughProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">faulttolerance.decomposition.tools.basic_units.PassThroughProxy</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.basic_units.PassThroughProxy">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">PassThroughProxy</code><span class="sig-paren">(</span><em>fn_name</em>, <em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.PassThroughProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.basic_units.ProxyDelegate">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">ProxyDelegate</code><span class="sig-paren">(</span><em>fn_name</em>, <em>proxy_type</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.ProxyDelegate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.basic_units.TaggedValue">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">TaggedValue</code><span class="sig-paren">(</span><em>value</em>, <em>unit</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.TaggedValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.TaggedValue.convert_to">
+<code class="descname">convert_to</code><span class="sig-paren">(</span><em>unit</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.TaggedValue.convert_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.TaggedValue.get_compressed_copy">
+<code class="descname">get_compressed_copy</code><span class="sig-paren">(</span><em>mask</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.TaggedValue.get_compressed_copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.TaggedValue.get_unit">
+<code class="descname">get_unit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.TaggedValue.get_unit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.TaggedValue.get_value">
+<code class="descname">get_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.TaggedValue.get_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.basic_units.TaggedValueMeta">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">TaggedValueMeta</code><span class="sig-paren">(</span><em>name</em>, <em>bases</em>, <em>dict</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.TaggedValueMeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.basic_units.UnitResolver">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">UnitResolver</code><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.UnitResolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.UnitResolver.addition_rule">
+<code class="descname">addition_rule</code><span class="sig-paren">(</span><em>units</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.UnitResolver.addition_rule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.basic_units.UnitResolver.multiplication_rule">
+<code class="descname">multiplication_rule</code><span class="sig-paren">(</span><em>units</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.UnitResolver.multiplication_rule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="faulttolerance.decomposition.tools.basic_units.UnitResolver.op_dict">
+<code class="descname">op_dict</code><em class="property"> = {'__add__': &lt;function UnitResolver.addition_rule at 0x7f584e5d6378&gt;, '__mul__': &lt;function UnitResolver.multiplication_rule at 0x7f584e5d6488&gt;, '__radd__': &lt;function UnitResolver.addition_rule at 0x7f584e5d6378&gt;, '__rmul__': &lt;function UnitResolver.multiplication_rule at 0x7f584e5d6488&gt;, '__rsub__': &lt;function UnitResolver.addition_rule at 0x7f584e5d6378&gt;, '__sub__': &lt;function UnitResolver.addition_rule at 0x7f584e5d6378&gt;}</em><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.UnitResolver.op_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.basic_units.cos">
+<code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">cos</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.cos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.basic_units.rad_fn">
+<code class="descclassname">faulttolerance.decomposition.tools.basic_units.</code><code class="descname">rad_fn</code><span class="sig-paren">(</span><em>x</em>, <em>pos=None</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.basic_units.rad_fn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-faulttolerance.decomposition.tools.fgh">
+<span id="faulttolerance-decomposition-tools-fgh-module"></span><h2>faulttolerance.decomposition.tools.fgh module<a class="headerlink" href="#module-faulttolerance.decomposition.tools.fgh" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.f1">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">f1</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.f1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.f2">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">f2</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.f2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.f3">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">f3</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.f3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.f4">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">f4</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.f4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.fgh">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">fgh</code><span class="sig-paren">(</span><em>mode</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.fgh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.g1">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">g1</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.g1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.g2">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">g2</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.g2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.g3">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">g3</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.g3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.g4">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">g4</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.g4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.h1">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">h1</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.h1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.h2">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">h2</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.h2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.h3">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">h3</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.h3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.fgh.h4">
+<code class="descclassname">faulttolerance.decomposition.tools.fgh.</code><code class="descname">h4</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.fgh.h4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.tools.ghz_correction">
+<span id="faulttolerance-decomposition-tools-ghz-correction-module"></span><h2>faulttolerance.decomposition.tools.ghz_correction module<a class="headerlink" href="#module-faulttolerance.decomposition.tools.ghz_correction" title="Permalink to this headline">¶</a></h2>
+<p>Functions to apply the required corrections when generating GHZ states under
+the different numbers of Bell pairs and GHZ sizes.</p>
+<p>author: Eduardo Villasenor
+created-on: 02/05/18</p>
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.ghz_correction.correction">
+<code class="descclassname">faulttolerance.decomposition.tools.ghz_correction.</code><code class="descname">correction</code><span class="sig-paren">(</span><em>measurements</em>, <em>ghz_size</em>, <em>N</em>, <em>operation_pos</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.ghz_correction.correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Correction operations necesary given the result of the measurements and
+the GHZ state size.</p>
+<p>measuements : (int) Measurements results of the collaped ancillas ex. [0, 1, 1, 0].
+N : (int) system size.
+operation_pos : (list) position of qubit(s) in which the corrections apply.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.ghz_correction.correction_ghz3">
+<code class="descclassname">faulttolerance.decomposition.tools.ghz_correction.</code><code class="descname">correction_ghz3</code><span class="sig-paren">(</span><em>measurements</em>, <em>N</em>, <em>operation_pos</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.ghz_correction.correction_ghz3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Correction opertions for the GHZ state of size 3.
+On the case when 3 bell pairs are collapsed into the GHZ.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.ghz_correction.correction_ghz4">
+<code class="descclassname">faulttolerance.decomposition.tools.ghz_correction.</code><code class="descname">correction_ghz4</code><span class="sig-paren">(</span><em>measurements</em>, <em>N</em>, <em>operation_pos</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.ghz_correction.correction_ghz4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.tools.names">
+<span id="faulttolerance-decomposition-tools-names-module"></span><h2>faulttolerance.decomposition.tools.names module<a class="headerlink" href="#module-faulttolerance.decomposition.tools.names" title="Permalink to this headline">¶</a></h2>
+<p>Functions to generate the names of the data to be used.
+The purpose of using this functions is to set a standard name system.</p>
+<p>author: Eduardo Villasenor
+created-on: 20/01/18</p>
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.names.chi">
+<code class="descclassname">faulttolerance.decomposition.tools.names.</code><code class="descname">chi</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em>, <em>stab_size</em>, <em>parity</em>, <em>protocol</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.names.chi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name generator for CHI matrix file outputs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.names.ghz">
+<code class="descclassname">faulttolerance.decomposition.tools.names.</code><code class="descname">ghz</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em>, <em>size</em>, <em>protocol</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.names.ghz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name generator for saved GHZ states.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.names.ghz_times">
+<code class="descclassname">faulttolerance.decomposition.tools.names.</code><code class="descname">ghz_times</code><span class="sig-paren">(</span><em>ps</em>, <em>pm</em>, <em>pg</em>, <em>eta</em>, <em>a0</em>, <em>a1</em>, <em>theta</em>, <em>size</em>, <em>protocol</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.names.ghz_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name generator for saved GHZ states.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.tools.operations">
+<span id="faulttolerance-decomposition-tools-operations-module"></span><h2>faulttolerance.decomposition.tools.operations module<a class="headerlink" href="#module-faulttolerance.decomposition.tools.operations" title="Permalink to this headline">¶</a></h2>
+<p>Routines to perform basic operations not supplied by qutip already.</p>
+<p>author: Eduardo Villaseñor
+created-on: 05/06/17</p>
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.collapse_single_Xbasis_ket">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">collapse_single_Xbasis_ket</code><span class="sig-paren">(</span><em>psi</em>, <em>project</em>, <em>N=1</em>, <em>pos=0</em>, <em>dimRed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.collapse_single_Xbasis_ket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse the state in the postion of a single qubit in X basis.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.collapse_single_Zbasis">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">collapse_single_Zbasis</code><span class="sig-paren">(</span><em>rho</em>, <em>project</em>, <em>N=1</em>, <em>pos=0</em>, <em>dimRed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.collapse_single_Zbasis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse the state in the postion of a single qubit.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.collapse_single_Zbasis_ket">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">collapse_single_Zbasis_ket</code><span class="sig-paren">(</span><em>psi</em>, <em>project</em>, <em>N=1</em>, <em>pos=0</em>, <em>dimRed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.collapse_single_Zbasis_ket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse the state in the postion of a single qubit in Z basis.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.forced_measure_single_Xbasis">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">forced_measure_single_Xbasis</code><span class="sig-paren">(</span><em>rho</em>, <em>N=1</em>, <em>pos=0</em>, <em>project=0</em>, <em>dimRed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.forced_measure_single_Xbasis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure a single qubit in the X basis.</p>
+<p>rho : (densmat) density matrix.
+N : (int) system size.
+pos : (int) position of qubit to be measured.
+project : (0, 1) the basis state to which the state collapses.
+dimRed : (bool) is the collapsed state has reduced to the</p>
+<blockquote>
+<div>dimentions N - 1</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.forced_measure_single_Zbasis">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">forced_measure_single_Zbasis</code><span class="sig-paren">(</span><em>rho</em>, <em>N=1</em>, <em>pos=0</em>, <em>project=0</em>, <em>dimRed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.forced_measure_single_Zbasis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Force a measurement on a single qubit in the Z basis to a given proyetor.</p>
+<p>rho : (densmat) density matrix.
+N : (int) system size.
+pos : (int) position of qubit to be measured.
+project : (0, 1) force the measurement into the desired projector
+dimRed : (bool) is the collapsed state has reduced to the</p>
+<blockquote>
+<div>dimentions N - 1</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.p_measurement_single_Xbasis">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">p_measurement_single_Xbasis</code><span class="sig-paren">(</span><em>rho</em>, <em>measure</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.p_measurement_single_Xbasis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the probability of measuring the value “measure” on the X basis.
+Parameters
+———-
+rho : (densmat) density matrix.
+measure : (0, 1) measurement result probability.
+pos : (int) position of qubit to be measured.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.p_measurement_single_Zbasis">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">p_measurement_single_Zbasis</code><span class="sig-paren">(</span><em>rho</em>, <em>measure</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.p_measurement_single_Zbasis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the probability of measuring the value “measure” on the Z basis.</p>
+<p>rho : (densmat) density matrix.
+measure : (0, 1) measurement result probability.
+pos : (int) position of qubit to be measured.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.projector_single_qubit_Xbasis">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">projector_single_qubit_Xbasis</code><span class="sig-paren">(</span><em>project</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.projector_single_qubit_Xbasis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.projector_single_qubit_Zbasis">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">projector_single_qubit_Zbasis</code><span class="sig-paren">(</span><em>project</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.projector_single_qubit_Zbasis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.projector_single_qubit_Zbasis_dimRed">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">projector_single_qubit_Zbasis_dimRed</code><span class="sig-paren">(</span><em>project</em>, <em>N=1</em>, <em>pos=0</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.projector_single_qubit_Zbasis_dimRed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.random_measure_single_Xbasis">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">random_measure_single_Xbasis</code><span class="sig-paren">(</span><em>rho</em>, <em>N=1</em>, <em>pos=0</em>, <em>dimRed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.random_measure_single_Xbasis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure a single qubit in the X basis.</p>
+<p>rho : (densmat) density matrix.
+N : (int) system size.
+pos : (int) position of qubit to be measured.
+dimRed : (bool) is the collapsed state has reduced to the</p>
+<blockquote>
+<div>dimentions N - 1</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.random_measure_single_Zbasis">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">random_measure_single_Zbasis</code><span class="sig-paren">(</span><em>rho</em>, <em>N=1</em>, <em>pos=0</em>, <em>dimRed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.random_measure_single_Zbasis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure a single qubit in the Z basis, using a random number to
+choose a measurement outcome.</p>
+<p>rho : (densmat) density matrix.
+N : (int) system size.
+pos : (int) position of qubit to be measured.
+dimRed : (bool) is the collapsed state has reduced to the</p>
+<blockquote>
+<div>dimentions N - 1</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.tensor_operator">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">tensor_operator</code><span class="sig-paren">(</span><em>operators</em>, <em>positions</em>, <em>N</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.tensor_operator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tensor the product of multiple single qubit operators.</p>
+<p>operators : (list) operator list to be tensored.
+N : (int) total system dimension.
+positions : list with the positions for each operator.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations.tensor_single_operator">
+<code class="descclassname">faulttolerance.decomposition.tools.operations.</code><code class="descname">tensor_single_operator</code><span class="sig-paren">(</span><em>operator</em>, <em>N</em>, <em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations.tensor_single_operator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tensor a single qubit operator between identyties accoring to the
+position of the qubit and the system size.</p>
+<p>operator : (operator) operatior to be tensored.
+N : (int) total system dimension.
+pos : (int) position inside the entire system to be measured.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.tools.operations_test">
+<span id="faulttolerance-decomposition-tools-operations-test-module"></span><h2>faulttolerance.decomposition.tools.operations_test module<a class="headerlink" href="#module-faulttolerance.decomposition.tools.operations_test" title="Permalink to this headline">¶</a></h2>
+<p>Routines test the functions in operations.py.</p>
+<p>author: Eduardo Villaseñor
+created-on: 05/06/17</p>
+<dl class="class">
+<dt id="faulttolerance.decomposition.tools.operations_test.TestOperations">
+<em class="property">class </em><code class="descclassname">faulttolerance.decomposition.tools.operations_test.</code><code class="descname">TestOperations</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations_test.TestOperations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.operations_test.TestOperations.test_measurement_Xbasis">
+<code class="descname">test_measurement_Xbasis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations_test.TestOperations.test_measurement_Xbasis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.operations_test.TestOperations.test_measurement_Zbasis">
+<code class="descname">test_measurement_Zbasis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations_test.TestOperations.test_measurement_Zbasis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.operations_test.TestOperations.test_p_measurement_Xbasis">
+<code class="descname">test_p_measurement_Xbasis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations_test.TestOperations.test_p_measurement_Xbasis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.operations_test.TestOperations.test_p_measurement_Zbasis">
+<code class="descname">test_p_measurement_Zbasis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations_test.TestOperations.test_p_measurement_Zbasis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.operations_test.TestOperations.test_proyector">
+<code class="descname">test_proyector</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations_test.TestOperations.test_proyector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.operations_test.TestOperations.test_proyector_dimRed">
+<code class="descname">test_proyector_dimRed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations_test.TestOperations.test_proyector_dimRed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="faulttolerance.decomposition.tools.operations_test.TestOperations.test_tensor_single_operator">
+<code class="descname">test_tensor_single_operator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations_test.TestOperations.test_tensor_single_operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.operations_test.assert_Equivalent">
+<code class="descclassname">faulttolerance.decomposition.tools.operations_test.</code><code class="descname">assert_Equivalent</code><span class="sig-paren">(</span><em>A</em>, <em>B</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.operations_test.assert_Equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain a global_phase between the two operators.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.tools.p_success">
+<span id="faulttolerance-decomposition-tools-p-success-module"></span><h2>faulttolerance.decomposition.tools.p_success module<a class="headerlink" href="#module-faulttolerance.decomposition.tools.p_success" title="Permalink to this headline">¶</a></h2>
+<p>Functions to calculate the success probability of certain protocols.
+Relies in ‘projectors.py’ and ‘operations.py’ to generate the required projectors.</p>
+<p>author: Eduardo Villaseñor
+created-on: 16/01/18</p>
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.p_success.double_sel">
+<code class="descclassname">faulttolerance.decomposition.tools.p_success.</code><code class="descname">double_sel</code><span class="sig-paren">(</span><em>rho</em>, <em>N</em>, <em>ancillas_pos1</em>, <em>ancillas_pos2</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.p_success.double_sel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the success probability of the single selection
+protocol for entanglement distillment.</p>
+<p>rho : (densmat) density matrix.
+N : (int) system size.
+ancilla_pos : (int) position of qubit to be measured.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.p_success.epl">
+<code class="descclassname">faulttolerance.decomposition.tools.p_success.</code><code class="descname">epl</code><span class="sig-paren">(</span><em>rho</em>, <em>N</em>, <em>ancillas_pos</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.p_success.epl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the success probability of the single selection
+protocol for entanglement distillment.</p>
+<p>rho : (densmat) density matrix.
+N : (int) system size.
+ancilla_pos : (int) position of qubit to be measured.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.p_success.ghz_3">
+<code class="descclassname">faulttolerance.decomposition.tools.p_success.</code><code class="descname">ghz_3</code><span class="sig-paren">(</span><em>rho</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.p_success.ghz_3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the probability of success for the special case when creating
+a GHZ state from 4 bell pairs.
+Requires that ancillas are on the last part of the entire state rho.</p>
+<p>rho : (densmat) density matrix.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.p_success.ghz_4">
+<code class="descclassname">faulttolerance.decomposition.tools.p_success.</code><code class="descname">ghz_4</code><span class="sig-paren">(</span><em>rho</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.p_success.ghz_4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the probability of success for the special case when creating
+a GHZ state from 4 bell pairs.
+Requires that ancillas are on the last part of the entire state rho.</p>
+<p>rho : (densmat) density matrix.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.p_success.single_sel">
+<code class="descclassname">faulttolerance.decomposition.tools.p_success.</code><code class="descname">single_sel</code><span class="sig-paren">(</span><em>rho</em>, <em>N</em>, <em>ancillas_pos</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.p_success.single_sel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the success probability of the single selection
+protocol for entanglement distillment.</p>
+<p>rho : (densmat) density matrix.
+N : (int) system size.
+ancilla_pos : (int) position of qubit to be measured.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-faulttolerance.decomposition.tools.pauli_basis">
+<span id="faulttolerance-decomposition-tools-pauli-basis-module"></span><h2>faulttolerance.decomposition.tools.pauli_basis module<a class="headerlink" href="#module-faulttolerance.decomposition.tools.pauli_basis" title="Permalink to this headline">¶</a></h2>
+<p>Routines to assemble the pauli basis based on constructiong the
+operators based on symbols (“IIXI”, “YZZX”, … )</p>
+<p>author: Eduardo Villaseñor
+created-on: 18/11/17</p>
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.pauli_basis.char_to_operator">
+<code class="descclassname">faulttolerance.decomposition.tools.pauli_basis.</code><code class="descname">char_to_operator</code><span class="sig-paren">(</span><em>c</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.pauli_basis.char_to_operator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a character into a sigma function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.pauli_basis.combinations">
+<code class="descclassname">faulttolerance.decomposition.tools.pauli_basis.</code><code class="descname">combinations</code><span class="sig-paren">(</span><em>n_operators</em>, <em>ops_positions</em>, <em>system_size</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.pauli_basis.combinations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the possible operator combinations for a given number
+of operators and system size</p>
+<dl class="docutils">
+<dt>n_operators <span class="classifier-delimiter">:</span> <span class="classifier">(int) number of operators in which the combinations are going to be</span></dt>
+<dd>obtained.</dd>
+</dl>
+<p>ops_positions : (list) position in which each operator acts.
+system_size : (int) total system size.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.pauli_basis.get_basis">
+<code class="descclassname">faulttolerance.decomposition.tools.pauli_basis.</code><code class="descname">get_basis</code><span class="sig-paren">(</span><em>operator_positions</em>, <em>system_size</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.pauli_basis.get_basis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all operators comninations from 0 to system_size.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.pauli_basis.product_rules">
+<code class="descclassname">faulttolerance.decomposition.tools.pauli_basis.</code><code class="descname">product_rules</code><span class="sig-paren">(</span><em>A</em>, <em>B</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.pauli_basis.product_rules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rulles that used in the symbol product function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.pauli_basis.string_to_operator">
+<code class="descclassname">faulttolerance.decomposition.tools.pauli_basis.</code><code class="descname">string_to_operator</code><span class="sig-paren">(</span><em>s</em>, <em>positions</em>, <em>system_size</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.pauli_basis.string_to_operator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a string and returns a gate acting on the corresponding qubits.
+Strings example: IXZI, YYYZ, …</p>
+<p>s : (string) string representation of single qubit operators.
+positions : (list) position in which each operator acts.
+system_size : (int) total system size.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.pauli_basis.symbol_product">
+<code class="descclassname">faulttolerance.decomposition.tools.pauli_basis.</code><code class="descname">symbol_product</code><span class="sig-paren">(</span><em>symbolA</em>, <em>symbolB</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.pauli_basis.symbol_product" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do the operation of two operators in symbol form up to a -1 factor.
+ex. XYZZ * IXZY = XZIX</p>
+</dd></dl>
+
+</div>
+<div class="section" id="faulttolerance-decomposition-tools-pauli-basis-test-module">
+<h2>faulttolerance.decomposition.tools.pauli_basis_test module<a class="headerlink" href="#faulttolerance-decomposition-tools-pauli-basis-test-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-faulttolerance.decomposition.tools.projectors">
+<span id="faulttolerance-decomposition-tools-projectors-module"></span><h2>faulttolerance.decomposition.tools.projectors module<a class="headerlink" href="#module-faulttolerance.decomposition.tools.projectors" title="Permalink to this headline">¶</a></h2>
+<p>Some tools to generate projectors based on even/odd or binary numbers.</p>
+<p>author: Eduardo Villaseñor
+created-on: 18/11/17</p>
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.projectors.even_projectors">
+<code class="descclassname">faulttolerance.decomposition.tools.projectors.</code><code class="descname">even_projectors</code><span class="sig-paren">(</span><em>system_size</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.projectors.even_projectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the even projectors in the qubit basis of a given system size.</p>
+<p>system_size : (int) total size of the system to be projected</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.projectors.number_to_ket">
+<code class="descclassname">faulttolerance.decomposition.tools.projectors.</code><code class="descname">number_to_ket</code><span class="sig-paren">(</span><em>system_size</em>, <em>number</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.projectors.number_to_ket" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.projectors.numbers_to_kets">
+<code class="descclassname">faulttolerance.decomposition.tools.projectors.</code><code class="descname">numbers_to_kets</code><span class="sig-paren">(</span><em>system_size</em>, <em>numbers</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.projectors.numbers_to_kets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.projectors.numbers_to_projectors">
+<code class="descclassname">faulttolerance.decomposition.tools.projectors.</code><code class="descname">numbers_to_projectors</code><span class="sig-paren">(</span><em>system_size</em>, <em>numbers</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.projectors.numbers_to_projectors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.projectors.odd_projectors">
+<code class="descclassname">faulttolerance.decomposition.tools.projectors.</code><code class="descname">odd_projectors</code><span class="sig-paren">(</span><em>system_size</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.projectors.odd_projectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the odd projectors in the qubit basis of a given system size.</p>
+<p>system_size : (int) total size of the system to be projected</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.projectors.project_even">
+<code class="descclassname">faulttolerance.decomposition.tools.projectors.</code><code class="descname">project_even</code><span class="sig-paren">(</span><em>rho</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.projectors.project_even" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.projectors.project_even_ket">
+<code class="descclassname">faulttolerance.decomposition.tools.projectors.</code><code class="descname">project_even_ket</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.projectors.project_even_ket" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.projectors.project_odd">
+<code class="descclassname">faulttolerance.decomposition.tools.projectors.</code><code class="descname">project_odd</code><span class="sig-paren">(</span><em>rho</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.projectors.project_odd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="faulttolerance.decomposition.tools.projectors.project_odd_ket">
+<code class="descclassname">faulttolerance.decomposition.tools.projectors.</code><code class="descname">project_odd_ket</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#faulttolerance.decomposition.tools.projectors.project_odd_ket" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="faulttolerance-decomposition-tools-purification-module">
+<h2>faulttolerance.decomposition.tools.purification module<a class="headerlink" href="#faulttolerance-decomposition-tools-purification-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-faulttolerance.decomposition.tools">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-faulttolerance.decomposition.tools" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">faulttolerance.decomposition.tools package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.tools.basic_units">faulttolerance.decomposition.tools.basic_units module</a><ul>
+<li><a class="reference internal" href="#basic-units">Basic Units</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.tools.fgh">faulttolerance.decomposition.tools.fgh module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.tools.ghz_correction">faulttolerance.decomposition.tools.ghz_correction module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.tools.names">faulttolerance.decomposition.tools.names module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.tools.operations">faulttolerance.decomposition.tools.operations module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.tools.operations_test">faulttolerance.decomposition.tools.operations_test module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.tools.p_success">faulttolerance.decomposition.tools.p_success module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.tools.pauli_basis">faulttolerance.decomposition.tools.pauli_basis module</a></li>
+<li><a class="reference internal" href="#faulttolerance-decomposition-tools-pauli-basis-test-module">faulttolerance.decomposition.tools.pauli_basis_test module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.tools.projectors">faulttolerance.decomposition.tools.projectors module</a></li>
+<li><a class="reference internal" href="#faulttolerance-decomposition-tools-purification-module">faulttolerance.decomposition.tools.purification module</a></li>
+<li><a class="reference internal" href="#module-faulttolerance.decomposition.tools">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/faulttolerance.decomposition.tools.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DistributedSC  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Eduardo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>
