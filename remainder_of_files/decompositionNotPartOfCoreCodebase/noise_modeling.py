@@ -88,6 +88,7 @@ class NoiseModel:
                 continue
 
             # To improve readability keep the simplest symbol
+            # NOTE bcriger: does this affect the probability with which a Pauli is applied?
             if k.count("I") > k_equiv.count("I"):
                 del self.pauli_basis[k_equiv]
             else:
@@ -95,6 +96,7 @@ class NoiseModel:
 
     def _inner_prod(self, rhoA, stateB):
         # Fidelity for the special case when one of the states is a pure state.
+        # NOTE bcriger: sqrt?
         return (stateB.dag() * rhoA * stateB).norm()
 
     def _parity_projection_ket(self, psi, targets, measurement):
@@ -146,6 +148,7 @@ class NoiseModel:
         # Take the inner procut of the chi matrix over all vectors
         # to rewrite it in the Pauli basis.
         for k, v in self.pauli_basis.items():
+            # NOTE bcriger: self.faulty_measurement == True implies *no* faulty measurement?
             if self.faulty_measurement:
                 # Decomposition when no faulty measurement
                 sym_ok = k + "_OK"
@@ -170,6 +173,7 @@ class NoiseModel:
         """
         Check if the total sum of the decomposition is equal to 1.
         """
+        # NOTE bcriger: Needs == 1?
         return sum(self.chi.values())
 
     def reset_chi(self):
