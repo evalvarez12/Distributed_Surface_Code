@@ -7,8 +7,8 @@ created on: 19/07/17
 """
 
 import numpy as np
-# import matplotlib.pyplot as plt
-# from matplotlib import colors
+import matplotlib.pyplot as plt
+from matplotlib import colors
 import errors
 
 
@@ -103,9 +103,9 @@ class SurfaceCode:
         self.p_not_complete = 0
 
         # Color map stuff for plot
-        # self.cmap = colors.ListedColormap(['red', 'orange', 'white', 'green'])
-        # bounds = [-2.5, -1.5, 0, 1.5, 2.5]
-        # self.cmap_norm = colors.BoundaryNorm(bounds, self.cmap.N)
+        self.cmap = colors.ListedColormap(['red', 'orange', 'white', 'green'])
+        bounds = [-2.5, -1.5, 0, 1.5, 2.5]
+        self.cmap_norm = colors.BoundaryNorm(bounds, self.cmap.N)
 
     def init_error_obj(self, surface, ps, pm, pg, eta, a0, a1, theta, protocol):
         """
@@ -616,12 +616,12 @@ class SurfaceCode:
         plt.imshow(data, cmap=self.cmap, norm=self.cmap_norm)
         plt.tick_params(axis='both',          # changes apply to the x-axis
                         which='both',      # both major and minor ticks are affected
-                        bottom='off',      # ticks along the bottom edge are off
-                        top='off',         # ticks along the top edge are off
-                        labelbottom='off',
-                        left='off',
-                        right='off',
-                        labelleft='off')
+                        bottom=False,      # ticks along the bottom edge are off
+                        top=False,         # ticks along the top edge are off
+                        labelbottom=False,
+                        left=False,
+                        right=False,
+                        labelleft=False)
 
     def plot_all(self):
         """Plot the surface code stabilizers."""
