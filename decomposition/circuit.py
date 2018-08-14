@@ -50,10 +50,10 @@ class Circuit:
         """
         Main function to run circuits recurively.
 
-        Parameters
+        Returns
         -----------
-        rho : (densmat) density matrix involved in the circuit, can be None depending
-              on the circuit block
+        rho : (densmat) density matrix result of the circuit.
+        check: (dic) number of resources used by the circuit.
         """
         check, rho = self._run()
         return rho, check
