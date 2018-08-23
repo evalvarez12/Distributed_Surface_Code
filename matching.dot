@@ -1,0 +1,32 @@
+digraph G {
+    graph [rankdir=TB];
+    subgraph cluster_G {
+
+        graph [style="filled,rounded",fillcolor="#80808018", label=""];
+        matching [label="matching", style="filled", fillcolor="#ffffffb2", fontcolor="#000000", group="0"];
+        matching__add_virtual_space [label="add_virtual_space\n\n(matching.py:218,\nfunction in matching)", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        matching__add_virtual_time [label="add_virtual_time\n\n(matching.py:232,\nfunction in matching)", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        matching__make_graphX [label="make_graph\n\n(matching.py:111,\nfunction in matching)", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        matching__match [label="match\n\n(matching.py:57,\nfunction in matching)", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        matching__match_simple [label="match_simple\n\n(matching.py:9,\nfunction in matching)", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        matching__pairs_remove_out_planar [label="pairs_remove_out_planar\n\n(matching.py:156,\nfunction in matching)", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        matching__pairs_remove_out_planar_space [label="pairs_remove_out_planar_space\n\n(matching.py:192,\nfunction in matching)", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        matching__pairs_remove_out_toric [label="pairs_remove_out_toric\n\n(matching.py:208,\nfunction in matching)", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+    }
+        matching -> matching__pairs_remove_out_planar_space [style="dashed", color="#838b8b"];
+        matching -> matching__pairs_remove_out_planar [style="dashed", color="#838b8b"];
+        matching -> matching__add_virtual_space [style="dashed", color="#838b8b"];
+        matching -> matching__match [style="dashed", color="#838b8b"];
+        matching -> matching__add_virtual_time [style="dashed", color="#838b8b"];
+        matching -> matching__match_simple [style="dashed", color="#838b8b"];
+        matching -> matching__pairs_remove_out_toric [style="dashed", color="#838b8b"];
+        matching -> matching__make_graphX [style="dashed", color="#838b8b"];
+        matching__match_simple -> matching__pairs_remove_out_planar_space [style="solid", color="#000000"];
+        matching__match_simple -> matching__add_virtual_space [style="solid", color="#000000"];
+        matching__match_simple -> matching__make_graphX [style="solid", color="#000000"];
+        matching__match -> matching__pairs_remove_out_planar [style="solid", color="#000000"];
+        matching__match -> matching__add_virtual_space [style="solid", color="#000000"];
+        matching__match -> matching__add_virtual_time [style="solid", color="#000000"];
+        matching__match -> matching__pairs_remove_out_toric [style="solid", color="#000000"];
+        matching__match -> matching__make_graphX [style="solid", color="#000000"];
+    }

@@ -101,7 +101,7 @@ for i in range(iterations):
     lc.reset()
     sc.reset()
 
-fail_rate = fail_rate/float(iterations)
+fail_rate = fail_rate / float(iterations)
 
 # Initializing variables. mpi4py requires that we pass numpy objects.
 f_rate = np.zeros(1)
@@ -122,6 +122,6 @@ if comm.rank == 0:
         # args_str = get_file_name(args)
         # script_path = dirname(realpath(__file__))
         # file_name = (script_path + "/results/" + args_str)
-        print size, distance, protocol, measurement, a0, eta, pg, round(total[0],7), ":", round(total[0]/cycles, 7)
-        # print "rate :", round(total[0], 7)*cycles
+        print(size, distance, protocol, measurement, a0, eta, pg, round(total[0],7), ":", round(total[0] / cycles, 7))
+        # print("rate :", round(total[0], 7) * cycles)
         # np.save(file_name, total)

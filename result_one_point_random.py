@@ -98,6 +98,6 @@ f_rate[0] = fail_rate
 comm.Reduce(f_rate, total, op=MPI.SUM, root=0)
 # Root process saves the results
 if rank == 0:
-        total = total/float(size)
-        print size, distance, cycles, "p=", p, " : ", round(total[0], 7)
+        total = total / float(size)
+        print(size, distance, cycles, "p=", p, " : ", round(total[0], 7))
         # print ("size: ", size, "rank: ", rank)

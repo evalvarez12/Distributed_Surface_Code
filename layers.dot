@@ -1,0 +1,26 @@
+digraph G {
+    graph [rankdir=TB];
+    subgraph cluster_G {
+
+        graph [style="filled,rounded",fillcolor="#80808018", label=""];
+        layers [label="layers", style="filled", fillcolor="#ffffffb2", fontcolor="#000000", group="0"];
+        layers__Layers [label="Layers\n\n(layers.py:12,\nclass in layers)", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        layers__Layers____init__ [label="__init__\n\n(layers.py:18,\nmethod in layers.Layers)", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+        layers__Layers__add [label="add\n\n(layers.py:79,\nmethod in layers.Layers)", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+        layers__Layers__decode [label="decode\n\n(layers.py:53,\nmethod in layers.Layers)", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+        layers__Layers__find_anyons [label="find_anyons\n\n(layers.py:102,\nmethod in layers.Layers)", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+        layers__Layers__find_anyons_all [label="find_anyons_all\n\n(layers.py:96,\nmethod in layers.Layers)", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+        layers__Layers__get_time [label="get_time\n\n(layers.py:41,\nmethod in layers.Layers)", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+        layers__Layers__reset [label="reset\n\n(layers.py:45,\nmethod in layers.Layers)", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+    }
+        layers -> layers__Layers [style="dashed", color="#838b8b"];
+        layers__Layers -> layers__Layers__add [style="dashed", color="#838b8b"];
+        layers__Layers -> layers__Layers__find_anyons_all [style="dashed", color="#838b8b"];
+        layers__Layers -> layers__Layers__find_anyons [style="dashed", color="#838b8b"];
+        layers__Layers -> layers__Layers__reset [style="dashed", color="#838b8b"];
+        layers__Layers -> layers__Layers____init__ [style="dashed", color="#838b8b"];
+        layers__Layers -> layers__Layers__decode [style="dashed", color="#838b8b"];
+        layers__Layers -> layers__Layers__get_time [style="dashed", color="#838b8b"];
+        layers__Layers__decode -> layers__Layers__find_anyons_all [style="solid", color="#000000"];
+        layers__Layers__find_anyons_all -> layers__Layers__find_anyons [style="solid", color="#000000"];
+    }
