@@ -97,9 +97,10 @@ class Blocks:
         # Probaility of success
         s = np.sin(self.theta)**2
         c = np.cos(self.theta)**2
-        p_success = 2*s*self.eta*(c + s*(1 - self.eta))
+        p_success = 2 * s * self.eta * (c + s * (1 - self.eta))
 
         # This circuit number of steps and time it took
+        # Note bcriger: Why would there be a + 1?
         attempts = self._success_number_of_attempts(p_success) + 1
         time = self.time_lookup["bell_pair"] * attempts
 
@@ -115,11 +116,12 @@ class Blocks:
         # Generate a Bell pair using the Barret-Kok protocol.
         # For this case set the initial state to be |+>
         # Probaility of success
-        s = .5
-        r = (1 - self.eta)*s/(1 - self.eta*s)
-        p_success = (1 - r)*self.eta**2
+        s = .5 # Note bcriger: How do we know what s is?
+        r = (1 - self.eta) * s / (1 - self.eta * s)
+        p_success = (1 - r) * self.eta**2
 
         # This circuit number of steps
+        # Note bcriger: There's that + 1 again.
         attempts = self._success_number_of_attempts(p_success) + 1
         time = self.time_lookup["bell_pair"] * attempts
 
@@ -157,6 +159,11 @@ class Blocks:
         # 100000 tries required for EPL
         # 1000000 for BK
         i = np.arange(20000)
+        # Note bcriger: Looking at the following method, it looks like
+        # this is pretty much going to be p. What's the deal?
+
+        # Note bcriger: I'm actually pretty sure this doesn't work
+        # as intended. 
         d = self._distribution(p_success, i)
         return np.random.choice(i, 1, p=d)[0]
 
