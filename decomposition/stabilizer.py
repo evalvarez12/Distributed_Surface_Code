@@ -164,12 +164,14 @@ class Stabilizer:
         ghz : (densmat) density matrix of a ghz state.
         """
         N = len(ghz.dims[0])
-        twirled_state = ghz * 0
+        # Note bcriger: This generates a zero matrix with the same dims
+        # as ghz.
+        avgd_state = ghz * 0 
         # Get all permuations and average over them
         permutations = itertools.permutations(range(N), N)
         for p in permutations:
-            twirled_state += ghz.permute(p)
-        return twirled_state/np.math.factorial(N)
+            avgd_state += ghz.permute(p)
+        return avgd_state / np.math.factorial(N)
 
     def _get_probabilities_measurement(self, rho, N_ghz):
         # Compute the probabilites of getting a even or a odd measurement result
@@ -184,6 +186,8 @@ class Stabilizer:
         if N != 0:
             P_even = qt.tensor(qt.qeye([2]*N), P_even)
             P_odd = qt.tensor(qt.qeye([2]*N), P_odd)
+        else:
+            raise ValueError("`N` is not supposed to be 0.")
 
         # Compute probabilites
         p_even = (P_even * rho * P_even.dag()).tr()
