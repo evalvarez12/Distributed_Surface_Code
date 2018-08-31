@@ -198,6 +198,7 @@ class Blocks:
         check_backup = self.check.copy()
         # Get EPl and number of attempts
         p_success, _, rho_epl = self.start_epl()
+        # Note bcriger: + 1
         attempts = self._success_number_of_attempts(p_success) + 1
 
         # Multiply check elements
