@@ -16,7 +16,7 @@ import tools.operations as ops
 import error_models as errs
 import tools.p_success as ps
 import tools.ghz_correction as gc
-
+from scipy.stats import planck
 
 class Blocks:
     """
@@ -165,6 +165,8 @@ class Blocks:
     def _distribution(self, p, n):
         # Distribution for the probability in the number of tries of
         # each event
+        raise NotImplementedError("This method has been deprecated" + \
+                                    " with extreme prejudice.")
         return p*(1-p)**n
 
     def _append_noisy_plus(self, rho):
