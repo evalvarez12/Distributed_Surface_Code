@@ -158,9 +158,12 @@ class Blocks:
         # NOTE: This is expensive, adjust manually as required
         # 100000 tries required for EPL
         # 1000000 for BK
-        i = np.arange(20000) 
-        d = self._distribution(p_success, i)
-        return np.random.choice(i, 1, p=d)[0]
+        
+        # i = np.arange(20000) 
+        # d = self._distribution(p_success, i)
+        # return np.random.choice(i, 1, p=d)[0]
+        planck_lambda = -np.log(1. - p_success)
+        return planck.rvs(planck_lambda)
 
     def _distribution(self, p, n):
         # Distribution for the probability in the number of tries of
